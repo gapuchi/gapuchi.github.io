@@ -1,0 +1,6 @@
+- name: Rocket League Bot
+  image: rocket-league-logo.png
+  url: "https://bitbucket.org/gapuchi/rlbot/src"
+  date: 2018
+  tags:
+  - Scala
