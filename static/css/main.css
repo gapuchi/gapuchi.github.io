@@ -31,7 +31,7 @@ h2, h3 {
 }
 a, a:link, a:active {
   text-decoration: none;
-  color: #3fa757;
+  color: #4B9CD3;
 }
 a:hover {
   color: #B3B3B3;
@@ -148,11 +148,6 @@ div.col-sm-3 img.profile-avatar {
   color: #6D6D6D;
 }
 
-.share-page {
-  padding: 10px 10px 5px;
-  border-top: 1px solid #f0f0f0;
-  border-bottom: 1px solid #f0f0f0;
-}
 .post-content img,
 .content img {
   max-width: 100%
