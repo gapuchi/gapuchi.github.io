@@ -5,7 +5,7 @@ date:   2019-01-19
 categories: [scala, cats]
 ---
 
-I decided to take a crack at learning the [Cats library for Scala](https://books.underscore.io/scala-with-cats/scala-with-cats.html). This serves as reference for my notes. You'll notice that contents will mirror the book, and pieces of it will be very similar if not identical to it as well. Again, these serves as my notes and will just contain the pieces that I think are important, not obvious, or a good reminder.
+I decided to take a crack at learning the [Cats library for Scala](https://books.underscore.io/scala-with-cats/scala-with-cats.html). This serves as reference for my notes. You'll notice that contents will mirror the book, and pieces of it will be very similar if not identical to it as well. Again, this serves as my notes and will just contain the pieces that I think are important, not obvious, or a good reminder.
 
 # Type Classes
 
