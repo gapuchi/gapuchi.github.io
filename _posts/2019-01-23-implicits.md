@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Scala With Cats - Implicits"
-date: 2019-01-23
+date: 2019-01-23 10:30:00 -0900
 categories: [scala, cats]
 ---
 
