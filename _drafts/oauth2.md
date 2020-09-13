@@ -65,16 +65,10 @@ The service will issue *client credentials* in the form of
 
 There are 4 types of authorization grants defined by OAuth2:
 
-|Grant Type|Description|
-|---|---|
-|Authorization Code|Used with server-side applications|
-|Implicit|Used with mobile apps or web applications|
-|Resource Owner Password Credentials||
-
-1. Authorization Code - used with server-side Applications
-1. Implicit - used with Mobile Apps or Web Applications (applications that run on the user’s device)
-1. Resource Owner Password Credentials - used with trusted Applications, such as those owned by the service itself
-1. Client Credentials - used with Applications API access
+1. Authorization CodeApplications
+1. Implicit
+1. Resource Owner Password Credentials
+1. Client Credentials
 
 The authorization grant type used depends on:
 
@@ -83,4 +77,26 @@ The authorization grant type used depends on:
 
 #### Grant Type - Authorization Code
 
-This grant type is optimized for *server-side applications*. The source code is not publicly exposed so *client secret* can be maintained.
+This grant type is optimized for *server-side applications*. The application must be able to receive HTTP requests because the service will redirect the user once authorization is granted.
+
+1. Client is given an *authorization code link*: `https://discord.com/api/oauth2/authorize?response_type=code&client_id=123456789&permissions=8&redirect_uri=http%3A%2F%2Farjun.adhia.net&scope=bot`
+    * `https://discord.com/api/oauth2/authorize` - Discord's API authorization endpoint
+    * `client_id=123456789` - the *application*'s *client id*.
+    * `redirect_uri=http%3A%2F%2Farjun.adhia.net` - The URI that the service redirects the user after an authorization code is granted.
+    * `response_type=code` - Specifies that the application is requesting an authorization code grant.
+    * `scope=bot` - specifies the level of access that the application is requesting. (For Discord, this is defined under [OAuth2 Scopes](https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes)).
+1. Client authorizes the application - The user will click on the above link, and the service will ask the user to authorize or deny the application.
+1. Client is redirected to the provided `redirect_url` once they authorize: `https://arjun.adhia.net/?code=987654321`
+    * `code=987654321` - The authorization code provided by the service, as an argument to the redirect url.
+1. Application requests access token - The application, requests a token with a `POST`: `https://discord.com/api/oauth2/token?client_id=1234567890&client_secret=3216549870&grant_type=authorization_code&code=098763421&redirect_uri=http%3A%2F%2Farjun.adhia.net&scope=bot`
+    * `client_id=1234567890`
+    * `client_secret=3216549870` - the client secret. The client secret can be held by the application because it is server-side and source code is hidden. If this was client side, anyone can see the secret.
+    * `grant_type=authorization_code`
+    * `code=098763421`
+    * `redirect_uri=http%3A%2F%2Farjun.adhia.net`
+    * `scope=bot`
+1. The API will return a response with the access token (and potentially a refresh token, to get a new token when the returned one expires) - the application can now use this token when making calls to the service.
+
+#### Grant Type - Implicit
+
+This grant type is for mobile apps and web applications, where the client secret confidentaility is not guaranteed.
