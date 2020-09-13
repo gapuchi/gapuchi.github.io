@@ -111,14 +111,14 @@ import JsonSyntax._
 Person("Dave", "dave@example.com").toJson
 ```
 
-> This took me a second to understand what was happening here, as I am not familiar with *extension methods*. The way I understand it, `Person` doesn't have a `toJson` method, so the Scala compiler looks for a way for it to have it. By using the `implicit class`, the compiler passes in the instance of `Person` as part of the constructor and creates an instance of `JsonWriterOps`. With this implicit, `Person` can call `toJson`. 
+> This took me a second to understand what was happening here, as I am not familiar with *extension methods*. The way I understand it, `Person` doesn't have a `toJson` method, so the Scala compiler looks for a way for it to have it. By using the `implicit class`, the compiler passes in the instance of `Person` as part of the constructor and creates an instance of `JsonWriterOps`. With this implicit, `Person` can call `toJson`.
 
-# Conclusion
+## Conclusion
 
 That's basically it! Using **type classes**, we can define functionality and it's implementations for specific types. It's a pretty cool pattern to implement.
 
 The main advantage that is apparent to me is the ability to have **on demand functionality.** We can serialize `Person` in different ways for different parts of a program. This on demand feature has definite benefits over *inheritance*, which requires implementation of functionality at the time of writing code, or implementing functionality in the libraries iteself.
 
-Implicits make type class implementations look very clean as well. The only potential issue I see is that the use of *extension methods* may not be apparent, if that interface is used. 
+Implicits make type class implementations look very clean as well. The only potential issue I see is that the use of *extension methods* may not be apparent, if that interface is used.
 
 The purpose of implicits hasn't been clear to me, in general, since it seemed to only make the declaration of the parameter passed less clear when looking at the code. However, I can see how it can be useful as long as there is a standard practice of when it is used, rather than making parameters implicity arbitrarily. In Cats, they set the standard of type classes to use implicits. However, we can also implement type classes without using implicits. It would be the same as the examle above, with the only change being to explicitly pass in the *type class instance* to the *type class interface*.

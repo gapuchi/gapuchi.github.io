@@ -13,4 +13,3 @@ I always had trouble understanding all the tools/platforms/frameworks/etc that g
 
 * Jekyll, a static website generator that creates a website by converting files (markdown, html, js, css, etc) that is organized in a specific [structure](https://jekyllrb.com/docs/structure/).
 * GitHub Pages, which hosts all my content. It **automatically build the website with Jekyll** if the files structure matches the defined Jekyll structure. This wasn't clear in the [documentation](https://jekyllrb.com/docs/github-pages/) to me, so it took me some time to figure that out.
-

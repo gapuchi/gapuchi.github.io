@@ -23,7 +23,7 @@ Json.toJson("A string!")
 
 In the example above, the compiler will look for an instance type of `JsonWriter[String]` in the *implicit scope* at the call site. This includes:
 
-* local or inherited definitions 
+* local or inherited definitions
 * imported definitions
 * definitions in the companion object of the **type class or parameter type** (in our example, `JsonWrite` and `String` respectively)
 
@@ -95,6 +95,6 @@ With this, implicit resolution becomes a search throughout the whole domain of p
 
 When creating a type class instance constructor using `implicit def`, be sure to mark all parameters with `implicit`, so the compiler can fill these in during resolution. If not marked, it creates another programming pattern called *implicit conversion* which is frowned upon in Scala.
 
-# Conclusion
+## Conclusion
 
 This really brings out the advantages of implicits. Implicit resolution is a powerful tool that lets the compiler automatically resolve parameters by automatically constructing the appropriate type. In my [previous post]({{ site.baseurl }}{% post_url 2019-01-19-type-classes %}), I mentioned that type classes can be implemented without `implicit`s. However, implicits are key if we want to utilize a powerful tool such as implicit resolution.

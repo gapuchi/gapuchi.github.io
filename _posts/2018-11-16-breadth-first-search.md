@@ -9,7 +9,6 @@ Wanting to expand my comment on [this reddit post](https://www.reddit.com/r/scal
 
 We'll use `Node` to represent a node in the graph we're traversing.
 
-
 ```scala
 case class Node(id: String, neighbors: Set[Node])
 ```
@@ -41,7 +40,7 @@ def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node = 
 
     val newVisitedNodes = visitedNodes + toVisit.head
     // &~ find the difference of the two sets
-    val newToVisit = toVisit ++: (toVisit.head.neighbors &~ visitedNodes).toSeq 
+    val newToVisit = toVisit ++: (toVisit.head.neighbors &~ visitedNodes).toSeq
 
     return find(targetId, newToVisit, newVisitedNodes)
 }
@@ -56,7 +55,7 @@ def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node = 
     else {
         val newVisitedNodes = visitedNodes + toVisit.head
         // &~ find the difference of the two sets
-        val newToVisit = toVisit ++: (toVisit.head.neighbors &~ visitedNodes).toSeq 
+        val newToVisit = toVisit ++: (toVisit.head.neighbors &~ visitedNodes).toSeq
 
         find(targetId, newToVisit, newVisitedNodes)
     }
@@ -66,14 +65,14 @@ def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node = 
 The if statement is conditional on the `toVisit` variable. Given this, I prefer utilizing `match`:
 
 ```scala
-def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node = 
+def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node =
     toVisit match {
         case Nil => null
         case head :: _ if head.id == targetId => head
         case head :: tail => {
             val newVisitedNodes = visitedNodes + toVisit.head
             // &~ find the difference of the two sets
-            val newToVisit = toVisit ++: (toVisit.head.neighbors &~ visitedNodes).toSeq 
+            val newToVisit = toVisit ++: (toVisit.head.neighbors &~ visitedNodes).toSeq
 
             find(targetId, newToVisit, newVisitedNodes)
         }
@@ -83,11 +82,11 @@ def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node =
 Inlining some variables and removing some braces results in:
 
 ```scala
-def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node = 
+def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node =
     toVisit match {
         case Nil => null
         case head :: _ if head.id == targetId => head
-        case head :: tail => find(targetId, tail ++: (head.neighbors &~ visitedNodes).toSeq, 
+        case head :: tail => find(targetId, tail ++: (head.neighbors &~ visitedNodes).toSeq,
             visitedNodes + head)
     }
 ```
@@ -95,14 +94,14 @@ def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node =
 and add an entry method, giving us the final:
 
 ```scala
-def find(targetId: String, startingNode: Node): Node = 
+def find(targetId: String, startingNode: Node): Node =
         find(targetId, Seq(startingNode), Set.empty)
 
-def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node = 
+def find(targetId: String, toVisit: Seq[Node], visitedNodes: Set[Node]): Node =
     toVisit match {
         case Nil => null
         case head :: _ if head.id == targetId => head
-        case head :: tail => find(targetId, tail ++: (head.neighbors &~ visitedNodes).toSeq, 
+        case head :: tail => find(targetId, tail ++: (head.neighbors &~ visitedNodes).toSeq,
             visitedNodes + head)
     }
 ```

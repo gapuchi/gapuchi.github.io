@@ -65,7 +65,7 @@ def format[A](value: A, writer: JsonWriter[A]): Json =
   writer.write(value)
 ```
 
-Which combinations makes sense? Obviously, passing a `Circle` value and `JsonWriter[Circle]` makes sense. 
+Which combinations makes sense? Obviously, passing a `Circle` value and `JsonWriter[Circle]` makes sense.
 
 But what about passing a `Shape` value and `JsonWriter[Circle]`? That would not work because not all shapes are circles. This means **we cannot substitute `JsonWriter[Shape]` with `JsonWriter[Circle]`**.
 
@@ -110,7 +110,7 @@ val func1: Function1[Shape, Circle] = new Function {
 }
 
 val func2: Function1[Circle, Shape] = new Function {
-    //Creates a new instance of Shape with area defined 
+    //Creates a new instance of Shape with area defined
     //as the same as the radius of the circle.
     def func(param: Circle): Shape = {
         new Shape {
@@ -184,4 +184,4 @@ Both can't happen:
 | Supertype instance used? | No | No | Yes |
 More specific type preferred? | No | Yes | No |
 
-Cats prefers invariant, to allow more control. This does bring up the scenario where if we have value of type `Some[Int]`, a type class instance of `Option` won't be used. This can be solved by having something like `Some(1): Option[Int]` or using "smart  constructors" like `Option.apply`, `Option.empty`, `some`, and `none`
+Cats prefers invariant, to allow more control. This does bring up the scenario where if we have value of type `Some[Int]`, a type class instance of `Option` won't be used. This can be solved by having something like `Some(1): Option[Int]` or using "smart  constructors" like `Option.apply`, `Option.empty`, `some`, and `none`.
