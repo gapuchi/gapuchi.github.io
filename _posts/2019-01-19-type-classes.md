@@ -7,8 +7,6 @@ categories: [scala, cats]
 
 I decided to take a crack at learning the [Cats library for Scala](https://books.underscore.io/scala-with-cats/scala-with-cats.html). This serves as reference for my notes. You'll notice that contents will mirror the book, and pieces of it will be very similar if not identical to it as well. Again, this serves as my notes and will just contain the pieces that I think are important, not obvious, or a good reminder.
 
-# Type Classes
-
 A lot of tools provided by Cats are in the form of *type classes*, a programming pattern that allows use to add additional functionality to existing libraries. This avoids inheritance and changing the libraries' source code.
 
 ## Anatomy of a Type Class

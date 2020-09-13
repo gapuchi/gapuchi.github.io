@@ -5,8 +5,6 @@ date: 2019-01-23 16:30:00 -0900
 categories: [scala, cats]
 ---
 
-# Controlling Instance Selection
-
 Two questions:
 
 * How does types and subtypes relate?

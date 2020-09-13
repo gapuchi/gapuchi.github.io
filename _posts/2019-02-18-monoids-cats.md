@@ -5,8 +5,6 @@ date: 2019-02-18
 categories: [scala, cats]
 ---
 
-# Monoids in Cats
-
 ## Monoid Type Class
 
 `cats.kernel.Monoid` (aliased [`cats.Monoid`](https://typelevel.org/cats/api/cats/kernel/Monoid.html)) extends `cats.external.Semigroup` (alias [`cats.Semigroup`](https://typelevel.org/cats/api/cats/kernel/Semigroup.html)).

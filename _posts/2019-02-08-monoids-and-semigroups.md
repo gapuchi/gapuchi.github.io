@@ -5,8 +5,6 @@ date: 2019-02-08
 categories: [scala]
 ---
 
-# Monoids and Semigroups
-
 **Monoids** and **semigroups** are type classes that allows us to combine values, such as `Int`, `String`, `Lists`, etc.
 
 ## Definition of a Monoid

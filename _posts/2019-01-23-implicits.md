@@ -7,8 +7,6 @@ categories: [scala, cats]
 
 Continuing my reading of [Scala With Cats](https://books.underscore.io/scala-with-cats/scala-with-cats.html#working-with-implicits).
 
-# Working With Implicits
-
 Couple things to know when using implicits
 
 ## Packaging Implicits
