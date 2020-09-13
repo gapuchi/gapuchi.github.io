@@ -2,10 +2,7 @@
 layout: post
 title: "Learning OAuth2"
 date: 2020-09-12
-categories: [oauth2]
 ---
-
-# What is OAuth2?
 
 ## The Driving Example
 
@@ -17,7 +14,7 @@ Discord requires authentication (as it should) from clients that want to access 
 
 Glancing over [Discord's documentation for OAuth2](https://discord.com/developers/docs/topics/oauth2), I saw terms such as *authorization url*, *token url*, *OAuth2 scopes*, *code grant*, etc - which made me realize I had no idea what I was doing.
 
-I took a step back and decided to learn what OAuth2 was.
+I took a step back and decided to learn what OAuth2 was. I found a helpful article [on DigitalOcean](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2) that broke it down in a helpful way.
 
 ## OAuth2
 
@@ -48,3 +45,42 @@ There are 4 OAuth roles:
 1. The *authorization server* issues an *access token* to the application.
 1. The *application* requests the *resource server* some resources and presents the access token.
 1. The *resource server* serves the resource to the *application*.
+
+### Application Registration
+
+Before an application can use OAuth2, it needs to register itself with the service. Services usually provide a registration form of some manner.
+
+In Discord, this looks like [a developer portal](https://discord.com/developers/applications), where you can create a new application:
+
+![Discord Application Screenshot](/assets/DiscordApplicationScreenShot.png)
+
+#### Client ID and Client Secret
+
+The service will issue *client credentials* in the form of
+
+* *client id* - A publicly exposed string used by the service to identify the application
+* *client secret* - A private string used to authenticate the application when requesting user resources to the service. This must kept private.
+
+### Authorization Grant
+
+There are 4 types of authorization grants defined by OAuth2:
+
+|Grant Type|Description|
+|---|---|
+|Authorization Code|Used with server-side applications|
+|Implicit|Used with mobile apps or web applications|
+|Resource Owner Password Credentials||
+
+1. Authorization Code - used with server-side Applications
+1. Implicit - used with Mobile Apps or Web Applications (applications that run on the user’s device)
+1. Resource Owner Password Credentials - used with trusted Applications, such as those owned by the service itself
+1. Client Credentials - used with Applications API access
+
+The authorization grant type used depends on:
+
+1. The method used by the application to request authorization.
+1. The grant types supported by the service API.
+
+#### Grant Type - Authorization Code
+
+This grant type is optimized for *server-side applications*. The source code is not publicly exposed so *client secret* can be maintained.
