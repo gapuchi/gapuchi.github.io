@@ -77,7 +77,7 @@ The authorization grant type used depends on:
 
 #### Grant Type - Authorization Code
 
-This grant type is optimized for *server-side applications*. The application must be able to receive HTTP requests because the service will redirect the user once authorization is granted.
+This grant type is optimized for *server-side applications*. The application must be able to receive HTTP requests from the *user-agent* (i.e. the user's web browser) because the service will redirect the user once authorization is granted.
 
 1. Client is given an *authorization code link*: `https://discord.com/api/oauth2/authorize?response_type=code&client_id=123456789&permissions=8&redirect_uri=http%3A%2F%2Farjun.adhia.net&scope=bot`
     * `https://discord.com/api/oauth2/authorize` - Discord's API authorization endpoint
@@ -100,3 +100,83 @@ This grant type is optimized for *server-side applications*. The application mus
 #### Grant Type - Implicit
 
 This grant type is for mobile apps and web applications, where the client secret confidentaility is not guaranteed.
+
+In this grant type, the user-agent gets the access token to give to the application. Because of this, the token is exposed to the user and potentially other applications on the user device.
+
+This flow **does not authenticate the identity of the application**. It relies that the redirect URI is properly configured.
+
+1. THe user is given an authorization link, to get a token from the service. This is similar to autorization code link except it **requests a token instead of a code**. (Check the reponse type in the url): `https://discord.com/api/oauth2/authorize?response_type=token&client_id=290926444748734499&state=15773059ghq9183habn&scope=identify`
+1. Client authorizes the application - The user will click on the above link, and the service will ask the user to authorize or deny the application.
+1. User-agent receives the redirect URI and the URL contains the access token: `https://arjun.adhia.net/?access_token=RTfP0OK99U3kbRtHOoKLmJbOn45PjL&token_type=Bearer&expires_in=604800&scope=identify&state=15773059ghq9183habn`.
+1. User-agent gets redirected to the redirect URI.
+1. The application returns a webpage that contains a script that can get the access token from the redirect URI.
+1. User-agent gets the token and passes it to the application.
+
+#### Grant Type - Resource Owner Password Credentials
+
+The user provides their service credentials (like username and password) directly to the application, which uses the credentials to get the token from the service.
+
+**This should only be used if the application is trusted by the user**.
+
+1. The application requests a token via a `POST`. Ex: `https://oauth.example.com/token?grant_type=password&username=USERNAME&password=PASSWORD&client_id=CLIENT_ID`
+
+(Discord doesn't have this grant type)
+
+#### Grant Type - Client Credentials
+
+This provides an application a way to access its own service account.
+
+Examples of when this would be useful:
+
+* An application wants to update its registered description or redirect URI
+* Access other data stored in its service account via the API.
+
+1. The application requests a token via a `POST` with its credentials, client id, and client secret:
+
+```
+'https://discord.com/api/oauth2/token'
+
+auth = (CLIENT_ID, CLIENT_SECRET)
+data = {
+    'grant_type': 'client_credentials',
+    'scope': 'identify connections'
+}
+headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+}
+```
+
+### Token Usage
+
+Once an application has a token, it can use the token to access the user's account via the API.
+
+`curl -X POST -H "Authorization: Bearer ACCESS_TOKEN""https://discord.com/api/users/@me"`.
+
+### Refresh Token Flow
+
+After an access token expires, API's will return an "Invalid Token Error". If a refresh toke was included when getting the original token was provided, the application can use it to request a new token.
+
+Discord requires the following (for authorization code grant type, the other grant types do not have refresh token):
+
+* client id
+* client secret
+* grant type
+* refresh token
+* redirect uri
+* scope
+
+```
+'https://discord.com/api/oauth2/token'
+
+data = {
+    'client_id': CLIENT_ID,
+    'client_secret': CLIENT_SECRET,
+    'grant_type': 'refresh_token',
+    'refresh_token': refresh_token,
+    'redirect_uri': REDIRECT_URI,
+    'scope': 'identify email connections'
+}
+headers = {
+    'Content-Type': 'application/x-www-form-urlencoded'
+}
+```
