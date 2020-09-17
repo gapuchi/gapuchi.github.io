@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Learning OAuth2"
-date: 2020-09-12
+date: 2020-09-16
 ---
 
 ## The Driving Example
@@ -133,7 +133,7 @@ Examples of when this would be useful:
 
 1. The application requests a token via a `POST` with its credentials, client id, and client secret:
 
-```
+```http
 'https://discord.com/api/oauth2/token'
 
 auth = (CLIENT_ID, CLIENT_SECRET)
@@ -165,7 +165,7 @@ Discord requires the following (for authorization code grant type, the other gra
 * redirect uri
 * scope
 
-```
+```http
 'https://discord.com/api/oauth2/token'
 
 data = {
