@@ -203,3 +203,52 @@ We should design software in a way that will minimize pain during maintenance. M
 
 #### Operability: Making Life Easy for Operations
 
+A good operations team is responsible for the following and more. (This is basically a list, not much worth in memorzing. Just get a feeling of what things to think about.)
+
+* Monitoring health and quickly restoring the health of the service if it went bad
+* Tracking down the cause of problem
+* Keeping software and platform up to date
+* Keeping tabs on how different systems affect each other (to avoid problematic changes)
+* Anticipating future problems and solving them before they occur
+* Establishing good practices and tools for development, configuration management, etc
+* Performing complex maintenance tasks
+* Maintaining the security of the system
+* Defining processes that make operations predictable and keep prod stable
+* Preserve the org's knowledge, even as members leave
+
+Data systems can do various things to make routine tasks easy, including:
+
+* Provide visibility into runtime behavior and internals of the system, **good monitoring**
+* Provide support for automation and integration with standard tools
+* Avoid dependency on individual machines (so machines can be taken down for maintenance)
+* Documentation, operational model ("If I do X, Y will happen")
+* Provide good default behavior, but allow defaults to be overridden
+* Self healing when applicable, but allow manual control over the system too
+* Exhibiting predictable behavior.
+
+#### Simplicity: Managing Complexity
+
+Code gets complex and hard to understand as a project gets bigger. This is almost inevitable.
+
+Various symptoms:
+
+1. Explosion of the state space
+1. Tight coupling of modules
+1. Tangled dependencies
+1. Inconsistent naming and terminology
+1. Hacky work
+1. Etc
+
+**Making a system simpler doesn't necessarily mean reducing its functionality.** It can also mean removing accidental complexity.
+
+*Accidental complexity* - Complexitiy that isn't inherent in the problem that the software solves, but arises only from the implementation.
+
+*Abstraction* is one of the best tools to remove accidental complexity. It can hide a lot of implementation details behind a clean facade.
+
+Finding good abstractions is very hard though.
+
+#### Evolvability: Making Change Easy
+
+System's requirement will most likely be in constant flux.
+
+Nothing else to note here...
