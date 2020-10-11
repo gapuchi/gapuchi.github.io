@@ -139,7 +139,7 @@ This does make posting tweets more expensive. 4.6K requests/sec, with an average
 
 Twitter is actually moving to a hybrid approach. It implements approach 2 for most users. Those with high number of followers are not handled the same way and rather uses something like approach 1.
 
-### Describing Performance
+#### Describing Performance
 
 Once we have described the load on our system, we can see how increased load affects the system. Two ways to look at it:
 
@@ -173,3 +173,33 @@ Percentiles are used in *service level objectives (SLOs)* and *service level agr
 Queue delays account for a large part of the response time. A server can only process a set amount of items in parallel (e.g. determined by the number of CPUs it has). It takes a certain amount of requests before other requests are held up. This is known as *head-of-line blocking*. Even if a single request takes no time at all, it make take a long time because it is waiting on other requests to be handled. Because of this **it is important to measure the response time on the client side**.
 
 When testing load, the client sending the test load should send the requests independently of the response time. If the client waits for a previous request before sending another, it essentially shortens the queue, making the tests use a shorter queue than what we would see in reality.
+
+#### Approaches for Coping with Load
+
+An architecture that designed to hold a certain load is unlikely to hold 10x that load.
+
+Two ways to scale:
+
+* *scale up* - move to a more powerful machine. Single machine system is simpler, but can get really expensive.
+* *scale out* - move to multiple, smaller machines.
+
+Usually scaling involves a mixture of both.
+
+*Elastic* system - a system that can add computing resources automatically as it detects a load increase. This is opposed to a system scaling *manually* - where a human adds the resources when needed. An *elastic* system is useful if the load is highly unpredictable, but manually scaled systems are simpler.
+
+Taking a stateful data system from one node to multiple can introduce a lot of complexity. So usually, it is common to *scale up* until it becomes too expensive, at which point, scale out.
+
+The architecture of a system that operates at a large scale is usually geared toward a specific application. There is no *magic scaling sauce*. The problem could be volume of reads, write, computations, access pattern, or something else - making a scaling architecture to handle any case isn't really feasible. (Or if you do, it  may be unnecessarily complicated.)
+
+Scalable architectures, although specific to specific applications, are usually built from general-purpose building blocks, arranged into familiar patterns.
+
+### Maintainability
+
+We should design software in a way that will minimize pain during maintenance. Maintenance is an unavoidable part of software development, and probably has more work done than the actual development itself (due to bug fixes, investigating failures, adapting new tech, etc.) There are three principles, with this in mind:
+
+* *Operability* - Easy to keep the system running
+* *Simplicity* - Easy for new engineers to understand the system by removing as much complexity as possible
+* *Evolvability* - Easy to make changes to the system, adapting it for unanticipated use cases as requirements change.
+
+#### Operability: Making Life Easy for Operations
+
