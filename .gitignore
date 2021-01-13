@@ -4,3 +4,4 @@ _site*
 *backup/
 .bundle/
 vendor/
+.ruby-version
