@@ -1,6 +1,5 @@
 ---
-layout: posts_by_category
-categories: cats
+layout: category_index
 title: Scala Cats
-permalink: /category/cats
+category_name: cats
 ---

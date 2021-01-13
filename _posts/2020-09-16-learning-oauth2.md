@@ -52,7 +52,7 @@ Before an application can use OAuth2, it needs to register itself with the servi
 
 In Discord, this looks like [a developer portal](https://discord.com/developers/applications), where you can create a new application:
 
-![Discord Application Screenshot](/assets/DiscordApplicationScreenShot.png)
+![Discord Application Screenshot](/assets/img/DiscordApplicationScreenShot.png)
 
 #### Client ID and Client Secret
 

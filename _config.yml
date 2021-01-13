@@ -1,41 +1,15 @@
-title: Posts
-description: My Blog
-author: Arjun Adhia
-github: https://github.com/gapuchi
-about: I am a software developer. This is my blog. Check it out. Or don't. I'm not a cop.
-disqus_shortname: stackproblems
-google_analytics: UA-XXXXXXXX-Y
-avatar_url: /static/img/avatar.jpg
-
-enableTags: true
-tagarray: []
-
-collections:
-  project:
-    output: true
-    permalink: /project/:path/
-
-urls:
-    - text: About Me
-      url: /about/
-    - text: My Projects
-      url: /projects/
-    - text: XML Feed
-      url: /feed.xml
-
-url: "https://gapuchi.github.io"
+title: Gapuchi's Blog
+email: arjun.adhia@gmail.com
+description: >-
+  I am a software developer. This is my blog. Check it out. Or don't. I'm not a cop.
 baseurl: ""
-paginate: 20
-per_page: 20
-paginate_path: "/page/:num/"
-markdown: kramdown
-plugins:
-  - jekyll-paginate
-  - jekyll-gist
+url: "https://arjun.adhia.net"
+twitter_username: waitIGotAnAdhia
+github_username:  gapuchi
 
-compress_html:
-  clippings: all
-  comments: ["<!-- ", " -->"]
-  endings: all
-  ignore:
-    envs: ['development']
+# Build settings
+remote_theme: broccolini/swiss
+theme_color: blue	
+plugins:
+  - jekyll-feed
+  - jekyll-remote-theme

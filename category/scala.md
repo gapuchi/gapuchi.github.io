@@ -1,6 +1,5 @@
 ---
-layout: posts_by_category
-categories: scala
+layout: category_index
+category_name: scala
 title: Scala
-permalink: /category/scala
 ---

@@ -1,3 +1,10 @@
+---
+layout: post
+title:  "Hello World!"
+date:   2018-11-04
+categories: [jekyll]
+---
+
 # Preface
 
 *Data Intensive Applications* - An application whose primary challenge is data: quantity, complexity, or speed at which data is changing. As opposed to *compute intensive*:
