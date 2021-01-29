@@ -11,5 +11,8 @@ github_username:  gapuchi
 remote_theme: broccolini/swiss
 theme_color: blue	
 plugins:
-  - jekyll-feed
   - jekyll-remote-theme
+
+collections:
+  machine_learning:
+    sort_by: part
