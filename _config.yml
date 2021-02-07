@@ -16,3 +16,5 @@ plugins:
 collections:
   machine_learning:
     sort_by: part
+  system_design:
+    sort_by: part
