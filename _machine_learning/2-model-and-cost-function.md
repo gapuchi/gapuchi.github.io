@@ -11,6 +11,7 @@ In supervised learning, we have a dataset - called **training dataset**.
 We feed our training set to a **learning algorithm** which will then output a function - called `h` , our **hypothesis** function. `h` then can take in `x` and output `y`.
 
 **Some Notation**
+
 $$
 \begin{align*}
 x^{(i)} &&& \text{Input variable/feature where }i\text{ is the index} \\
@@ -21,6 +22,7 @@ X &&& \text{Space of input values}\\
 Y &&& \text{Space of output values}\\
 \end{align*}
 $$
+
 For *supervised learning*, our goal is to learn a function $h:X \rightarrow Y$ so that $h(x)$ is a good predictor for the corresponding value of $y$. `h` is the **hypothesis**.
 
 How do we represent `h`?

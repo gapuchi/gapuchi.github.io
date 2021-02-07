@@ -1,0 +1,22 @@
+---
+layout: default
+---
+<article class="container mx-auto px-2 mt2 mb4">
+    <header>
+        <h1 class="h0 py-4 mt-3">{{ page.title }}</h1>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    </header>
+    <div class="prose mb-4 py-4">
+      {% capture collections_combined %}
+        {% for item in site[page.foo] %}
+          {{ item.content | markdownify }}
+        {% endfor %}
+      {% endcapture %}
+
+      {% include toc.html html=collections_combined %}
+
+      {{ collections_combined }}
+    </div>
+</article>
