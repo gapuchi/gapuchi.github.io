@@ -1,5 +1,4 @@
 ---
-layout: notes
 part: 1
 ---
 
