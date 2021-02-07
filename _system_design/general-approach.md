@@ -84,3 +84,99 @@ Go into futher details for some of the components. The components you further in
 ## 8 - Scalability Other Issues
 
 Talk about scaling and its solutions (partitioning, caching, load balancing, etc). Discuss bottlenecks - call out flaws.
+
+# Case Study - URL Shortening Service
+
+## Gather Requirements
+
+Functional Requirements
+
+1. Given a URL, our service should provide a shorter, unique URL.
+1. When users access this shorter URL, it should redirect to their original URL
+1. The URL will expire after a certain default time. Users can provide their own expiration date if needed.
+
+Non Functional Requirements
+
+1. System should be highly available
+1. URL redirection should happen with minimal latency
+
+## Perform Calculations
+
+Assumptions:
+
+|Metric|Value|
+|---|---|
+|New Shortenings per month|1 million|
+|Size of Object|500 bytes|
+|Avg Read of Object|100 times|
+|Avg Lifetime|1 year|
+
+Calculations:
+
+Writes - 1 million/month = ~0.38 writes/sec
+Reads - 100 million/month = ~38 reads/sec
+Storage - 1 million objects/month * 12 months/year * 1 year * 500 bytes/object = 6 GB
+
+Bandwidth Write - 0.38 writes/sec * 500 bytes/write = 190 bytes/sec
+Bandwidth Read - 38 reads/sec * 500 bytes/read = 19 Kb/sec
+
+## Service API
+
+```
+createURL(url, expiration)
+```
+
+```
+deleteURL(url)
+```
+
+## Database Design
+
+This is a read intensive operation.
+
+We can create a DB for the URLs.
+
+|PK|Hash|
+|---|---|
+||Original URL|
+||Creation Date|
+||Expiration Date|
+
+noSQL or SQL? There isn't any relational data, so we can use noSQL.
+
+## High Level Design
+
+We have the web client -> application server -> DB
+
+## Low Level Design
+
+A closer look at our application server. How do we create the shortened url?
+
+#### Option 1 - Encoding a Hash
+
+We can use a hash and then encode the bits to be diplayed.
+
+We can encode the bits in base36 (a-z, 0-9), base 62 (a-z, A-Z, 0-9) or add "+", "/" to make it base64
+
+We need to decide how long the URL shortening should be? 6? 8? 10?
+
+With 6 letters, we have 64^6 = 68.7B possible values. This meets our expected sizing.
+
+Let's say we use MD5 hash - this produces 128 bits. After encoding we get more than 21 characters (base64 encodes 6 bits). We can take the first 6 characters. If there are conflicts we can take the next letter or something.
+
+Problems:
+
+1. If two users enter the same URL, it will produce the same URL shortened
+1. URL Encoded and Not URL encoded of the same URL will produce different shortened URLs.
+
+##### Option 2 - Generate Keys Offline
+
+We have a key generation service that generates random 6 letteer strings and stores them in a DB. When we create a new one, we just pull from this DB.
+
+**Concurrency Problems?** What if two servers are pulling at the same time? We can introduce locking on the items.
+
+How do we ensure that the key is marked as use as soon as it is provided? We can have to tables, one for not used, one for used. It can be moved to use and then providied the app server.
+
+What is the key db size? If it is storing base64 encoding, we can provide 68.7B 6 letter keys. If each letter is one byte, then 68.7B strings * 6 letters/string * 1 byte/letter = 412GB.
+
+How do we ensure high availability? We can have replicas of KGS.
