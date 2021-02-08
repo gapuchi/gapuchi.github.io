@@ -18,3 +18,4 @@ collections:
     sort_by: part
   system_design:
     sort_by: part
+    output: true

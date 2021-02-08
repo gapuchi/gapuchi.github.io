@@ -1,4 +1,6 @@
 ---
+layout: post
+title: System Design General Approach
 part: 1
 ---
 
@@ -169,7 +171,7 @@ Problems:
 1. If two users enter the same URL, it will produce the same URL shortened
 1. URL Encoded and Not URL encoded of the same URL will produce different shortened URLs.
 
-##### Option 2 - Generate Keys Offline
+#### Option 2 - Generate Keys Offline
 
 We have a key generation service that generates random 6 letteer strings and stores them in a DB. When we create a new one, we just pull from this DB.
 

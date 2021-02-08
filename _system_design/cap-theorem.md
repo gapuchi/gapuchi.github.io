@@ -1,4 +1,6 @@
 ---
+layout: post
+title: CAP Theorem
 part: 2
 ---
 
