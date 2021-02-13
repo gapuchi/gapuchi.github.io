@@ -19,3 +19,6 @@ collections:
   system_design:
     sort_by: part
     output: true
+  data_structures:
+    sort_by: part
+    output: true
