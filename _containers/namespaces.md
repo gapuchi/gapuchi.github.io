@@ -99,4 +99,42 @@ How do we address this? Using **Linux namespaces**.
 
 ## Linux Namespaces
 
-The idea - wrap certain global system resources.
+The idea - wrap certain global system resources in an abstraction layer. This allows different groups of processes to have different views of the system.
+
+Processes within a namespace have their own isolated instance of the resources.
+
+---
+
+Namespaces
+: (General) a space of names
+: (Linux) a type of namespace (e.g. process id, mount, etc.)
+
+---
+
+> What is important here is that the term "namespaces" are used in different ways. When a process is "in a namespace", it is in an instance of a namespace type.
+
+There are 7 namespace (or I'll refer to is as "namespace types" to keep terminology less confusing):
+
+1. mnt
+1. pid
+1. net
+1. ipc
+1. uts
+1. cgroup
+1. user
+
+There were two more proposed in 2016 - time and syslog, but they have not been implemented yet.
+
+With the introduction of user namespace in 2013, the kernel became "container ready".
+
+### Namespace API
+
+Before we look at the namespaces, it'll be useful to look at the namespace API. It consists of 3 system calls.
+
+> Coming from an OO background, I assumed "namespace API" meant the API of a namespace. I assume that each namespace had a "verb" or an implementation of the below API's that could vary among the namespace types. **This is not the case**.
+>
+> Rather, it is an API of the kernel (?) that operates with namespaces. These are *syscall*'s.
+
+#### 1. clone
+
+[`clone(2)`](https://man7.org/linux/man-pages/man2/clone.2.html)
