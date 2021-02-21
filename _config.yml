@@ -22,3 +22,6 @@ collections:
   data_structures:
     sort_by: part
     output: true
+  containers:
+    sort_by: part
+    output: true
