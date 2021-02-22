@@ -25,11 +25,11 @@ It was used in the first approaches of running microservices. It is currently us
 How can we set up a chroot environment? With little effort:
 
 ```console
-~ $ mkdir -p new-root/{bin,lib64}
-~ $ cp /bin/bash new-root/bin
-~ $ cp /lib64/{ld-linux-x86-64.so*,libc.so*,libdl.so.*,libreadline.so*,libtinfo.so*} new-root/lib64
+$ mkdir -p new-root/{bin,lib64}
+$ cp /bin/bash new-root/bin
+$ cp /lib64/{ld-linux-x86-64.so*,libc.so*,libdl.so.*,libreadline.so*,libtinfo.so*} new-root/lib64
 // This isn't working on my system because a dependency is missing
-~ $ sudo chroot new-root
+$ sudo chroot new-root
 ```
 
 This creates a new folder, copies the bash shell and its dependencies to this folder, and sets this new folder as the root. This jail only has bash capabilities (and everything that comes with bash, e.g. `cd`, `pwd`, etc.). Not really a useful jail, but a working example.
@@ -74,9 +74,9 @@ So, **`chroot` doesn't give isolation of the file system.**
 We can sneak peak outside of a jail from a process perspective:
 
 ```console
-~ $ mkdir /proc
-~ $ mount -t proc proc /proc
-~ $ ps aux
+$ mkdir /proc
+$ mount -t proc proc /proc
+$ ps aux
 ...
 ```
 
@@ -85,9 +85,9 @@ There is no process isolation at all. We can even kill processes outside of the 
 We can sneak peak out of a jail from a network perspective:
 
 ```console
-~ $ mkdir /sys
-~ $ mount -t sysfs sys /sys
-~ $ ls /sys/class/net
+$ mkdir /sys
+$ mount -t sysfs sys /sys
+$ ls /sys/class/net
 eth0 lo
 ```
 
@@ -158,14 +158,14 @@ This can be used to join an existing namespace.
 Not a syscall, but the `proc` filesystem provides additional namespace related files. Each file in `/proc/$PID/ns` is a magic link that be used as a handle for performing operations (like `setns`) to the referenced namespace.
 
 ```console
-~ $ ps
+$ ps
     PID TTY          TIME CMD
   24900 pts/2    00:00:00 zsh
   25039 pts/2    00:00:00 ps
 ```
 
 ```console
-~ $ ls -Gg /proc/24900/ns
+$ ls -Gg /proc/24900/ns
 total 0
 lrwxrwxrwx 1 0 Feb 21 16:37 cgroup -> 'cgroup:[4026531835]'
 lrwxrwxrwx 1 0 Feb 21 16:37 ipc -> 'ipc:[4026531839]'
@@ -180,7 +180,7 @@ lrwxrwxrwx 1 0 Feb 21 16:37 uts -> 'uts:[4026531838]'
 ```
 
 ```console
-~ $ ls -Gg /proc/self/ns
+$ ls -Gg /proc/self/ns
 total 0
 lrwxrwxrwx 1 0 Feb 21 16:40 cgroup -> 'cgroup:[4026531835]'
 lrwxrwxrwx 1 0 Feb 21 16:40 ipc -> 'ipc:[4026531839]'
@@ -209,7 +209,7 @@ The flag for this namespace type is `CLONE_NEWNS` (CLONE NEW NameSpace). This wa
 A use case for the mnt namespace is to improve our jail (by making it more secure):
 
 ```console
-~ $ sudo unshare -m
+$ sudo unshare -m
 # mkdir mount-dir
 # mount -n -o size=10m -t tmpfs tmpfs mount-dir
 # man mount
@@ -224,10 +224,10 @@ tmpfs            10M     0   10M   0% /home/arjun/mount-dir
 If we try to access this on the host system:
 
 ```console
-~ $ la mount-dir
+$ la mount-dir
 total 0
-~ $ grep mount-dir /proc/mounts
-~ $
+$ grep mount-dir /proc/mounts
+$
 ```
 
 We see folder (a file) created in the first namespace, but no files under it. This is because we mounted a [tmpfs](https://en.wikipedia.org/wiki/Tmpfs) (a temporary fs) to that folder and added files to that mount. Since our host system is in another `mnt` namespace, it cannot see these files, or see this mount.
@@ -235,7 +235,7 @@ We see folder (a file) created in the first namespace, but no files under it. Th
 We can actually see the mount point in the `mountinfo` file inside of the `proc` filesystem:
 
 ```console
-~ $ grep mount-dir /proc/$(pgrep -u root bash)/mountinfo
+$ grep mount-dir /proc/$(pgrep -u root bash)/mountinfo
 441 440 0:54 / /home/arjun/mount-dir rw,relatime - tmpfs tmpfs rw,size=10240k,inode64
 ```
 
@@ -248,9 +248,9 @@ We can actually see the mount point in the `mountinfo` file inside of the `proc`
 With the `uts` namespace, we can unshare the domain and hostname from the current host system.
 
 ```console
-~ $ hostname
+$ hostname
 arjun-b250hd3
-~ $ sudo unshare -u
+$ sudo unshare -u
 # hostname
 arjun-b250hd3
 # hostname a-cooler-hostname
@@ -261,7 +261,7 @@ a-cooler-hostname
 and if we look at the system:
 
 ```console
-~ $ hostname
+$ hostname
 arjun-b250hd3
 ```
 
@@ -300,18 +300,134 @@ The first process created in a `pid` namespace gets the number 1 and gains all t
 * The termination of this PID will terminate all processes in its PID namespace and any descendants.
 
 ```console
-~ $ ps aux
+$ ps aux
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 root           1  0.0  0.0 171184 10752 ?        Ss   16:22   0:00 /sbin/init
 root           2  0.0  0.0      0     0 ?        S    16:22   0:00 [kthreadd]
 root           3  0.0  0.0      0     0 ?        I<   16:22   0:00 [rcu_gp]
 .... //The list goes on
-~ $ sudo unshare -fp --mount-proc
+$ sudo unshare -fp --mount-proc
 # ps aux
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 root           1  0.0  0.0   7728  4484 pts/4    S    17:27   0:00 -bash
 root           6  0.0  0.0   9876  3424 pts/4    R+   17:27   0:00 ps aux
-# 
+#
 ```
 
 > `--mount-proc` is needed to remount the `proc` filesystem. Why? We didn't unshare the `mnt` namespace.
+
+#### Network (net)
+
+With the `net` namespace, we can virtualize the network stack.
+
+Each network namespace contains its own resource properties within `/proc/net`.
+
+A network namespace only contains a loopback interface on creation:
+
+```console
+$ sudo unshare -n
+[arjun-b250hd3 gapuchi.github.io]# ip link
+1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+```
+
+Every network interface (physical or virtual) is present exactly once per namespace.
+
+An interface can be moved between namespaces.
+
+Each namespace contains:
+
+* a private set of IP addresses
+* its own routing table
+* socket listing
+* connection tracking table
+* firewall
+* other network-related resources
+
+Destroying a network namespace will destroy any virtual interfaces and move any physical interfaces back to teh initial network namespace.
+
+##### Use Case - Software Defined Network
+
+TBD
+
+#### User ID (user)
+
+With the `user` namespace, we can isolate user and group IDs.
+
+This allows a user and group ID's of a process be different inside and outside of the namespace.
+
+Use Case - A process can have a normal, unprivileged user ID outside a user namespace while being fully privileged inside.
+
+
+```console
+$ whoami
+arjun
+$ id -u
+1000
+$ unshare -U
+$ whoami
+nobody
+$ id -u
+65534
+```
+
+After we create the namespace, the files `/proc/$PID/{u,g}id_map` expose the mappings for user and group ID's for the PID. This can be written only once. These files contain a 1:1 mapping a range of contiguous user IDs between two user namespaces.
+
+An example file:
+
+```console
+> cat /proc/$PID/uid_map
+0 1000 1
+```
+
+This means user ID starting at `0` are mapped to ID `1000`, with the length of the range of `1`. (Meaning only user ID `0` is mapped to `1000`. user ID `1` isn't mapped to `1001` with this.)
+
+If a process tried to access a file, its user and group IDs are mapped to the initial user namespace (for permission checking).
+
+When a process retrieves file user and group IDs (via [`stat(2)`](https://man7.org/linux/man-pages/man2/fstat.2.html)), the IDs are mapped in the opposite direction (i.e. to ID's within the namespace).
+
+The file `/proc/$PID/setgroups` contains either `allow` or `deny` (literally) to enable or disable the permission to call the [`setgroups(2)`](https://man7.org/linux/man-pages/man2/setgroups.2.html) syscall within a user namespace. This prevented an unprivileged process to create a new namespace where the user had all the privileges. The user would be able to drop groups with `setgroups(2)` to gain access files previously not accessible.
+
+#### Control Group (cgroup)
+
+cgroups was a dedicated kernel feature to support resource limiting, prioritization, accounting, and controlling.
+
+With the `cgroups` namespace, we can prevent leaking host information into a namespace.
+
+> Not really sure what cgroup really is. Will expand this with the demo later.
+
+### Composing Namespaces
+
+Namespaces are composable, making it possible to have isolated `pid` namespaces which share the same network interface (which apparently is done in Kubernetes Pods).
+
+As an example, let's create a new `pid` namespace:
+
+```console
+$ sudo unshare -fp --mount-proc
+# ps aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0   7728  4452 pts/2    S    18:25   0:00 -bash
+root           6  0.0  0.0   9876  3352 pts/2    R+   18:26   0:00 ps aux
+```
+
+The `setns(2)` syscall (with its appropriate wrapper program `nsenter`) can be used to join the namespace. First find the `pid` we want to join with:
+
+```console
+# export PID=$(pgrep -u root bash)
+```
+
+Now we can join the namespace:
+
+```console
+# sudo nsenter --pid=/proc/$PID/ns/pid unshare --mount-proc
+# ps aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0   7728  4488 pts/2    S    18:25   0:00 -bash
+root          10  0.0  0.0  15764  7268 pts/2    S    18:26   0:00 sudo nsenter --pid=/proc/1/ns/pid unshare --mount-proc
+root          11  0.0  0.0   5360   740 pts/2    S    18:26   0:00 nsenter --pid=/proc/1/ns/pid unshare --mount-proc
+root          12  0.0  0.0   7720  4480 pts/2    S    18:26   0:00 -bash
+root          17  0.0  0.0   9876  3320 pts/2    R+   18:26   0:00 ps aux
+#
+```
+
+We are now in the same `pid` namespace. Cool!
