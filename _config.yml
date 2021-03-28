@@ -25,3 +25,6 @@ collections:
   containers:
     sort_by: part
     output: true
+  rust:
+    sort_by: part
+    output: true
