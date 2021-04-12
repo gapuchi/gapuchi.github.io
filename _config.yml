@@ -28,3 +28,6 @@ collections:
   rust:
     sort_by: part
     output: true
+  kubernetes:
+    sort_by: part
+    output: true
