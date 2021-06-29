@@ -1,4 +1,19 @@
 theme:
   name: material
-site_name: My Docs
-site_url: https://example.com/
+  palette:
+    # scheme: slate
+    primary: blue
+    accent: deep purple
+  font:
+    code: Fira Code
+  features:
+    - navigation.tracking
+    - navigation.tabs
+
+
+repo_url: https://github.com/gapuchi/gapuchi.github.io
+
+site_name: Gapuchi's Notes
+site_url: https://arjun.adhia.net/
+site_description: Notes By Gapuchi
+site_author: gapuchi
