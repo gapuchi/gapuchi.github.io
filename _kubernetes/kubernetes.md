@@ -162,3 +162,98 @@ The routing itself is controlled by rules defined on the Ingress resource.
 We can configure a pod to only run on specific nodes, or prefer certain nodes.
 
 > This usually isn't necessary, the scheduler will do a reasonable job of this. There may be specific cases where you want to put a pod in a node with an SSD, or two pods together.
+
+## Method 1 - NodeSelector
+
+`nodeSelector` is a field of PodSpec in the form of a map of key-value pairs.
+
+For a pod to be eligible to run on the node, the node must have each of the specified key-value pairs as labels.
+
+## Method 2 - Affinity and Anti-affinity
+
+The `nodeSelector` is a very basic way of adding constraints to pods. The affinity/anti-affinity feature extends the types of constraints you can express.
+
+Key enhancements:
+
+* More expressive language (not a simple AND)
+* You can indicate a rule is a preference rather than a requirement. (If it doesn't meet the rule, the pod will still be scheduled.)
+* You can constrain against labels on other pods running on the nodes (rather than labels on the pod)
+
+### Node Affinity
+
+Two types of node affinity:
+
+1. `requiredDuringSchedulingIgnoredDuringExecution`
+1. `preferredDuringSchedulingIgnoredDuringExecution`
+
+These are basically hard and soft requirements, respectively.
+
+The "IgnoredDuringExecution" basically means if a pod's labels change at runtime so that it doesn't meet the rule, it'll still run on the node.
+
+# Stateful Containers Using StatefulSet
+
+**StatefulSet** manages the deployment and scaling of a set of Pods.
+
+It provides guarantees about the ordering and uniqueness of these Pods. (Not sure what ordering here is, or what it means by unique).
+
+This is good for applications that require:
+
+* Stable, unique network identifiers
+* Stable, persistent storage
+* Ordered, graceful deployment and scaling
+* Ordered, automated rolling updates
+
+## Container Storage Interface (CSI)
+
+(This isn't related directly to stateful containers, but it is relevant when working with storage for the statefule container example).
+
+The **Container Storage Interface** is a standard for exposing arbitrary block and file storage systems to containerized workloads on Container Orchestration Systems (COs) like Kubernetes.
+
+Using CSI, 3P storage providers can write and deploy plugins exposing new storage systems in Kubernetes without ever having to touch the core Kubernetes code.
+
+Third party for example, Amazon Elastic Block Store (Amazon EBS). Amazon EBS has a CSI driver that provides this interface to allow Amazon EKS to manage the lifecycle of Amazon EBS volumes for persistent volumes.
+
+# Kubernetes Secrets
+
+Kuberbetes can store secrets that pods can access via a mounted volume. K8s store these secrets in a Base64 encoding, but a more secure way is preferred. 
+
+We can use AWS Key Management Service (KMS) Customer Managed Keys (CMK) to do so.
+
+# Sealed Secrets
+
+Sealed Secrets provides a mechanism to encrypt a Secret object to that it is sage to store - even to a public repo.
+
+It can only be decrypted by the controller running in the K8s cluster.
+
+This is composed of two parts:
+
+1. A cluster-side controller
+1. A client-side utility, *kubeseal*
+
+The steps:
+
+1. On Start Up
+    1. The controller looks for a cluster-wide private/public key pair. If not found, it'll generate a new 4096 bit RSA key pair.
+    1. The private key is persisted in a Secret object in the controller's namespace.
+    1. The public key  is made publicly available
+1. During encrpytion
+    1. Each value in the original Secret is symmetrically encrypted using AES-256 with a randomly generated session key.
+    1. The session key is asymmetrically encryped with the controller's public key using SHA256 and the original Secret's namespace/name as the input parameter.
+        1. The output string is: length (2 bytes) of encrypted session key + encrypted session key + encrypted Secret
+1. During deployment of SealedSecret
+    1. The controller picks up the secret
+    1. Unseals it using the private key
+    1. Creates a Secrete resource.
+1. During decryption
+    1. The SealedSecret's name/namepace is used as the input parameter.
+
+*kubeseal* is used for creating a SealedSecret custom resource definition (CRD) from a Secret resource definition using the public key.
+
+# Users
+
+Two types of users:
+
+1. Normal users (**not managed by Kubernetes**)
+1. Service Accounts (managed by Kubernetes)
+
+> [From Doc](https://kubernetes.io/docs/reference/access-authn-authz/authentication/): Kubernetes does not have objects which represent normal user accounts. Normal users cannot be added to a cluster through an API call.

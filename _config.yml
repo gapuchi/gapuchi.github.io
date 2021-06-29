@@ -14,6 +14,9 @@ plugins:
   - jekyll-remote-theme
 
 collections:
+  aws:
+    sort_by: part
+    output: true
   machine_learning:
     sort_by: part
   system_design:
