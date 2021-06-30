@@ -2,8 +2,8 @@ theme:
   name: material
   palette:
     scheme: slate
-    primary: blue
-    accent: deep purple
+    primary: deep purple
+    accent: blue
   font:
     code: Fira Code
   features:
