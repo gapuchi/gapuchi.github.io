@@ -1,7 +1,7 @@
 theme:
   name: material
   palette:
-    # scheme: slate
+    scheme: slate
     primary: blue
     accent: deep purple
   font:
@@ -10,6 +10,9 @@ theme:
     - navigation.tracking
     - navigation.tabs
 
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
 
 repo_url: https://github.com/gapuchi/gapuchi.github.io
 
