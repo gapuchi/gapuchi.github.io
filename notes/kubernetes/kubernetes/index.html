@@ -1,0 +1,1320 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Notes By Gapuchi">
+      
+      
+      
+        <meta name="author" content="gapuchi">
+      
+      
+        <link rel="canonical" href="https://arjun.adhia.net/notes/kubernetes/kubernetes/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.1, mkdocs-material-7.1.9">
+    
+    
+      
+        <title>Kubernetes - Gapuchi's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ca7ac06f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.f1a3b89f.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#7e56c2">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=:300,400,400i,700%7CFira+Code&display=fallback">
+        <style>:root{--md-text-font-family:"";--md-code-font-family:"Fira Code"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kubernetes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-header__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gapuchi's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Kubernetes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/gapuchi/gapuchi.github.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Index
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../AWS/aws-networking/" class="md-tabs__link md-tabs__link--active">
+        Notes
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-nav__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Gapuchi's Notes
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/gapuchi/gapuchi.github.io/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      <label class="md-nav__link" for="__nav_2">
+        Notes
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      <label class="md-nav__link" for="__nav_2_1">
+        AWS
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="AWS" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/aws-networking/" class="md-nav__link">
+        Networking
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/ecs/" class="md-nav__link">
+        Elastic Container Service
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/eks/" class="md-nav__link">
+        EKS
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/emr-on-eks/" class="md-nav__link">
+        EMR on EKS
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      <label class="md-nav__link" for="__nav_2_2">
+        Containers
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Containers" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Containers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/namespaces/" class="md-nav__link">
+        Namespaces
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      <label class="md-nav__link" for="__nav_2_3">
+        Data structures
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Data structures" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data structures
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/advanced-topics/" class="md-nav__link">
+        Advanced Topics
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/implementations/" class="md-nav__link">
+        Implementations
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/recursion-and-dynamic-programming/" class="md-nav__link">
+        Recursion and Dynamic Programming
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/sort-and-search/" class="md-nav__link">
+        Sort and Search
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/tree-balance/" class="md-nav__link">
+        Balancing Trees
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/trees-and-graphs/" class="md-nav__link">
+        Trees and Graphs
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      <label class="md-nav__link" for="__nav_2_4">
+        Database
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Database" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Database
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_5" type="checkbox" id="__nav_2_5" checked>
+      
+      <label class="md-nav__link" for="__nav_2_5">
+        Kubernetes
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Kubernetes
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#nodes" class="md-nav__link">
+    Nodes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#objects" class="md-nav__link">
+    Objects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    Architecture
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#control-plane" class="md-nav__link">
+    Control Plane
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-plane" class="md-nav__link">
+    Data Plane
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      <label class="md-nav__link" for="__nav_2_6">
+        Machine learning
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Machine learning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Machine learning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/1-introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/2-model-and-cost-function/" class="md-nav__link">
+        Model and Cost Function
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      <label class="md-nav__link" for="__nav_2_7">
+        Networking
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Networking" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Networking
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/rpc-vs-rest/" class="md-nav__link">
+        RPC vs REST
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" >
+      
+      <label class="md-nav__link" for="__nav_2_8">
+        Rust
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Rust" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/1-variables-mutability/" class="md-nav__link">
+        Variable and Mutability
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/10-generics/" class="md-nav__link">
+        Generics, Traits, and Lifetimes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/2-data-types/" class="md-nav__link">
+        Data Types
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/3-functions/" class="md-nav__link">
+        Functions
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/4-control-flow/" class="md-nav__link">
+        Control Flow
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/5-ownership/" class="md-nav__link">
+        Ownership
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/6-structs/" class="md-nav__link">
+        Structs
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/7-enums/" class="md-nav__link">
+        Enums and Pattern Matching
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/8-managing-projects/" class="md-nav__link">
+        Managing Projects
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/9-error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" >
+      
+      <label class="md-nav__link" for="__nav_2_9">
+        System design
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="System design" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          System design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/cap-theorem/" class="md-nav__link">
+        CAP Theorem
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/general-approach/" class="md-nav__link">
+        System Design General Approach
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#nodes" class="md-nav__link">
+    Nodes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#objects" class="md-nav__link">
+    Objects
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    Architecture
+  </a>
+  
+    <nav class="md-nav" aria-label="Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#control-plane" class="md-nav__link">
+    Control Plane
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data-plane" class="md-nav__link">
+    Data Plane
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/gapuchi/gapuchi.github.io/edit/master/docs/notes/kubernetes/kubernetes.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="kubernetes">Kubernetes</h1>
+<p>Kubernetes is open source container management platform.</p>
+<p>It</p>
+<ul>
+<li>help you run containers at scale</li>
+<li>provide objects and APIs for building applications</li>
+</ul>
+<h2 id="nodes">Nodes</h2>
+<p><strong>Nodes</strong> are the machines that make up a Kubernetes cluster. These can be physical or virtual.</p>
+<p>Two types of nodes:</p>
+<ol>
+<li>Control-plane (which makes up the Control Plane) is the brains of the cluster</li>
+<li>Worker-node (which makes up the Data Plane) runs the actual container images (via pods)</li>
+</ol>
+<h2 id="objects">Objects</h2>
+<p><strong>Kubernetes objects</strong> are entities that are used to represent the state of the cluster.</p>
+<p>The cluster does its best to ensure it exists as defined (by the object). This is the cluster's <em>desired state</em>. The object is a <em>record intent</em>.</p>
+<p>Kubernetes is always working to make an object's <em>current state</em> equal to the object's <em>desired state</em>.</p>
+<p>The desired state could describe:</p>
+<ul>
+<li>What pods (containers) are running, and on which nodes</li>
+<li>IP endpoints that map to a logical group of containers</li>
+<li>How many replicas of a container are running</li>
+<li>Other stuff</li>
+</ul>
+<p>A <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/">Pod</a> is a thin wrapper around one or more containers</p>
+<p>A <a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a> implements a single instance of a pod on a worker node</p>
+<p>A <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployment</a> details how to roll out (or roll back) across versions of your application</p>
+<p>A <a href="https://www.eksworkshop.com/010_introduction/basics/concepts_objects_details_2/#replicasethttpskubernetesiodocsconceptsworkloadscontrollersreplicaset">ReplicaSet</a> ensures a defined number of pods are always running</p>
+<p>A <a href="https://www.eksworkshop.com/010_introduction/basics/concepts_objects_details_2/#jobhttpskubernetesiodocsconceptsworkloadscontrollersjobs-run-to-completion">Job</a> ensures a pod properly runs to completion</p>
+<p>A <a href="https://www.eksworkshop.com/010_introduction/basics/concepts_objects_details_2/#servicehttpskubernetesiodocsconceptsservices-networkingservice">Service</a> maps a fixed IP address to a logical group of pods</p>
+<p>A <a href="https://www.eksworkshop.com/010_introduction/basics/concepts_objects_details_2/#labelhttpskubernetesiodocsconceptsoverviewworking-with-objectslabels">Label</a> key/value pairs used for association and filtering</p>
+<h2 id="architecture">Architecture</h2>
+<p><img alt="Image of Kubernetes Architecture" src="/assets/img/kubernetes-arch.png" /></p>
+<h3 id="control-plane">Control Plane</h3>
+<p><img alt="Image of Control Plane Architecture" src="/assets/img/control-plane.png" /></p>
+<ul>
+<li>One or More API Servers: Entry point for REST / kubectl</li>
+<li>etcd: Distributed key/value store</li>
+<li>Controller-manager: Always evaluating current vs desired state</li>
+<li>Scheduler: Schedules pods to worker nodes</li>
+</ul>
+<h3 id="data-plane">Data Plane</h3>
+<p><img alt="Image of Data Plane Architecture" src="/assets/img/data-plane.png" /></p>
+<ul>
+<li>Made up of worker nodes</li>
+<li>kubelet: Acts as a conduit between the API server and the node</li>
+<li>kube-proxy: Manages IP translation and routing</li>
+</ul>
+<h1 id="helm">Helm</h1>
+<p><strong>Helm</strong> is a package manager for kubernetes. It packages multiple kubernetes resources into a single logical deployment unit called a <strong>Chart</strong>.</p>
+<h1 id="health-checks">Health Checks</h1>
+<p>https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/</p>
+<p><strong>Liveliness probes</strong> are used in K8s to know when a prod is alive or dead. K8s will kill and recreate the pod when a liveliness probe doesn't pass</p>
+<p><strong>Readiness probes</strong> are used in K8s to know when a pod is ready to serve traffic. If a readiness probe fails, traffic will not be sent to the pod.</p>
+<h1 id="auto-scaling">Auto Scaling</h1>
+<p>Two forms of auto scaling:</p>
+<ol>
+<li><strong>Horizontal Pod Autoscaler (HPA)</strong> - scales the pods in a deployment or replica set. It is implemented as a K8s API resource and a controller. </li>
+<li>The controller manager queries the resource utilization against the metrics specified in each HorizontalPodAutoscaler definition.</li>
+<li>It obtains the metrics from either the resource metrics API (for per-pod resource metrics), or the custom metrics API (for all other metrics).</li>
+<li><strong>Cluster Autoscaler (CA)</strong> - component that automatically adjusts the size of a Kubernetes Cluster so that all pods have a place to run and there are no unneeded nodes.</li>
+</ol>
+<h1 id="role-based-access-control-rbac">Role-based Access Control (RBAC)</h1>
+<p><strong>RBAC</strong> is a method of regulating access to computer or network resources based on the roles of individual users within an enterprise.</p>
+<p>The logical components:</p>
+<ul>
+<li><strong>Entity</strong> - A group/user/service account. The identity representating the application that wants to execute certain operations (actions) and requires permission to do so.</li>
+<li><strong>Resource</strong> - A pod/service/secret that the entity wants to access using the certain operations.</li>
+<li><strong>Role</strong> - Used to define therules for the actions the entity can take on various resources.</li>
+<li><strong>Role binding</strong> - Attaches a role to an entity. This dictates the set of actions permitted by the entity on the specified resources. Two types roles/role bindings:<ol>
+<li>Role/RoleBinding - authorization in a namespace</li>
+<li>ClusterRole/ClusterRoleBinding- authorization cluster-wide</li>
+</ol>
+</li>
+<li><strong>Namespace</strong> - They provide a unique scope for object names. They are intended to be used in multi-tenant environments to create virutal kubernetes clusters on the same physical cluster.</li>
+</ul>
+<h1 id="amazon-ec2-security-groups-kubernetes-pods">Amazon EC2 Security Groups + Kubernetes pods</h1>
+<p>We can use Security Groups to define inbound and outbound network traffic to and from pods.</p>
+<h1 id="kubernetes-service">Kubernetes Service</h1>
+<blockquote>
+<p>Let's say we have nginx running cluster wide. We can talk to these pods directly theoretically, but what happens if a node dies? The pods die, but the deployment will create new ones, <em>with different IPs</em>. How do we get this new IP?</p>
+</blockquote>
+<p>This is where kubernetes service comes in.</p>
+<p>A Kubernetes service is an abstraction that defines logical set of pods running somewhere in your cluster.</p>
+<p>When created, each Service is assined a unique IP address (aka <strong>clusterIP</strong>). This address is tied to the lifespan of the Service and will not change while the Service is alive.</p>
+<p>Pods can be configured to talk to the Service, and that communication will be load-balanced automatically to some pods that are members of the Service.</p>
+<h2 id="accessing-the-service">Accessing the Service</h2>
+<p>Two ways we can find a Service:</p>
+<ol>
+<li>environment variables</li>
+<li>DNS</li>
+</ol>
+<h3 id="environment-variables">Environment Variables</h3>
+<p>When a pod runs on a node, <code>kubelet</code> adds a set of environment variables for each active Service.</p>
+<blockquote>
+<p>What happens if we were to run a pod first and then make it a Service? Environment variables won't be there</p>
+</blockquote>
+<p>You'd have to kill the pods and wait for the Deployment to recreate them. At this point, the Service will already have existed and the env variables will be set.</p>
+<h3 id="dns">DNS</h3>
+<p>Kubernetes offers a DNS cluster add-on Service that automatically assigns DNS names to other Services.</p>
+<h2 id="exposing-the-service">Exposing the Service</h2>
+<p>There may be a need to expose a Service onto an external IP address. Kubernetes support this in two ways: <code>NodePort</code> and <code>LoadBalancer</code>.</p>
+<h2 id="ingress">Ingress</h2>
+<p><strong>Ingress</strong> exposes HTTP and HTTPS routes from outside the cluster to Services within the cluster.</p>
+<p>The routing itself is controlled by rules defined on the Ingress resource.</p>
+<blockquote>
+<p>Ingress doesn't expose arbitrary ports or protocols. If you want to expose services other than HTTP or HTTPS, use <code>NodePort</code> or <code>LoadBalancer</code>.</p>
+</blockquote>
+<p><strong>Ingress Controller</strong> is responsible for fulfilling the Ingress, commonly with a load balancer. It may configure your edge router or additional frontends to help handle the traffic.</p>
+<blockquote>
+<p>You need an ingress controller to satisfy an ingress. Just having an ingress doesn't do anything.</p>
+</blockquote>
+<h1 id="assigning-pods-to-nodes">Assigning Pods to Nodes</h1>
+<p>We can configure a pod to only run on specific nodes, or prefer certain nodes.</p>
+<blockquote>
+<p>This usually isn't necessary, the scheduler will do a reasonable job of this. There may be specific cases where you want to put a pod in a node with an SSD, or two pods together.</p>
+</blockquote>
+<h2 id="method-1-nodeselector">Method 1 - NodeSelector</h2>
+<p><code>nodeSelector</code> is a field of PodSpec in the form of a map of key-value pairs.</p>
+<p>For a pod to be eligible to run on the node, the node must have each of the specified key-value pairs as labels.</p>
+<h2 id="method-2-affinity-and-anti-affinity">Method 2 - Affinity and Anti-affinity</h2>
+<p>The <code>nodeSelector</code> is a very basic way of adding constraints to pods. The affinity/anti-affinity feature extends the types of constraints you can express.</p>
+<p>Key enhancements:</p>
+<ul>
+<li>More expressive language (not a simple AND)</li>
+<li>You can indicate a rule is a preference rather than a requirement. (If it doesn't meet the rule, the pod will still be scheduled.)</li>
+<li>You can constrain against labels on other pods running on the nodes (rather than labels on the pod)</li>
+</ul>
+<h3 id="node-affinity">Node Affinity</h3>
+<p>Two types of node affinity:</p>
+<ol>
+<li><code>requiredDuringSchedulingIgnoredDuringExecution</code></li>
+<li><code>preferredDuringSchedulingIgnoredDuringExecution</code></li>
+</ol>
+<p>These are basically hard and soft requirements, respectively.</p>
+<p>The "IgnoredDuringExecution" basically means if a pod's labels change at runtime so that it doesn't meet the rule, it'll still run on the node.</p>
+<h1 id="stateful-containers-using-statefulset">Stateful Containers Using StatefulSet</h1>
+<p><strong>StatefulSet</strong> manages the deployment and scaling of a set of Pods.</p>
+<p>It provides guarantees about the ordering and uniqueness of these Pods. (Not sure what ordering here is, or what it means by unique).</p>
+<p>This is good for applications that require:</p>
+<ul>
+<li>Stable, unique network identifiers</li>
+<li>Stable, persistent storage</li>
+<li>Ordered, graceful deployment and scaling</li>
+<li>Ordered, automated rolling updates</li>
+</ul>
+<h2 id="container-storage-interface-csi">Container Storage Interface (CSI)</h2>
+<p>(This isn't related directly to stateful containers, but it is relevant when working with storage for the statefule container example).</p>
+<p>The <strong>Container Storage Interface</strong> is a standard for exposing arbitrary block and file storage systems to containerized workloads on Container Orchestration Systems (COs) like Kubernetes.</p>
+<p>Using CSI, 3P storage providers can write and deploy plugins exposing new storage systems in Kubernetes without ever having to touch the core Kubernetes code.</p>
+<p>Third party for example, Amazon Elastic Block Store (Amazon EBS). Amazon EBS has a CSI driver that provides this interface to allow Amazon EKS to manage the lifecycle of Amazon EBS volumes for persistent volumes.</p>
+<h1 id="kubernetes-secrets">Kubernetes Secrets</h1>
+<p>Kuberbetes can store secrets that pods can access via a mounted volume. K8s store these secrets in a Base64 encoding, but a more secure way is preferred. </p>
+<p>We can use AWS Key Management Service (KMS) Customer Managed Keys (CMK) to do so.</p>
+<h1 id="sealed-secrets">Sealed Secrets</h1>
+<p>Sealed Secrets provides a mechanism to encrypt a Secret object to that it is sage to store - even to a public repo.</p>
+<p>It can only be decrypted by the controller running in the K8s cluster.</p>
+<p>This is composed of two parts:</p>
+<ol>
+<li>A cluster-side controller</li>
+<li>A client-side utility, <em>kubeseal</em></li>
+</ol>
+<p>The steps:</p>
+<ol>
+<li>On Start Up<ol>
+<li>The controller looks for a cluster-wide private/public key pair. If not found, it'll generate a new 4096 bit RSA key pair.</li>
+<li>The private key is persisted in a Secret object in the controller's namespace.</li>
+<li>The public key  is made publicly available</li>
+</ol>
+</li>
+<li>During encrpytion<ol>
+<li>Each value in the original Secret is symmetrically encrypted using AES-256 with a randomly generated session key.</li>
+<li>The session key is asymmetrically encryped with the controller's public key using SHA256 and the original Secret's namespace/name as the input parameter.<ol>
+<li>The output string is: length (2 bytes) of encrypted session key + encrypted session key + encrypted Secret</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>During deployment of SealedSecret<ol>
+<li>The controller picks up the secret</li>
+<li>Unseals it using the private key</li>
+<li>Creates a Secrete resource.</li>
+</ol>
+</li>
+<li>During decryption<ol>
+<li>The SealedSecret's name/namepace is used as the input parameter.</li>
+</ol>
+</li>
+</ol>
+<p><em>kubeseal</em> is used for creating a SealedSecret custom resource definition (CRD) from a Secret resource definition using the public key.</p>
+<h1 id="users">Users</h1>
+<p>Two types of users:</p>
+<ol>
+<li>Normal users (<strong>not managed by Kubernetes</strong>)</li>
+<li>Service Accounts (managed by Kubernetes)</li>
+</ol>
+<blockquote>
+<p><a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">From Doc</a>: Kubernetes does not have objects which represent normal user accounts. Normal users cannot be added to a cluster through an API call.</p>
+</blockquote>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../../database/transactions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Transactions" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Transactions
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../machine_learning/1-introduction/" class="md-footer__link md-footer__link--next" aria-label="Next: Introduction" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Introduction
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tracking", "navigation.tabs"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.477d984a.min.js", "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.82b56eb2.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
