@@ -52,11 +52,11 @@ A [Label](https://www.eksworkshop.com/010_introduction/basics/concepts_objects_d
 
 ## Architecture
 
-![Image of Kubernetes Architecture](/assets/img/kubernetes-arch.png)
+![Image of Kubernetes Architecture](/img/kubernetes-arch.png)
 
 ### Control Plane
 
-![Image of Control Plane Architecture](/assets/img/control-plane.png)
+![Image of Control Plane Architecture](/img/control-plane.png)
 
 * One or More API Servers: Entry point for REST / kubectl
 * etcd: Distributed key/value store
@@ -65,7 +65,7 @@ A [Label](https://www.eksworkshop.com/010_introduction/basics/concepts_objects_d
 
 ### Data Plane
 
-![Image of Data Plane Architecture](/assets/img/data-plane.png)
+![Image of Data Plane Architecture](/img/data-plane.png)
 
 * Made up of worker nodes
 * kubelet: Acts as a conduit between the API server and the node
