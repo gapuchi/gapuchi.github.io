@@ -28,3 +28,6 @@ site_name: Gapuchi's Notes
 site_url: https://arjun.adhia.net/
 site_description: Notes By Gapuchi
 site_author: gapuchi
+
+extra_css:
+  - stylesheets/extra.css

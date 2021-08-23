@@ -4,10 +4,10 @@ My notes from Google's blog post on [REST vs RPC](https://cloud.google.com/blog/
 
 ## RPC
 
-**Procedure**
+Procedure
 :  a.k.a functions. Is the dominant construct for organizing computer code. 
 
-**Remote Procedure Call (RPC)** 
+Remote Procedure Call (RPC)
 :  Is when a computer program causes a **procedure** (function, subroutine) to execute in a different address space. (This is usually on a different computer on a shared network). This procedure is coded as if it were a normal (local) procedure call, without the programmer explicitly coding the details for the remote interaction.
 
 Here is an example of a RPC through HTTP:
@@ -35,10 +35,10 @@ Two commons with software development:
 
 ## REST
 
-**REpresentational State Transfer (REST)**
+REpresentational State Transfer (REST)
 :  A model for API's. It is an **architectural style** that helped design HTTP (and the world wide web). It defines a set of constraints for how the architecture of an "Internet-scale distributed hypermedia" should behave.
 
-**Hypertext Transfer Protocol (HTTP)**
+Hypertext Transfer Protocol (HTTP)
 :  An application layer protocol for "distributed, collaborative, hypermedia information systems". It is the foundation of data communication for the world wide web.
 
 HTTP is the only commercially important REST API, so for simplicity's sake, we will focus on HTTP and not other REST implementations.
