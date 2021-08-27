@@ -11,7 +11,7 @@
     * NAT device
     * VPN connection
     * AWS Direct Connect connection
-* **CIDR block** - Classless Inter-Domain Routing. An internet protocol address allocation and route aggregation methodlogy.
+* **CIDR block** - Classless Inter-Domain Routing. An internet protocol address allocation and route aggregation methodology.
 
 ## Subnet Security
 
