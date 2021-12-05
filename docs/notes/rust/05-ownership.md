@@ -1,10 +1,4 @@
----
-layout: post
-title: Ownership
-part: 5
----
-
-# Ownership
+# [Ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)
 
 **Ownership Rules**:
 

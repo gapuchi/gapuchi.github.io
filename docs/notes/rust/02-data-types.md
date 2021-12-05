@@ -1,10 +1,4 @@
----
-layout: post
-title: Data Types
-part: 2
----
-
-# Data Types
+# [Data Types](https://doc.rust-lang.org/book/ch03-02-data-types.html)
 
 Rust is **statically typed**, which means it knows all the types at compile time. The compiler can infer (usually) what type a variable is, but there are cases where it cannot.
 

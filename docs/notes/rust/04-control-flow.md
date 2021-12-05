@@ -1,10 +1,4 @@
----
-layout: post
-title: Control Flow
-part: 4
----
-
-# Control Flow
+# [Control Flow](https://doc.rust-lang.org/book/ch03-05-control-flow.html)
 
 ## `if` Expressions
 

@@ -1,9 +1,3 @@
----
-layout: post
-title: Error Handling
-part: 9
----
-
 # Error Handling
 
 In many occasions, Rust requires you to acknowledge the possibility of an error and take some action before your code will compile.

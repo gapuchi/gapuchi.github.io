@@ -1,9 +1,3 @@
----
-layout: post
-title: Generics, Traits, and Lifetimes
-part: 10
----
-
 # [Generic Types, Traits, and Lifetimes](https://doc.rust-lang.org/book/ch10-00-generics.html#generic-types-traits-and-lifetimes)
 
 For the sake of conciseness, I'm not explaining generics here. It is the same concept as in Java. This section will include Rust specific syntax and behaviors.

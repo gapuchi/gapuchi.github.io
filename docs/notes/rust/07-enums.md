@@ -1,9 +1,3 @@
----
-layout: post
-title: Enums and Pattern Matching
-part: 7
----
-
 # Enums and Pattern Matching
 
 ## Defining an Enum

@@ -1,9 +1,3 @@
----
-layout: post
-title: Structs
-part: 6
----
-
 # Using Structs to Structure Related Data
 
 A *struct* is a custom data type. It is like an object's data attributes if you're thinking about object-oriented programming.

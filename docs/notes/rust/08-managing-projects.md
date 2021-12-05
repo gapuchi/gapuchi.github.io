@@ -1,9 +1,3 @@
----
-layout: post
-title: Managing Projects
-part: 8
----
-
 # Managing Growing Projects with Packages, Crates, and Modules
 
 * So far we've written code in one **module** in one **file**.
