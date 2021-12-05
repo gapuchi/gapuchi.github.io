@@ -11,3 +11,9 @@ If we were to do the bitwise operation inverse, we would get something different
 So how do we do this? `~5 & ((1 << 3) - 1)`
 
 We take `1`, shift it over by however many digits we want to inverse and subtract 1. This gives us leadings zeroes with a specific number of tailing ones. We then intersect this with the inverse. This essentially get's rid of the leading ones that result from the inverse.
+
+### How do you do a bitwise equals operation?
+
+Let's say we have `101110` and `101001`. How can we get a binary value that shows which digits are equal? In this case, `111000`?
+
+You can do a XOR and negate!
