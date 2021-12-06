@@ -1,4 +1,4 @@
-# [Data Types](https://doc.rust-lang.org/book/ch03-02-data-types.html)
+# Data Types
 
 Rust is **statically typed**, which means it knows all the types at compile time. The compiler can infer (usually) what type a variable is, but there are cases where it cannot.
 

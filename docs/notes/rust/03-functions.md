@@ -1,4 +1,4 @@
-# [Functions](https://doc.rust-lang.org/book/ch03-03-how-functions-work.html)
+# Functions
 
 * Statement - instructions that perform some action and do not return a value.
 * Expression - evaluate to a resulting value.

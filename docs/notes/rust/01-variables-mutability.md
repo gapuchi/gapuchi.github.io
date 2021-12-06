@@ -1,4 +1,4 @@
-# [Variable and Mutability](https://doc.rust-lang.org/book/ch03-01-variables-and-mutability.html)
+# Variable and Mutability
 
 `let` declares a variable. This is **immutable** by default. If you want to make it mutable, add `mut` keyword:
 
