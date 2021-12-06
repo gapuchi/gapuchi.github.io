@@ -1,9 +1,20 @@
 theme:
   name: material
   palette:
-    # scheme: slate
-    primary: deep purple
-    accent: blue
+    - media: "(prefers-color-scheme: light)" # 
+      scheme: default
+      primary: deep purple
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)" # 
+      scheme: slate
+      primary: pink
+      accent: lime
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
   font:
     code: Fira Code
   features:
