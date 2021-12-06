@@ -242,7 +242,7 @@ println!("1 new tweet: {}", tweet.summarize());
 - We can implement `Summary` for `Vec<T>`.
 - We **cannot** implement `Display` for `Vec<T>`.
 
-We can't do the third because of *coherence*, or more specifically *the orohan rule* (the parent type is not present). This rule is to ensure no one else breaks your code and vice versa. Without this rule, two crates can create an implementation for the same type and Rust wouldn't know what to do.
+We can't do the third because of *coherence*, or more specifically *the orphan rule* (the parent type is not present). This rule is to ensure no one else breaks your code and vice versa. Without this rule, two crates can create an implementation for the same type and Rust wouldn't know what to do.
 
 ### Default Implementations
 
@@ -769,7 +769,7 @@ fn longest<'a>(x: &'a str, y: &str) -> &'a str {
 
 We do not need an annotation on `y` because the lifetime of `y` has no relation with the lifetime of `x` or the return value.
 
-**The lifetime parameter for the return type needs to match the lifetime parameter for one the of the parameters when returning a reference from a function.** If it didn't, that means it is referring to a value created in the function, meaning the value will become invalid outside of the function, making the compiler not happy.
+**The lifetime parameter for the return type needs to match the lifetime parameter for one of the parameters when returning a reference from a function.** If it didn't, that means it is referring to a value created in the function, meaning the value will become invalid outside of the function, making the compiler not happy.
 
 This won't compile. Even though we have a lifetime parameter on the return type, it isn't related to one of the parameters of the function. More importantly, it is a dangling reference, so the whole lifetime parameter issue is moot anyway:
 
