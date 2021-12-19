@@ -107,3 +107,112 @@ fn main() {
 > `move` in the closure doesn't indicate anything specific to the param list it precedes. It is for the captures variables. May be a common misunderstanding due to its placement.
 
 Typically when defining functions, you can use `Fn` trait and the compiler will tell you if you need `FnMut` or `FnOnce`.
+
+## Iterators
+
+In rust, iterators are *lazy*. You can use iterators in various ways, including a `for` loop:
+
+```rust
+let v1 = vec![1, 2, 3];
+
+let v1_iter = v1.iter();
+
+for val in v1_iter {
+    println!("Got: {}", val);
+}
+```
+
+Iterators abstract the logic of looping through an structure. E.g set an index to, perform an operation, increment index, and stop once there are no items left. This abstraction reduces the chances of errors performed by the user.
+
+### The `Iterator` trait and `next` method
+
+All iterators implement the `Iterator` trait, which is defined the standard library. Looks something like this:
+
+```rust
+pub trait Iterator {
+    type Item;
+
+    fn next(&mut self) -> Option<Self::Item>;
+
+    // methods with default implementations elided
+}
+```
+
+> `type Item` defines an *associated type* for this trait.
+
+The trait has only one method, which returns one time wrapped in `Some` and `None` once the iterator is over.
+
+```rust
+#[test]
+fn iterator_demonstration() {
+    let v1 = vec![1, 2, 3];
+
+    let mut v1_iter = v1.iter();
+
+    assert_eq!(v1_iter.next(), Some(&1));
+    assert_eq!(v1_iter.next(), Some(&2));
+    assert_eq!(v1_iter.next(), Some(&3));
+    assert_eq!(v1_iter.next(), None);
+}
+```
+
+> **Note** We needed to make `v1_iter` mutable, because calling `next` on the iterator modifies the internal state of the iterator. (e.g. the tracking of the next item) The `for` loop didn't need to be mutable because the loop took ownership and made it immutable behind the scenes.
+
+The values returned by `next` are immutable references.
+
+* `iter` produces an iterator over immutable references.
+* `into_iter` produces an iterator that takes ownership of `v1` and returns owned values.
+* `iter_mut` produces an iterator over mutable references.
+
+### Methods that Consume the Iterator
+
+The `Iterator` trait has some methods defined with it. (Check the documentation) Some of these method invokes the `next` method.
+
+These methods that invoke the `next` method are called *consuming adaptors*, since they "consume" the iterator.
+
+An example is `sum`:
+
+```rust
+let v1 = vec![1, 2, 3];
+
+let v1_iter = v1.iter();
+
+let total: i32 = v1_iter.sum();
+
+assert_eq!(total, 6);
+```
+
+The `sum` method repeatedly calls next and adds the valeus of the iterator. We can't use `v1_iter` after `sum` since it takes ownership of the iterator.
+
+### Methods that Produce Other Iterators
+
+Some methods on the `Iterator` trait changes iterators into different types of iterators. These are called *iterator adaptors*. You can chain these methods to perform complicated computations. Since these are lazy, you have to call a consuming adaptor to get a result from the calls to the iterator adaptors.
+
+A common example, `map`:
+
+```rust
+let v1: Vec<i32> = vec![1, 2, 3];
+
+let v2: Vec<_> = v1.iter().map(|x| x + 1).collect();
+
+assert_eq!(v2, vec![2, 3, 4]);
+```
+
+### Using Closure that Capture Their Environment
+
+The above `map` method takes in a closure. We can take advantage of closure's ability to capture their environment:
+
+```rust
+struct Shoe {
+    size: u32,
+    style: String,
+}
+
+fn shoes_in_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
+    shoes.into_iter().filter(|s| s.size == shoe_size).collect()
+}
+```
+
+In the `shoes_in_size` function, we take the ownership of `shoes` by calling `into_iter` method and provide a closure to `filter` which captures the `shoe_size` from the environment.
+
+> What if we used `iter` instead of `into_iter`?
