@@ -827,3 +827,89 @@ fn main() {
 Here, `ImportantExcerpt` has a field that is a string slice. Note the angle brackets after the struct name. This annotation means an instance of `ImportantExcerpt` can’t outlive the reference it holds in its part field.
 
 In the example above, `ImportantExcerpt` is created in scope after `novel` which is what provides the `part` field its value. The struct doesn't go out of scope after `novel`.
+
+### Lifetime Elision
+
+The following method compiles without lifetime annotations:
+
+```rust
+fn first_word(s: &str) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[..]
+}
+```
+
+We expect the refernces to have lifetime annotations:
+
+```rust
+fn first_word<'a>(s: &'a str) -> &'a str {
+```
+
+but this got super repetitive. The compiler was made to infer the lifetimes in these specific examples.
+
+**Lifetime elision rules** are these patterns programmed into Rust's analysis of references. If the compiler finds a specific pattern, we do not need to specify the lifetimes.
+
+**The rules do not provide full inferences, though**. If there are some references without a lifetime annotation after the elision rules are applied, the compiler will fail.
+
+input lifetimes
+: lifetimes on function/method parameters
+
+output lifetimes
+: lifetiems on return values
+
+The rules:
+
+1. Each parameter that is a reference gets its own lifetime annotation.
+1. If there is exactly one input lifetime parameter, that lifetime is assigned to all output lifetime parameters.
+1. If there are multiple input lifetime parameters, but one is `&self` or `&mut self` (indicating this is a method, not a function), the lifetime of `self` is assigned to all output lifetime parameters.
+
+> **Example 1**
+>
+> `fn first_word(s: &str) -> &str {`
+>
+> `fn first_word<'a>(s: &'a str) -> &str {    // Rule 1`
+>
+> `fn first_word<'a>(s: &'a str) -> &'a str { // Rule 2`
+>
+> The compiler stops, since all references have a lifetime.
+
+> **Example 2**
+>
+> `fn longest(x: &str, y: &str) -> &str {`
+>
+> `fn longest<'a, 'b>(x: &'a str, y: &'b str) -> &str { // Rule 1`
+>
+> Rule 2 doesn't apply since there is more than 1 input lifetime parameter.
+>
+> Rule 3 doesn't apply since this is a function, not a method.
+>
+> Compiler fails, since we couldn't figure out the lifetimes of all the signature.
+
+### Lifetime Annotations in Method Definitions
+
+We implement methods on structs with lifetimes by using the same syntax as generics.
+
+TBD
+
+### The Static Lifetime
+
+`'static` lifetime means the reference can live for the entire duration of the program.
+
+All string literals have the `'static` lifetimes.
+
+We can annotate strings like:
+
+```rust
+let s: &'static str = "I have a static lifetime.";
+```
+
+The text of the string is stored in the binary, so it's always available.
+
+Double check if you really need static lifetime parameters....
