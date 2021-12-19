@@ -105,3 +105,5 @@ fn main() {
 `x` is now moved into the closure. The `println!` after will fail because x moved. It can be fixed by removing the `println!`.
 
 > `move` in the closure doesn't indicate anything specific to the param list it precedes. It is for the captures variables. May be a common misunderstanding due to its placement.
+
+Typically when defining functions, you can use `Fn` trait and the compiler will tell you if you need `FnMut` or `FnOnce`.
