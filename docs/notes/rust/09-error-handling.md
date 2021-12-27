@@ -13,7 +13,7 @@ Rust doesn't have exceptions. It has the type `Result<T, E>` for recoverable err
 
 When the `panic!` macro executes, your program will print a failure message, unwind and clean up the stack, and then quit.
 
-> By default, when a panic occurs, the programs starts *unwinding* - Rust walks back up the stack and cleans up the data from each funciton it encounters. 
+> By default, when a panic occurs, the programs starts *unwinding* - Rust walks back up the stack and cleans up the data from each funciton it encounters.
 > This is a a lot of work. An alternative is to immediately *abort* - which ends the program without cleaning it up. The memory that the program uses will need to be cleaned up by the operating system. If you need the binary to be as small as possible, you can switch from unwinding to aborting upon a panic by adding `panic = 'abort'` to the apporiate `[profile]` sections.
 > ```toml
 > [profile.release]
@@ -183,9 +183,9 @@ fn main() {
 
 (This may not make complete sense until we get to closures.) `unwrap_or_else` and other methods will help us get rid of nested `match` expressions when handling errors.
 
-### Shortcuts for Pan on Error: `unwrap` and `expect`
+### Shortcuts for Panic on Error: `unwrap` and `expect`
 
-`match` is fine and dandy, but it gets verbose. There are helper methods to define varios tasks.
+`match` is fine and dandy, but it gets verbose. There are helper methods to define various tasks.
 
 `unwrap` is a shortcut method that is implemented just like the `match` above. It will return the value inside `Ok` or `panic!` for `Err`:
 

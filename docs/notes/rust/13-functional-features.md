@@ -8,7 +8,7 @@ Closures
 Closures, unlike functions, can capture values from the scope in which they're defined.
 
 ```rust
-let x = |param1, param2| { 
+let x = |param1, param2| {
     println!("{}", param2);
     param1
 };
@@ -216,3 +216,11 @@ fn shoes_in_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
 In the `shoes_in_size` function, we take the ownership of `shoes` by calling `into_iter` method and provide a closure to `filter` which captures the `shoe_size` from the environment.
 
 > What if we used `iter` instead of `into_iter`?
+>
+> Compiling fails.
+>
+> ```rust
+> value of type `Vec<Shoe>` cannot be built from `std::iter::Iterator<Item=&Shoe>`
+> ```
+>
+> This is because `iter` creates immutable references, so it returns an iterator of `&Shoe`.
