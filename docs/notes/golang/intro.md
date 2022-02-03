@@ -194,7 +194,7 @@ for {
 }
 ```
 
-## If
+### If
 
 Like `for`, the expression need not be surround by `()` and `{}` are required.
 
@@ -223,3 +223,119 @@ if v := math.Pow(x, n); v < lim {
 	fmt.Printf("%g >= %g\n", v, lim)
 }
 ```
+
+### Switch
+
+The `switch` is like in Java, a nicer way to write `if/else` statements. Unlike Java, it **only runs the first matching case**. The cases also do not need to be constants.
+
+```go
+switch os := runtime.GOOS; os {
+case "darwin":
+    fmt.Println("OS X.")
+case "linux":
+    fmt.Println("Linux.")
+default:
+    fmt.Printf("%s.\n", os)
+}
+```
+
+It evaluates top to bottom, and does not evaluate other cases once a matching case is found.
+
+You can write a switch statement without a condition and it'll be interpreted as `switch true {...`. You can use this to write complex `if/else` statements.
+
+```go
+switch {
+case t.Hour() < 12:
+    fmt.Println("Good morning!")
+case t.Hour() < 17:
+    fmt.Println("Good afternoon.")
+default:
+    fmt.Println("Good evening.")
+}
+```
+
+### Defer
+
+A `defer` statement delays the execution of a function until the surrounding function returns.
+
+```go
+func main() {
+	defer fmt.Println("world")
+
+	fmt.Println("hello")
+}
+```
+
+> In Java, we can consider this to be `finally`. It's useful for cleaning up after a function. The nice thing about this is that you can declare the clean up function as soon as it is relevant instead of at the end. Nicer organizaiton.
+
+Couple traits:
+
+1. A deferred function’s arguments are evaluated when the defer statement is evaluated. If a variable in the defer statement is changed after the defer statement, it won't reflect in the call of the defer function.
+1. Deferred function calls are executed in Last In First Out order after the surrounding function returns.
+1. Deferred functions may read and assign to the returning function’s named return values. (Useful for errors.)
+
+```go
+func c() (i int) {
+    defer func() { i++ }()
+    return 1
+}
+```
+
+This will return `2`.
+
+Panic
+: A built-in function that stops the normal flow of control and begins *panicking*. If a function invokes `panic`, everything stops, any deferred functions are executed normally, and returns to the caller. The caller would see function as if it was a `panic`. Panic bubbles up until all the functions in the goroutine have returned. Program then crashes.
+
+Recover
+: A built-in function that regains control of a panicking goroutine. It is only useful in deferred functions. A call to recover will return `Nil` if the function isn't panicking and will return the value passed to the `panic` if the function was panicking and then resume normally.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    f()
+    fmt.Println("Returned normally from f.")
+}
+
+func f() {
+    defer func() {
+        if r := recover(); r != nil {
+            fmt.Println("Recovered in f", r)
+        }
+    }()
+    fmt.Println("Calling g.")
+    g(0)
+    fmt.Println("Returned normally from g.")
+}
+
+func g(i int) {
+    if i > 3 {
+        fmt.Println("Panicking!")
+        panic(fmt.Sprintf("%v", i))
+    }
+    defer fmt.Println("Defer in g", i)
+    fmt.Println("Printing in g", i)
+    g(i + 1)
+}
+```
+
+Would output
+
+```
+Calling g.
+Printing in g 0
+Printing in g 1
+Printing in g 2
+Printing in g 3
+Panicking!
+Defer in g 3
+Defer in g 2
+Defer in g 1
+Defer in g 0
+Recovered in f 4
+Returned normally from f.
+```
+
+> The convention in the Go libraries is that even when a package uses panic internally, its external API still presents explicit error return values.
