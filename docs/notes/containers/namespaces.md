@@ -1,7 +1,4 @@
----
-layout: post
-title: Namespaces
----
+# Container Namespaces
 
 My notes from [this Medium article](https://medium.com/@saschagrunert/demystifying-containers-part-i-kernel-space-2c53d6979504).
 
