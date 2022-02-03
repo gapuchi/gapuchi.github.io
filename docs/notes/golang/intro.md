@@ -339,3 +339,202 @@ Returned normally from f.
 ```
 
 > The convention in the Go libraries is that even when a package uses panic internally, its external API still presents explicit error return values.
+
+## Pointers
+
+Pointer
+: A pointer holds a memory address of a value.
+
+The type `*T` is a pointer to a `T` value. Its zero value is `nil`.
+
+```go
+var p *int
+```
+
+The `&` generates a pointer to its operand.
+
+```go
+i := 42
+p = &i //p is a pointer to 42
+```
+
+The `*` operator denotes the pointer's underlying value.
+
+```go
+fmt.Println(*p) // read i through the pointer p
+*p = 21         // set i through the pointer p
+```
+
+This is known as "dereferencing" or "indirecting". 
+
+## Structs
+
+Struct
+: A `struct` is a collection of fields.
+
+The struct's fields are accessed using a `.`
+
+```go
+type Vertex struct {
+	X int
+	Y int
+}
+
+func main() {
+	v := Vertex{1, 2}
+	v.X = 4
+	fmt.Println(v.X)
+}
+```
+
+The struct's fields can also be accessed through a struct pointer.
+
+If we want to access field `X` of a struct pointer `p`, we could do `(*p).X`, but that is verbose. So it's simplified to `p.X`.
+
+Struct Literal
+: A struct literal represents a newly allocat struct value by listing the values of its fields.
+
+You can list a subset of the fields using `Name:` (and the order doesn't matter).
+
+The `&` prefix returns a pointer to the struct value.
+
+```go
+v1 = Vertex{1, 2}  // has type Vertex
+v2 = Vertex{X: 1}  // Y:0 is implicit
+v3 = Vertex{}      // X:0 and Y:0
+p  = &Vertex{1, 2} // has type *Vertex
+```
+
+## Arrays
+
+The type `[n]T` is an array of `n` values of type `T`.
+
+So `var a [10]int` is an array of 10 ints. An array cannot be resized, so its okay that the size is part of its type. (Or maybe the other way around? The size is part of the type so an array size cannot be changed?)
+
+## Slices
+
+A slice is a dynamically-sized, flexible view into the elements of an array (which is a fixed size).
+
+The type `[]T` is a slice with elements of type `T`.
+
+A slice is formed by declaring a low and high bound - `a[low  : high]`. It includes the first index and excludes the last one. 
+
+Consider a slice as a reference to an array, it doesn't store any values on its own. If you change a value in a slice, you modify the array and all other slices looking at it.
+
+A slice literal is like an array literal `[3]bool{true, true, false}` but without the length (so `[]bool{true, true, false}`). The slice literal creates the same array and a slice of it (returning the slice).
+
+You can emit the low and high bounds for a slice and let use default low (`0`) and high (length of the array). (e.g. `a[0:]`, `a[:5]`, `a[:]`)
+
+slice length
+: The number of elements the slice contains
+
+slice capacity
+: The number of elements in the underlying array, starting from the beginning of the slice.
+
+To get the length and capacity, use `len(s)` and `cap(s)`.
+
+You can extend the length of a slice if it has enough capacity. Let's say `s` is a slice of length 1. `s = s[:4]` would extend the length to 4 (assuming the array is at least 4).
+
+The zero value of a slice is `nil`. The length and cap is `0` and has no underlying array.
+
+You can create slices using the built in `make` function. It makes a zeroed array with the given length (and optionally, capacity).
+
+```
+a := make([]int, 5)  // len(a)=5
+b := make([]int, 0, 5) // len(b)=0, cap(b)=5
+```
+
+Slices can container any type, including slices.
+
+You can append to a slice using the built in `append` function.
+
+```
+func append(s []T, vs ...T) []T
+```
+
+If the backing array is too small, a new one will be created and the slice will point to the new array.
+
+> Does this modify the array? Probably??
+
+## Range
+
+The `range` form of a `for` loop is used to iterate through a slice or a map. The iterator returns two values, the index and a copy of the value at the index.
+
+```go
+var pow = []int{1, 2, 4, 8, 16, 32, 64, 128}
+
+for i, v := range pow {
+    fmt.Printf("2**%d = %d\n", i, v)
+}
+```
+
+If you don't need either of the two variables returned by `range`, replace it with an `_`. If you only need the index, drop the second variable.
+
+```go
+for _, v := range pow {...}
+for i, _ := range pow {...}
+for i := range pow {...}
+```
+
+## Map 
+
+Map maps keys to values. The zero value of a map is `nil`. A `nil` map has no keys, nor any can be added.
+
+The `make` function returns a map of the given type.
+
+```go
+m = make(map[string]Vertex)
+m["Bell Labs"] = Vertex{
+    40.68433, -74.39967,
+}
+```
+
+Map literals are like struct literals but require keys.
+
+```go
+var m = map[string]Vertex{
+	"Bell Labs": Vertex{
+		40.68433, -74.39967,
+	},
+	"Google": Vertex{
+		37.42202, -122.08408,
+	},
+}
+```
+
+If the top-level type is just a type name, you don't need to specify the name in the literal
+
+```go
+var m = map[string]Vertex{
+	"Bell Labs": {40.68433, -74.39967},
+	"Google":    {37.42202, -122.08408},
+}
+```
+
+* Set a value: `m[key] = elem`
+* Get a value: `elem = m[key]`
+* Delete a key: `delete(m, key)`
+* Test if a key is present: `elem, ok = m[key]`. `ok` is a boolean indicating if it is present. `elem` will be the zero value if it is not present.
+
+## Function Values
+
+Functions are values and can be stored in variables and passed as parameters.
+
+```go
+func compute(fn func(float64, float64) float64) float64 {
+	return fn(3, 4)
+}
+```
+
+Functions may also be closures, as in referencing variables outside its body.
+
+
+```go
+func adder() func(int) int {
+	sum := 0
+	return func(x int) int {
+		sum += x
+		return sum
+	}
+}
+```
