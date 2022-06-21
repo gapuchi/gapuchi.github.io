@@ -224,3 +224,32 @@ In the `shoes_in_size` function, we take the ownership of `shoes` by calling `in
 > ```
 >
 > This is because `iter` creates immutable references, so it returns an iterator of `&Shoe`.
+
+### Creating Iterators with the `Iterator` Trait
+
+We can create our own iterators by implementing the `Iterator` trait. We only need to implement `next` method, after which, you can use all the default methods of the `Iterator` trait.
+
+```rust
+struct Counter {
+    count: u32,
+}
+
+impl Counter {
+    fn new() -> Counter {
+        Counter { count: 0 }
+    }
+}
+
+impl Iterator for Counter {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.count < 5 {
+            self.count += 1;
+            Some(self.count)
+        } else {
+            None
+        }
+    }
+}
+```
