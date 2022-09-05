@@ -18,6 +18,8 @@ trait Monoid[A] {
 }
 ```
 
+Monoids must obey certain laws:
+
 ```scala
 def associaiveLaw[A](x: A, y: A, z: A)(implicit m; Monoid[A]): Boolean = {
     m.combine(x, m.combine(y, z)) == m.combine(m.combine(x, y), z)
@@ -45,6 +47,11 @@ trait Monoid[A] extends Semigroup[A] {
     def empty: A
 }
 ```
+
+There are data types where there is no sensible `empty` element. For example:
+
+* Positive integers data type
+* Non-empty lists data type
 
 ## Boolean Monoids
 
@@ -94,3 +101,79 @@ implicit def symDiffMonoid[A]: Monoid[Set[A]] = new Monoid[Set[A]] {
 ```
 
 Set difference is not associative, so no monoid/semigroup can be created.
+
+
+## Exercise
+
+Write the code for `def add(items: List[Int]): Int`
+
+```scala
+def add(items: List[Int]): Int =
+    items.foldLeft(0)(_ + _)
+```
+
+Or with Monoids, (we don't really need to do it this way.)
+
+```scala
+import cats.Monoid
+import cats.instances.int._    // for Monoid
+import cats.syntax.semigroup._ // for |+|
+
+def add(items: List[Int]): Int =
+    items.foldLeft(Monoid[Int].empty)(_ |+| _)
+```
+
+Write the code for `def add(items: List[Option[Int]]): Int`
+
+
+```scala
+import cats.Monoid
+import cats.instances.int._    // for Monoid
+import cats.syntax.semigroup._ // for |+|
+
+def add(items: List[A])(implicit monoid: Monoid[A]): A =
+    items.foldLeft(monoid.empty)(_ |+| _)
+```
+
+or use Scala's *context bound* syntax:
+
+```scala
+def add[A: Monoid](items: List[A]): A =
+  items.foldLeft(Monoid[A].empty)(_ |+| _)
+```
+
+With this implementation, we can use to add elements of a `List[Int]` and `List[Option[Int]]`
+
+```scala
+import cats.instances.int._ // for Monoid
+
+add(List(1,2,3))
+// res9: Int = 6
+
+import cats.instances.option._ // for Monoid
+
+add(List(Some(1), None, Some(2), None, Some(3)))
+// res10: Option[Int] = Some(6)
+```
+
+This will fail if the `List` contained only `Some` values, since the inferred value of the list would be `List[Some[Int]]` not `List[Option[Int]]` and we don't have a Monoid for `Some[A]`.
+
+Now we want to add up `Orders`
+
+```scala
+case class Order(totalCost: Double, quantity: Double)
+```
+
+How can we use `add`?
+
+```scala
+implicit val orderMonoid = new Monoid[Order] {
+    def combine(o1: Order, o2: Order) =
+    Order(
+      o1.totalCost + o2.totalCost,
+      o1.quantity + o2.quantity
+    )
+
+  def empty = Order(0, 0)
+}
+```
