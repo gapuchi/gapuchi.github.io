@@ -323,5 +323,12 @@ saying.value // second access
 ```
 
 ```
-TODO Trampolining and Eval.defer
+TODO
+
+- Trampolining and Eval.defer
+- Writer Monad
+- Reader Monad
+- State Monad
 ```
+
+> Why do we need `pure`?
