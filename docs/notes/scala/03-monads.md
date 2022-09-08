@@ -332,3 +332,141 @@ TODO
 ```
 
 > Why do we need `pure`?
+
+## The Writer Monad
+
+The writer monad allows us to carry a log along with a computation.
+
+-  A use case for this is multi-threaded computations. We can keep track of logs for separate threads without worrying about them interleaving.
+
+The `Writer[W, A]` has two values, a log of type `W` and a result of type `A`.
+
+Writer has some convenience methods.
+
+`pure` syntax - to create with only result. We need to have `Monoid[W]` so we can create an empty log (`W`).
+
+```scala
+type Logged[A] = Writer[Vector[String], A]
+
+123.pure[Logged]
+// res2: Logged[Int] = WriterT((Vector(),123))
+```
+
+`tell` syntax - to create with only log.
+
+```scala
+Vector("msg1", "msg2", "msg3").tell
+// res3: cats.data.Writer[scala.collection.immutable.Vector[String],Unit] = WriterT((Vector(msg1, msg2, msg3),()))
+```
+
+`Writer.apply` or `writer` syntax if we have both.
+
+```scala
+val a = Writer(Vector("msg1", "msg2", "msg3"), 123)
+// a: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(msg1, msg2, msg3),123))
+
+val b = 123.writer(Vector("msg1", "msg2", "msg3"))
+// b: cats.data.Writer[scala.collection.immutable.Vector[String],Int] = WriterT((Vector(msg1, msg2, msg3),123))
+```
+
+`value` to get result.
+`written` to get logs.
+
+```scala
+val aResult: Int =
+  a.value
+// aResult: Int = 123
+
+val aLog: Vector[String] =
+  a.written
+// aLog: Vector[String] = Vector(msg1, msg2, msg3)
+```
+
+`run` to get both.
+
+```scala
+val (log, result) = b.run
+// log: scala.collection.immutable.Vector[String] = Vector(msg1, msg2, msg3)
+// result: Int = 123
+```
+
+### Composing and Transforming
+
+`map` only operates on the result
+
+`flatMap` appends the logs (so it needs `Semigroup[W]`) and with the computed results.
+
+> This is an example of how `flatMap` handles complexity. We use `flatMap` to apply a function to our result giving us another `Writer`. One with a log and the result. `flatMap` here handles this by taking in the new result and taking the **old log** and appending the **new log**. That is handled out of the box.
+
+`mapWritten` transforms the logs.
+
+```scala
+val writer2 = writer1.mapWritten(_.map(_.toUpperCase))
+// writer2: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(A, B, C, X, Y, Z),42))
+```
+
+`bimap` transforms both log and result, taking in two functions.
+
+`mapBoth` transforms both log and result, taking in one function with two arguments.
+
+```scala
+val writer3 = writer1.bimap(
+  log => log.map(_.toUpperCase),
+  res => res * 100
+)
+// writer3: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(A, B, C, X, Y, Z),4200))
+
+writer3.run
+// res6: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(A, B, C, X, Y, Z),4200)
+
+val writer4 = writer1.mapBoth { (log, res) =>
+  val log2 = log.map(_ + "!")
+  val res2 = res * 1000
+  (log2, res2)
+}
+// writer4: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(a!, b!, c!, x!, y!, z!),42000))
+
+writer4.run
+// res7: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(a!, b!, c!, x!, y!, z!),42000)
+```
+
+`result` clears the logs.
+
+`swap` swaps the log and result.
+
+### Exercise - factorial
+
+Let's say we have a slow `factorial` that logs.
+
+```scala
+def slowly[A](body: => A) =
+  try body finally Thread.sleep(100)
+
+def factorial(n: Int): Int = {
+  val ans = slowly(if(n == 0) 1 else n * factorial(n - 1))
+  println(s"fact $n $ans")
+  ans
+}
+```
+
+If we have multi-threaded application, the logs will get interleaved.
+
+Rewrite `factorial` to capture the log messages.
+
+```scala
+type Logged[A] = Writer[Vector[String], A]
+
+def slowly[A](body: => A) =
+  try body finally Thread.sleep(100)
+
+def factorial(n: Int): Logged[Int] = {
+ 
+    for {
+      ans <-  if (n==0)
+                1.pure[Logged]
+              else
+                slowly(factorial(n - 1).map(_ * n))
+      _ <- Vector(s"fact $n $ans").tell
+    } yield ans
+}
+```
