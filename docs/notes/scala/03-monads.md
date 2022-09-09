@@ -470,3 +470,298 @@ def factorial(n: Int): Logged[Int] = {
     } yield ans
 }
 ```
+
+## The Reader Monad
+
+The Reader monad allows us to sequence operations that depend on some input.
+
+### Composing and Transforming
+
+We can create `Reader[A, B]` from a function `A => B`.
+
+```scala
+import cats.data.Reader
+
+case class Cat(name: String, favoriteFood: String)
+// defined class Cat
+
+val catName: Reader[Cat, String] =
+  Reader(cat => cat.name)
+// catName: cats.data.Reader[Cat,String] = Kleisli(<function1>)
+```
+
+`run` extracts the function, and then we can call it as usual.
+
+```scala
+catName.run(Cat("Garfield", "lasagne"))
+// res0: cats.Id[String] = Garfield
+```
+
+We can have a set of `Readers` that accept the same type of input, combine it using `map` or `flatMap`, and then call `run` at the end.
+
+`map` passes the result of the computation through a function.
+
+```scala
+val greetKitty: Reader[Cat, String] =
+  catName.map(name => s"Hello ${name}")
+
+greetKitty.run(Cat("Heathcliff", "junk food"))
+// res1: cats.Id[String] = Hello Heathcliff
+```
+
+`flatMap` allows us to combine readers that depend on the same input type.
+
+```scala
+val feedKitty: Reader[Cat, String] =
+  Reader(cat => s"Have a nice bowl of ${cat.favoriteFood}")
+
+val greetAndFeed: Reader[Cat, String] =
+  for {
+    greet <- greetKitty
+    feed  <- feedKitty
+  } yield s"$greet. $feed."
+
+//Or
+// greetKitty.flatMap(greeting -> feedKitty.map(feeding -> s"$greet. $feed."))
+
+greetAndFeed(Cat("Garfield", "lasagne"))
+// res3: cats.Id[String] = Hello Garfield. Have a nice bowl of lasagne.
+
+greetAndFeed(Cat("Heathcliff", "junk food"))
+// res4: cats.Id[String] = Hello Heathcliff. Have a nice bowl of junk food.
+```
+
+### Exercise
+
+Build a program that accept a configuration as a parameter - a login system.
+
+```scala
+case class Db(
+  usernames: Map[Int, String],
+  passwords: Map[String, String]
+)
+```
+
+Create a type alias `DbReader` for a `Reader` that consumes `Db`.
+
+```scala
+type DbReader[A] = Reader[Db, A]
+```
+
+```scala
+def findUsername(userId: Int): DbReader[Option[String]] =
+  Reader(db => db.usernames.get(id))
+
+def checkPassword(
+      username: String,
+      password: String): DbReader[Boolean] =
+  Reader(db => db.passwords.get(username).contains(password))
+
+def checkLogin(
+      userId: Int,
+      password: String): DbReader[Boolean] =
+  for {
+    username <- findUsername(userId)
+    check <- username.map { name => 
+              checkPassowrd(name, password)
+            }.getOrElse { false.pure[DbReader] }
+  } yield check
+```
+
+## The State Monad
+
+The State monad allow us to pass additional state around as part of a computation.
+
+Instances of `State[S, A]` represent functions of type `S => (S, A)`. `S` is the type of state, `A` is the type of the result.
+
+```scala
+import cats.data.State
+
+val a = State[Int, String] { state =>
+  (state, s"The state is $state")
+}
+// a: cats.data.State[Int,String] = cats.data.IndexedStateT@6ceace82
+```
+
+We can run our monad by giving the inital state.
+
+`run` gives us both the state and result.
+
+`runS` gives us the state
+
+`runA` gives the result.
+
+```scala
+// Get the state and the result:
+val (state, result) = a.run(10).value
+// state: Int = 10
+// result: String = The state is 10
+
+// Get the state, ignore the result:
+val state = a.runS(10).value
+// state: Int = 10
+
+// Get the result, ignore the state:
+val result = a.runA(10).value
+// result: String = The state is 10
+```
+
+### Composing and Transforming
+
+`map` and `flatMap` thread the state from one instance to another by combining instances. Each individual instances represents an atomic state transformation, and the combination represents a complete sequence of changes.
+
+```scala
+val step1 = State[Int, String] { num =>
+  val ans = num + 1
+  (ans, s"Result of step1: $ans")
+}
+// step1: cats.data.State[Int,String] = cats.data.IndexedStateT@76122894
+
+val step2 = State[Int, String] { num =>
+  val ans = num * 2
+  (ans, s"Result of step2: $ans")
+}
+// step2: cats.data.State[Int,String] = cats.data.IndexedStateT@1eaaaa5d
+
+val both = for {
+  a <- step1
+  b <- step2
+} yield (a, b)
+// both: cats.data.IndexedStateT[cats.Eval,Int,Int,(String, String)] = cats.data.IndexedStateT@47a10835
+
+val (state, result) = both.run(20).value
+// state: Int = 42
+// result: (String, String) = (Result of step1: 21,Result of step2: 42)
+```
+
+The final state is the result of applying both transformations in sequence. The single state gets threaded from step to step even though we don't interact with it in the for comprehension.
+
+> How does the state get threaded? It is a behind a scene of flatMap.
+
+The general model for using `State` is to represent each step as an instance and then compose it using general monad operators.
+
+Some methods for convenience for creating primitive steps:
+
+* `get` extracts the state as the result. `// State[A, A](a => (a,a))`
+* `set` updates the state and returns unit as the result. `// State[A, Unit](a => (a,())`
+* `pure` ignores the state and returns a supplied result.
+* `inspect` extracts the state via a transformation function.
+* `modify` updates the state using an update function.
+
+We can use these in a for comprehension. We usually ignore the result of intermediate stages.
+
+```scala
+import State._
+
+val program: State[Int, (Int, Int, Int)] = for {
+  a <- get[Int]
+  _ <- set[Int](a + 1)
+  b <- get[Int]
+  _ <- modify[Int](_ + 1)
+  c <- inspect[Int, Int](_ * 1000)
+} yield (a, b, c)
+// program: cats.data.State[Int,(Int, Int, Int)] = cats.data.IndexedStateT@22a799f8
+
+val (state, result) = program.run(1).value
+// state: Int = 3
+// result: (Int, Int, Int) = (1,2,3000)
+```
+
+### Exercise - Post-Order Calculator
+
+```scala
+1 2 + //gives us 3
+```
+
+Let's parse each symbol into a `State` instance
+
+```scala
+import cats.data.State
+
+type CalcState[A] = State[List[Int], A]
+
+def evalOne(sym: String): CalcState[Int] = sym match {
+  case "+" => operator(_ + _)
+  case "-" => operator(_ - _)
+  case "*" => operator(_ * _)
+  case "/" => operator(_ / _)
+  case num => operand(num.toInt)
+}
+
+def operand(num: Int): CalcState[Int] = 
+  CalcState[Int] { stack => (num :: stack, num) }
+
+def operator(func: (Int, Int) => Int): CalcState[Int] =
+  CalcState[Int] {
+    case b :: a :: tail =>
+      val ans = func(a, b)
+      (ans :: tail, ans)
+
+    case _ =>
+      sys.error("Fail!")
+  }
+```
+
+Now we can use `evalOne`
+
+```scala
+evalOne("42").runA(Nil).value
+// res3: Int = 42
+```
+
+We can use `flatMap` to get more complex
+
+```scala
+val program = for {
+  _   <- evalOne("1")
+  _   <- evalOne("2")
+  ans <- evalOne("+")
+} yield ans
+// program: cats.data.IndexedStateT[cats.Eval,List[Int],List[Int],Int] = cats.data.IndexedStateT@19744e79
+
+program.runA(Nil).value
+// res4: Int = 3
+```
+
+We can write an `evalAll` method.
+
+```scala
+def evalAll(input: List[String]): CalcState[Int] =
+  input.foldLeft(0.pure[CalcState]) { (a, b) =>
+    a.flatMap(_ => evalOne(b))
+  }
+```
+
+> How do we recognize that fold is needed here?
+
+We can combine `evalAll` and `evalOne` since they are the same type:
+
+```scala
+val program = for {
+  _   <- evalAll(List("1", "2", "+"))
+  _   <- evalAll(List("3", "4", "+"))
+  ans <- evalOne("*")
+} yield ans
+// program: cats.data.IndexedStateT[cats.Eval,List[Int],List[Int],Int] = cats.data.IndexedStateT@e08e443
+
+program.runA(Nil).value
+// res7: Int = 21
+```
+
+We can define a function that takes in one string:
+
+```scala
+def evalInput(input: String): Int =
+  evalAll(input.split(" ").toList).runA(Nil).value
+
+evalInput("1 2 + 3 4 + *")
+// res8: Int = 21
+```
+
+## Defining Custom Monads
+
+We can define our own `Monad` by providing implementation of `flatMap`, `pure` and `tailRecM` (haven't seen this yet).
+
+```
+// TODO Finish custom 
+```
