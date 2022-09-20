@@ -31,7 +31,7 @@ def doSomethingVeryLongRunning: Future[Int] =
   } yield result1 + result2
 ```
 
-The `flatMap` takes care of all the complexity of thread pools, scheudlers, and that garbage.
+The `flatMap` takes care of all the complexity of thread pools, schedulers, and that garbage.
 
 The above runs the computations in sequence. We can think of it as `Future[A] flatMap A => Future[B]` giving us `Future[B]`. We can also do parallel, but thats for another time.
 
@@ -42,6 +42,8 @@ A monad of constructor type `F[_]` has:
 * An operation `pure` of type `A => F[A]`
 * An operation `flatMap` of type `(F[A], A=> F[B]) = F[B]`
 
+### Functions
+
 ```scala
 import scala.language.higherKinds
 
@@ -51,6 +53,8 @@ trait Monad[F[_]] {
   def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
 }
 ```
+
+### Laws
 
 Monads must obey certain laws:
 

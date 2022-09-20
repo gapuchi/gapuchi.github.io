@@ -25,7 +25,41 @@ Right(12)
 // res3: scala.util.Either[Nothing,Int] = Right(41)
 ```
 
-`List`, `Option`, `Either` all have eager evaluations. But `map` doesn't have to be. All it is a mean to sequence of operations.
+`List`, `Option`, `Either` all have eager evaluations. But `map` doesn't have to be. 
+
+**`Functor` is a mean to sequence operations.**
+
+## Definition of a Functor
+
+A **functor** is a type `F[A]` that has a `map` operation of the type of `(A => B) => F[B]`.
+
+### Functions
+
+```scala
+package cats
+
+import scala.language.higherKinds
+
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+```
+
+### Laws
+
+It should adhere to two laws:
+
+```scala
+def identityLaw[A: Functor]: Boolean = {
+    Functor[A].map(a => a) == fa
+}
+
+def compositionLaw[A: Functor, B, C](f: A => B, g: B => C): Boolean = {
+    Functor[A].map(g(f(_))) == Functor[A].map(f).map(g)
+}
+```
+
+This gives the property that functors will behavior doesn't change whether we do multiple operations or combine the operations into a single function and then apply it once.
 
 ## Example: Futures
 
@@ -82,32 +116,6 @@ val result1 = Await.result(future1, 1.second)
 val result2 = Await.result(future2, 1.second)
 // result2: (Int, Int) = (-1155484576,-723955400)
 ```
-
-## Definition of a Functor
-
-A **functor** is a type `F[A]` that has a `map` operation of the type of `(A => B) => F[B]`.
-
-```scala
-package cats
-
-import scala.language.higherKinds
-
-trait Functor[F[_]] {
-  def map[A, B](fa: F[A])(f: A => B): F[B]
-}
-```
-
-It should adhere to two laws:
-
-```scala
-// Identity
-fa.map(a => a) == fa
-
-Composition
-fa.map(g(f(_))) == fa.map(f).map(g)
-```
-
-This gives the property that functors will behavior doesn't change whether we do multiple operations or combine the operations into a single function and then apply it once.
 
 ## Exercise
 

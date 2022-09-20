@@ -2,41 +2,13 @@
 
 **Monoids** and **semigroups** are type classes that allows us to combine values, such as `Int`, `String`, `Lists`, etc.
 
-## Definition of a Monoid
+`Monoid` is a `Semigroup` with an additional `empty` function. The reason for this distinction is that some data types do not have a sensible `empty` element. (E.g. positive integer data type, non-empty list data type)
 
-A **monoid** for a type `A` is
+## Definition of a Semigroup and Monoid
 
-* an operation combine with type `(A, A) => A` that must be *commutative*
-* an element `empty` of type `A` that must be an *identity element*
+### Functions
 
 A simplified version of this definition in Cats:
-
-```scala
-trait Monoid[A] {
-    def combine(x: A, y: A): A
-    def empty: A
-}
-```
-
-Monoids must obey certain laws:
-
-```scala
-def associaiveLaw[A](x: A, y: A, z: A)(implicit m; Monoid[A]): Boolean = {
-    m.combine(x, m.combine(y, z)) == m.combine(m.combine(x, y), z)
-}
-
-def identityLaw[A](x: A)(implicit m: Monoid[A]): Boolean = {
-    (m.combine(x, m.empty) == x) && (m.combine(m.empty, x) == x)
-}
-```
-
-So subtraction and division are not monoids, because they aren't associative.
-
-## Definition of a Semigroup
-
-A **semigroup** for a type `A` is the same as `Monoid[A]` without the `empty`.
-
-An updated version of the Scala definition:
 
 ```scala
 trait Semigroup[A] {
@@ -48,10 +20,22 @@ trait Monoid[A] extends Semigroup[A] {
 }
 ```
 
-There are data types where there is no sensible `empty` element. For example:
+### Laws
 
-* Positive integers data type
-* Non-empty lists data type
+* `combine(x: A, y: A): A` must be *commutative*
+* `empty` must be an *identity element*
+
+```scala
+def associaiveLaw[A](x: A, y: A, z: A)(implicit m; Monoid[A]): Boolean = {
+    m.combine(x, m.combine(y, z)) == m.combine(m.combine(x, y), z)
+}
+
+def identityLaw[A](x: A)(implicit m: Monoid[A]): Boolean = {
+    (m.combine(x, m.empty) == x) && (m.combine(m.empty, x) == x)
+}
+```
+
+> So subtraction and division are not monoids, because they aren't associative.
 
 ## Boolean Monoids
 
