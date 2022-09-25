@@ -127,3 +127,7 @@ def sum[A: Monoid](list: List[A]) =
     list.foldRight(Monoid[A].empty)((a, agg) => a |+| agg)
     // list.foldRight(Monoid[A].empty)(Monoid[A].combine)
 ```
+
+## Traverse
+
+`Traverse` is a higher-level type class that leverages `Applicatives` to provide a more convenient, lawful, pattern for iteration.
