@@ -1,0 +1,2578 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Notes By Gapuchi">
+      
+      
+        <meta name="author" content="gapuchi">
+      
+      
+        <link rel="canonical" href="https://arjun.adhia.net/posts/2020/2020-09-16-learning-oauth2/">
+      
+      
+        <link rel="prev" href="../../2018/2018-11-16-breadth-first-search/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+    
+    
+      
+        <title>OAuth 2 - Gapuchi's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#oauth-2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-header__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gapuchi's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              OAuth 2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Index
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../notes/AWS/ecs/" class="md-tabs__link">
+        Notes
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../2018/2018-11-16-breadth-first-search/" class="md-tabs__link md-tabs__link--active">
+        Posts
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-nav__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Gapuchi's Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="false">
+          Notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" tabindex="0" aria-expanded="false">
+          AWS
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="AWS" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/ecs/" class="md-nav__link">
+        Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/eks/" class="md-nav__link">
+        EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/emr-on-eks/" class="md-nav__link">
+        EMR on EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/kinesis-streams/" class="md-nav__link">
+        Amazon Kinesis Data Streams
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/route-53/" class="md-nav__link">
+        Route 53
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/vpc/" class="md-nav__link">
+        VPCs and Subnets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/AWS/xray/" class="md-nav__link">
+        Xray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2" tabindex="0" aria-expanded="false">
+          Containers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Containers" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Containers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/containers/namespaces/" class="md-nav__link">
+        Container Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/containers/oci/" class="md-nav__link">
+        Open Contianer Initiative (OCI)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Data structures
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data structures" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data structures
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/data_structures/advanced-topics/" class="md-nav__link">
+        Advanced Topics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/data_structures/implementations/" class="md-nav__link">
+        Implementations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/data_structures/recursion-and-dynamic-programming/" class="md-nav__link">
+        Recursion and Dynamic Programming
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/data_structures/sort-and-search/" class="md-nav__link">
+        Sort and Search
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/data_structures/tree-balance/" class="md-nav__link">
+        Balancing Trees
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/data_structures/trees-and-graphs/" class="md-nav__link">
+        Trees and Graphs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="false">
+          Database
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Database" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Database
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/database/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_5" type="checkbox" id="__nav_2_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_5" tabindex="0" aria-expanded="false">
+          Docker
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Docker" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Docker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/docker/privileged/" class="md-nav__link">
+        Docker Privileges
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_6" tabindex="0" aria-expanded="false">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/golang/intro/" class="md-nav__link">
+        A Tour of Go
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_7" tabindex="0" aria-expanded="false">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/java/concurrency/" class="md-nav__link">
+        Concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/java/iterable/" class="md-nav__link">
+        Iterable, Iterator
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8" tabindex="0" aria-expanded="false">
+          Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/kubernetes/1-kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/kubernetes/2-components/" class="md-nav__link">
+        Components
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/kubernetes/3-api/" class="md-nav__link">
+        Kubernetes API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/kubernetes/4-scheduling/" class="md-nav__link">
+        Scheduling, Preemption, Eviction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_9" tabindex="0" aria-expanded="false">
+          Machine learning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Machine learning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          Machine learning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/01-introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/02-model-and-cost-function/" class="md-nav__link">
+        Model and Cost Function
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/03-parameter-learning/" class="md-nav__link">
+        03 parameter learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/04-multivariate-linear-regression/" class="md-nav__link">
+        04 multivariate linear regression
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/05-computing-parameters-analytically/" class="md-nav__link">
+        05 computing parameters analytically
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/06-classification-and-representation/" class="md-nav__link">
+        06 classification and representation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/07-logistic-regression-model/" class="md-nav__link">
+        07 logistic regression model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/08-multiclass-classification/" class="md-nav__link">
+        08 multiclass classification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/09-solving-overfitting/" class="md-nav__link">
+        09 solving overfitting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/machine_learning/10-neural-networks/" class="md-nav__link">
+        10 neural networks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_10" type="checkbox" id="__nav_2_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_10" tabindex="0" aria-expanded="false">
+          Math
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Math" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_10">
+          <span class="md-nav__icon md-icon"></span>
+          Math
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/math/bitwise-operations/" class="md-nav__link">
+        Bitwise Operations Tips/Tricks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_11" type="checkbox" id="__nav_2_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_11" tabindex="0" aria-expanded="false">
+          Networking
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networking" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_11">
+          <span class="md-nav__icon md-icon"></span>
+          Networking
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/networking/cidr/" class="md-nav__link">
+        Classless Inter-Domain Routing (CIDR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/networking/dns/" class="md-nav__link">
+        DNS Concepts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/networking/rpc-vs-rest/" class="md-nav__link">
+        RPC vs REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/networking/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_12" type="checkbox" id="__nav_2_12" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_12" tabindex="0" aria-expanded="false">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rust" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_12">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/03.1-variables-mutability/" class="md-nav__link">
+        Variable and Mutability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/03.2-data-types/" class="md-nav__link">
+        Data Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/03.3-functions/" class="md-nav__link">
+        Functions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/03.5-control-flow/" class="md-nav__link">
+        Control Flow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/04-ownership/" class="md-nav__link">
+        Ownership
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/05-structs/" class="md-nav__link">
+        Using Structs to Structure Related Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/06-enums/" class="md-nav__link">
+        Enums and Pattern Matching
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/07-managing-projects/" class="md-nav__link">
+        Managing Growing Projects with Packages, Crates, and Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/09-error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/10-generics/" class="md-nav__link">
+        Generic Types, Traits, and Lifetimes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/13-functional-features/" class="md-nav__link">
+        Functional Features
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/rust/15-smart-pointers/" class="md-nav__link">
+        Smart Pointers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13" type="checkbox" id="__nav_2_13" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13" tabindex="0" aria-expanded="false">
+          Scala
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Scala" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_13">
+          <span class="md-nav__icon md-icon"></span>
+          Scala
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/00-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/01-monoids-and-semigroups/" class="md-nav__link">
+        Monoids and Semigroups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/02-functors/" class="md-nav__link">
+        Functors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/03-monads/" class="md-nav__link">
+        Monads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/04-semigroupal-and-applicatives/" class="md-nav__link">
+        Semigroupal and Applicative
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/05-foldable-and-traverse/" class="md-nav__link">
+        Foldable and Traverse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/99-heirarchy-of-type-classes/" class="md-nav__link">
+        Heirarchy of Sequencing Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/higher-kinds-and-type-constructors/" class="md-nav__link">
+        Higher Kinds and Type Constructors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/selections/" class="md-nav__link">
+        Selections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13_10" type="checkbox" id="__nav_2_13_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13_10" tabindex="0" aria-expanded="false">
+          Cats
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cats" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_13_10">
+          <span class="md-nav__icon md-icon"></span>
+          Cats
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/cats/2019-01-19-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/cats/2019-01-23-implicits/" class="md-nav__link">
+        Implicits
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/cats/2019-02-18-monoids-cats/" class="md-nav__link">
+        Monoids Cats
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/scala/cats/ad-hoc-polymorphism/" class="md-nav__link">
+        Ad-hoc Polymorphism in Cats
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_14" type="checkbox" id="__nav_2_14" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_14" tabindex="0" aria-expanded="false">
+          Service
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Service" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_14">
+          <span class="md-nav__icon md-icon"></span>
+          Service
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/service/api/" class="md-nav__link">
+        Api
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_15" type="checkbox" id="__nav_2_15" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_15" tabindex="0" aria-expanded="false">
+          System design
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="System design" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_15">
+          <span class="md-nav__icon md-icon"></span>
+          System design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/0-general-approach/" class="md-nav__link">
+        System Design General Approach
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/1-general-considerations/" class="md-nav__link">
+        General System Design Considerations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/asynchronism/" class="md-nav__link">
+        Asynchronism
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/cache/" class="md-nav__link">
+        Cache
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/content-delivery-network/" class="md-nav__link">
+        Content Deliver Network (CDN)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/databases/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/load-balancer/" class="md-nav__link">
+        Load Balancer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/reverse-proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../notes/system_design/scalability/" class="md-nav__link">
+        Scalabilty
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="true">
+          Posts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Posts" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Posts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1" tabindex="0" aria-expanded="false">
+          2018
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2018" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          2018
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2018/2018-11-16-breadth-first-search/" class="md-nav__link">
+        Breadth First Search
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" tabindex="0" aria-expanded="true">
+          2020
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2020" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          2020
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          OAuth 2
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        OAuth 2
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-driving-example" class="md-nav__link">
+    The Driving Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oauth2" class="md-nav__link">
+    OAuth2
+  </a>
+  
+    <nav class="md-nav" aria-label="OAuth2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#roles" class="md-nav__link">
+    Roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#high-level-flow-of-authorization" class="md-nav__link">
+    High Level Flow of Authorization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-registration" class="md-nav__link">
+    Application Registration
+  </a>
+  
+    <nav class="md-nav" aria-label="Application Registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client-id-and-client-secret" class="md-nav__link">
+    Client ID and Client Secret
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authorization-grant" class="md-nav__link">
+    Authorization Grant
+  </a>
+  
+    <nav class="md-nav" aria-label="Authorization Grant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-authorization-code" class="md-nav__link">
+    Grant Type - Authorization Code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-implicit" class="md-nav__link">
+    Grant Type - Implicit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-resource-owner-password-credentials" class="md-nav__link">
+    Grant Type - Resource Owner Password Credentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-client-credentials" class="md-nav__link">
+    Grant Type - Client Credentials
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-usage" class="md-nav__link">
+    Token Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-token-flow" class="md-nav__link">
+    Refresh Token Flow
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-driving-example" class="md-nav__link">
+    The Driving Example
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oauth2" class="md-nav__link">
+    OAuth2
+  </a>
+  
+    <nav class="md-nav" aria-label="OAuth2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#roles" class="md-nav__link">
+    Roles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#high-level-flow-of-authorization" class="md-nav__link">
+    High Level Flow of Authorization
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application-registration" class="md-nav__link">
+    Application Registration
+  </a>
+  
+    <nav class="md-nav" aria-label="Application Registration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client-id-and-client-secret" class="md-nav__link">
+    Client ID and Client Secret
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authorization-grant" class="md-nav__link">
+    Authorization Grant
+  </a>
+  
+    <nav class="md-nav" aria-label="Authorization Grant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-authorization-code" class="md-nav__link">
+    Grant Type - Authorization Code
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-implicit" class="md-nav__link">
+    Grant Type - Implicit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-resource-owner-password-credentials" class="md-nav__link">
+    Grant Type - Resource Owner Password Credentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grant-type-client-credentials" class="md-nav__link">
+    Grant Type - Client Credentials
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-usage" class="md-nav__link">
+    Token Usage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-token-flow" class="md-nav__link">
+    Refresh Token Flow
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="oauth-2">OAuth 2</h1>
+<h2 id="the-driving-example">The Driving Example</h2>
+<p>In my attempt to learn Rust (check out my notes <a href="https://github.com/gapuchi/hello-rust">here</a>), I wanted to see if I can create a discord API wrapper in Rust.</p>
+<p>I was able to create a new project, use an http crate, and make api calls. Cool! The next step was hitting Discord API's. This is when it got tricky.</p>
+<p>Discord requires authentication (as it should) from clients that want to access it API's. It does this by supporting <strong>OAuth2</strong>.</p>
+<p>Glancing over <a href="https://discord.com/developers/docs/topics/oauth2">Discord's documentation for OAuth2</a>, I saw terms such as <em>authorization url</em>, <em>token url</em>, <em>OAuth2 scopes</em>, <em>code grant</em>, etc - which made me realize I had no idea what I was doing.</p>
+<p>I took a step back and decided to learn what OAuth2 was. I found a helpful article <a href="https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2">on DigitalOcean</a> that broke it down in a helpful way.</p>
+<h2 id="oauth2">OAuth2</h2>
+<p>OAuth2 is an <em>authorization framework</em> that allows:</p>
+<ol>
+<li>an application (my rust binary) to</li>
+<li>access user accounts (my discord account)</li>
+<li>on an HTTP service (i.e. Discord)</li>
+</ol>
+<p>This allows any third party applications to access a users account for their own purposes. This could be an application that populates a calendar with your friend's birthdays by looking at Facebook. The application needs access to your Facebook account to do this, and it can't just sign in as you to achieve this.</p>
+<h3 id="roles">Roles</h3>
+<p>There are 4 OAuth roles:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource Owner</td>
+<td>The <em>user</em> who authorizes an application to access their account. (i.e. me)</td>
+</tr>
+<tr>
+<td>Client</td>
+<td>The <em>application</em> that wants to access a user's account. (i.e. my rust binary)</td>
+</tr>
+<tr>
+<td>Resource Server</td>
+<td>The server that hosts the user's account. (i.e. Discord)</td>
+</tr>
+<tr>
+<td>Authorization Server</td>
+<td>The server that verifies the user's id and issues access tokens to the application. (i.e. Discord)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="high-level-flow-of-authorization">High Level Flow of Authorization</h3>
+<ol>
+<li>The <em>application</em> requests the <em>user</em> authorization to access (some) service resources.</li>
+<li>The <em>user</em> authorizes the request, and the <em>application</em> receives an authorization grant.</li>
+<li>The <em>application</em> requests the <em>authorization server</em> an <em>access token</em> by showing authentication of its own identity (the application's, not the user's) and the authorization grant.</li>
+<li>The <em>authorization server</em> issues an <em>access token</em> to the application.</li>
+<li>The <em>application</em> requests the <em>resource server</em> some resources and presents the access token.</li>
+<li>The <em>resource server</em> serves the resource to the <em>application</em>.</li>
+</ol>
+<h3 id="application-registration">Application Registration</h3>
+<p>Before an application can use OAuth2, it needs to register itself with the service. Services usually provide a registration form of some manner.</p>
+<p>In Discord, this looks like <a href="https://discord.com/developers/applications">a developer portal</a>, where you can create a new application:</p>
+<p><img alt="Discord Application Screenshot" src="/assets/img/DiscordApplicationScreenShot.png" /></p>
+<h4 id="client-id-and-client-secret">Client ID and Client Secret</h4>
+<p>The service will issue <em>client credentials</em> in the form of</p>
+<ul>
+<li><em>client id</em> - A publicly exposed string used by the service to identify the application</li>
+<li><em>client secret</em> - A private string used to authenticate the application when requesting user resources to the service. This must kept private.</li>
+</ul>
+<h3 id="authorization-grant">Authorization Grant</h3>
+<p>There are 4 types of authorization grants defined by OAuth2:</p>
+<ol>
+<li>Authorization CodeApplications</li>
+<li>Implicit</li>
+<li>Resource Owner Password Credentials</li>
+<li>Client Credentials</li>
+</ol>
+<p>The authorization grant type used depends on:</p>
+<ol>
+<li>The method used by the application to request authorization.</li>
+<li>The grant types supported by the service API.</li>
+</ol>
+<h4 id="grant-type-authorization-code">Grant Type - Authorization Code</h4>
+<p>This grant type is optimized for <em>server-side applications</em>. The application must be able to receive HTTP requests from the <em>user-agent</em> (i.e. the user's web browser) because the service will redirect the user once authorization is granted.</p>
+<ol>
+<li>Client is given an <em>authorization code link</em>: <code>https://discord.com/api/oauth2/authorize?response_type=code&amp;client_id=123456789&amp;permissions=8&amp;redirect_uri=http%3A%2F%2Farjun.adhia.net&amp;scope=bot</code><ul>
+<li><code>https://discord.com/api/oauth2/authorize</code> - Discord's API authorization endpoint</li>
+<li><code>client_id=123456789</code> - the <em>application</em>'s <em>client id</em>.</li>
+<li><code>redirect_uri=http%3A%2F%2Farjun.adhia.net</code> - The URI that the service redirects the user after an authorization code is granted.</li>
+<li><code>response_type=code</code> - Specifies that the application is requesting an authorization code grant.</li>
+<li><code>scope=bot</code> - specifies the level of access that the application is requesting. (For Discord, this is defined under <a href="https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes">OAuth2 Scopes</a>).</li>
+</ul>
+</li>
+<li>Client authorizes the application - The user will click on the above link, and the service will ask the user to authorize or deny the application.</li>
+<li>Client is redirected to the provided <code>redirect_url</code> once they authorize: <code>https://arjun.adhia.net/?code=987654321</code><ul>
+<li><code>code=987654321</code> - The authorization code provided by the service, as an argument to the redirect url.</li>
+</ul>
+</li>
+<li>Application requests access token - The application, requests a token with a <code>POST</code>: <code>https://discord.com/api/oauth2/token?client_id=1234567890&amp;client_secret=3216549870&amp;grant_type=authorization_code&amp;code=098763421&amp;redirect_uri=http%3A%2F%2Farjun.adhia.net&amp;scope=bot</code><ul>
+<li><code>client_id=1234567890</code></li>
+<li><code>client_secret=3216549870</code> - the client secret. The client secret can be held by the application because it is server-side and source code is hidden. If this was client side, anyone can see the secret.</li>
+<li><code>grant_type=authorization_code</code></li>
+<li><code>code=098763421</code></li>
+<li><code>redirect_uri=http%3A%2F%2Farjun.adhia.net</code></li>
+<li><code>scope=bot</code></li>
+</ul>
+</li>
+<li>The API will return a response with the access token (and potentially a refresh token, to get a new token when the returned one expires) - the application can now use this token when making calls to the service.</li>
+</ol>
+<h4 id="grant-type-implicit">Grant Type - Implicit</h4>
+<p>This grant type is for mobile apps and web applications, where the client secret confidentaility is not guaranteed.</p>
+<p>In this grant type, the user-agent gets the access token to give to the application. Because of this, the token is exposed to the user and potentially other applications on the user device.</p>
+<p>This flow <strong>does not authenticate the identity of the application</strong>. It relies that the redirect URI is properly configured.</p>
+<ol>
+<li>THe user is given an authorization link, to get a token from the service. This is similar to autorization code link except it <strong>requests a token instead of a code</strong>. (Check the reponse type in the url): <code>https://discord.com/api/oauth2/authorize?response_type=token&amp;client_id=290926444748734499&amp;state=15773059ghq9183habn&amp;scope=identify</code></li>
+<li>Client authorizes the application - The user will click on the above link, and the service will ask the user to authorize or deny the application.</li>
+<li>User-agent receives the redirect URI and the URL contains the access token: <code>https://arjun.adhia.net/?access_token=RTfP0OK99U3kbRtHOoKLmJbOn45PjL&amp;token_type=Bearer&amp;expires_in=604800&amp;scope=identify&amp;state=15773059ghq9183habn</code>.</li>
+<li>User-agent gets redirected to the redirect URI.</li>
+<li>The application returns a webpage that contains a script that can get the access token from the redirect URI.</li>
+<li>User-agent gets the token and passes it to the application.</li>
+</ol>
+<h4 id="grant-type-resource-owner-password-credentials">Grant Type - Resource Owner Password Credentials</h4>
+<p>The user provides their service credentials (like username and password) directly to the application, which uses the credentials to get the token from the service.</p>
+<p><strong>This should only be used if the application is trusted by the user</strong>.</p>
+<ol>
+<li>The application requests a token via a <code>POST</code>. Ex: <code>https://oauth.example.com/token?grant_type=password&amp;username=USERNAME&amp;password=PASSWORD&amp;client_id=CLIENT_ID</code></li>
+</ol>
+<p>(Discord doesn't have this grant type)</p>
+<h4 id="grant-type-client-credentials">Grant Type - Client Credentials</h4>
+<p>This provides an application a way to access its own service account.</p>
+<p>Examples of when this would be useful:</p>
+<ul>
+<li>An application wants to update its registered description or redirect URI</li>
+<li>
+<p>Access other data stored in its service account via the API.</p>
+</li>
+<li>
+<p>The application requests a token via a <code>POST</code> with its credentials, client id, and client secret:</p>
+</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">&#39;https://discord.com/api/oauth2/token&#39;</span>
+
+<span class="err">auth = (CLIENT_ID, CLIENT_SECRET)</span>
+<span class="err">data = {</span>
+<span class="err">    &#39;grant_type&#39;: &#39;client_credentials&#39;,</span>
+<span class="err">    &#39;scope&#39;: &#39;identify connections&#39;</span>
+<span class="err">}</span>
+<span class="err">headers = {</span>
+<span class="err">    &#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;</span>
+<span class="err">}</span>
+</code></pre></div>
+<h3 id="token-usage">Token Usage</h3>
+<p>Once an application has a token, it can use the token to access the user's account via the API.</p>
+<p><code>curl -X POST -H "Authorization: Bearer ACCESS_TOKEN""https://discord.com/api/users/@me"</code>.</p>
+<h3 id="refresh-token-flow">Refresh Token Flow</h3>
+<p>After an access token expires, API's will return an "Invalid Token Error". If a refresh toke was included when getting the original token was provided, the application can use it to request a new token.</p>
+<p>Discord requires the following (for authorization code grant type, the other grant types do not have refresh token):</p>
+<ul>
+<li>client id</li>
+<li>client secret</li>
+<li>grant type</li>
+<li>refresh token</li>
+<li>redirect uri</li>
+<li>scope</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">&#39;https://discord.com/api/oauth2/token&#39;</span>
+
+<span class="err">data = {</span>
+<span class="err">    &#39;client_id&#39;: CLIENT_ID,</span>
+<span class="err">    &#39;client_secret&#39;: CLIENT_SECRET,</span>
+<span class="err">    &#39;grant_type&#39;: &#39;refresh_token&#39;,</span>
+<span class="err">    &#39;refresh_token&#39;: refresh_token,</span>
+<span class="err">    &#39;redirect_uri&#39;: REDIRECT_URI,</span>
+<span class="err">    &#39;scope&#39;: &#39;identify email connections&#39;</span>
+<span class="err">}</span>
+<span class="err">headers = {</span>
+<span class="err">    &#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;</span>
+<span class="err">}</span>
+</code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tracking", "navigation.tabs"], "search": "../../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2502 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Notes By Gapuchi">
+      
+      
+        <meta name="author" content="gapuchi">
+      
+      
+        <link rel="canonical" href="https://arjun.adhia.net/notes/machine_learning/07-logistic-regression-model/">
+      
+      
+        <link rel="prev" href="../06-classification-and-representation/">
+      
+      
+        <link rel="next" href="../08-multiclass-classification/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+    
+    
+      
+        <title>07 logistic regression model - Gapuchi's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#logistic-regression-model" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-header__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gapuchi's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              07 logistic regression model
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Index
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../AWS/ecs/" class="md-tabs__link md-tabs__link--active">
+        Notes
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-tabs__link">
+        Posts
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-nav__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Gapuchi's Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+          Notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" tabindex="0" aria-expanded="false">
+          AWS
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="AWS" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/ecs/" class="md-nav__link">
+        Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/eks/" class="md-nav__link">
+        EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/emr-on-eks/" class="md-nav__link">
+        EMR on EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/kinesis-streams/" class="md-nav__link">
+        Amazon Kinesis Data Streams
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/route-53/" class="md-nav__link">
+        Route 53
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/vpc/" class="md-nav__link">
+        VPCs and Subnets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/xray/" class="md-nav__link">
+        Xray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2" tabindex="0" aria-expanded="false">
+          Containers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Containers" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Containers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/namespaces/" class="md-nav__link">
+        Container Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/oci/" class="md-nav__link">
+        Open Contianer Initiative (OCI)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Data structures
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data structures" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data structures
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/advanced-topics/" class="md-nav__link">
+        Advanced Topics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/implementations/" class="md-nav__link">
+        Implementations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/recursion-and-dynamic-programming/" class="md-nav__link">
+        Recursion and Dynamic Programming
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/sort-and-search/" class="md-nav__link">
+        Sort and Search
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/tree-balance/" class="md-nav__link">
+        Balancing Trees
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/trees-and-graphs/" class="md-nav__link">
+        Trees and Graphs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="false">
+          Database
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Database" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Database
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_5" type="checkbox" id="__nav_2_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_5" tabindex="0" aria-expanded="false">
+          Docker
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Docker" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Docker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/privileged/" class="md-nav__link">
+        Docker Privileges
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_6" tabindex="0" aria-expanded="false">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/intro/" class="md-nav__link">
+        A Tour of Go
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_7" tabindex="0" aria-expanded="false">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/concurrency/" class="md-nav__link">
+        Concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/iterable/" class="md-nav__link">
+        Iterable, Iterator
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8" tabindex="0" aria-expanded="false">
+          Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/1-kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/2-components/" class="md-nav__link">
+        Components
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/3-api/" class="md-nav__link">
+        Kubernetes API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/4-scheduling/" class="md-nav__link">
+        Scheduling, Preemption, Eviction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_9" tabindex="0" aria-expanded="true">
+          Machine learning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Machine learning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          Machine learning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-model-and-cost-function/" class="md-nav__link">
+        Model and Cost Function
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-parameter-learning/" class="md-nav__link">
+        03 parameter learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-multivariate-linear-regression/" class="md-nav__link">
+        04 multivariate linear regression
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-computing-parameters-analytically/" class="md-nav__link">
+        05 computing parameters analytically
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-classification-and-representation/" class="md-nav__link">
+        06 classification and representation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          07 logistic regression model
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        07 logistic regression model
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cost-function" class="md-nav__link">
+    Cost Function
+  </a>
+  
+    <nav class="md-nav" aria-label="Cost Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linear-regression-cost-function" class="md-nav__link">
+    Linear Regression Cost Function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logistic-regression-cost-function" class="md-nav__link">
+    Logistic Regression Cost Function
+  </a>
+  
+    <nav class="md-nav" aria-label="Logistic Regression Cost Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#looking-at-y1" class="md-nav__link">
+    Looking at \(y=1\)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#looking-at-y0" class="md-nav__link">
+    Looking at \(y=0\)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simplified-cost-function-and-gradient-descent" class="md-nav__link">
+    Simplified Cost Function and Gradient Descent
+  </a>
+  
+    <nav class="md-nav" aria-label="Simplified Cost Function and Gradient Descent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logistic-regression-cost-function_1" class="md-nav__link">
+    Logistic Regression Cost Function
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-optimization" class="md-nav__link">
+    Advanced Optimization
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-multiclass-classification/" class="md-nav__link">
+        08 multiclass classification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-solving-overfitting/" class="md-nav__link">
+        09 solving overfitting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-neural-networks/" class="md-nav__link">
+        10 neural networks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_10" type="checkbox" id="__nav_2_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_10" tabindex="0" aria-expanded="false">
+          Math
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Math" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_10">
+          <span class="md-nav__icon md-icon"></span>
+          Math
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../math/bitwise-operations/" class="md-nav__link">
+        Bitwise Operations Tips/Tricks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_11" type="checkbox" id="__nav_2_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_11" tabindex="0" aria-expanded="false">
+          Networking
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networking" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_11">
+          <span class="md-nav__icon md-icon"></span>
+          Networking
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/cidr/" class="md-nav__link">
+        Classless Inter-Domain Routing (CIDR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/dns/" class="md-nav__link">
+        DNS Concepts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/rpc-vs-rest/" class="md-nav__link">
+        RPC vs REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_12" type="checkbox" id="__nav_2_12" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_12" tabindex="0" aria-expanded="false">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rust" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_12">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.1-variables-mutability/" class="md-nav__link">
+        Variable and Mutability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.2-data-types/" class="md-nav__link">
+        Data Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.3-functions/" class="md-nav__link">
+        Functions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.5-control-flow/" class="md-nav__link">
+        Control Flow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/04-ownership/" class="md-nav__link">
+        Ownership
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/05-structs/" class="md-nav__link">
+        Using Structs to Structure Related Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/06-enums/" class="md-nav__link">
+        Enums and Pattern Matching
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/07-managing-projects/" class="md-nav__link">
+        Managing Growing Projects with Packages, Crates, and Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/09-error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/10-generics/" class="md-nav__link">
+        Generic Types, Traits, and Lifetimes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/13-functional-features/" class="md-nav__link">
+        Functional Features
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/15-smart-pointers/" class="md-nav__link">
+        Smart Pointers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13" type="checkbox" id="__nav_2_13" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13" tabindex="0" aria-expanded="false">
+          Scala
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Scala" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_13">
+          <span class="md-nav__icon md-icon"></span>
+          Scala
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/00-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/01-monoids-and-semigroups/" class="md-nav__link">
+        Monoids and Semigroups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/02-functors/" class="md-nav__link">
+        Functors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/03-monads/" class="md-nav__link">
+        Monads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/04-semigroupal-and-applicatives/" class="md-nav__link">
+        Semigroupal and Applicative
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/05-foldable-and-traverse/" class="md-nav__link">
+        Foldable and Traverse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/99-heirarchy-of-type-classes/" class="md-nav__link">
+        Heirarchy of Sequencing Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/higher-kinds-and-type-constructors/" class="md-nav__link">
+        Higher Kinds and Type Constructors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/selections/" class="md-nav__link">
+        Selections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13_10" type="checkbox" id="__nav_2_13_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13_10" tabindex="0" aria-expanded="false">
+          Cats
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cats" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_13_10">
+          <span class="md-nav__icon md-icon"></span>
+          Cats
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-01-19-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-01-23-implicits/" class="md-nav__link">
+        Implicits
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-02-18-monoids-cats/" class="md-nav__link">
+        Monoids Cats
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/ad-hoc-polymorphism/" class="md-nav__link">
+        Ad-hoc Polymorphism in Cats
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_14" type="checkbox" id="__nav_2_14" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_14" tabindex="0" aria-expanded="false">
+          Service
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Service" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_14">
+          <span class="md-nav__icon md-icon"></span>
+          Service
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service/api/" class="md-nav__link">
+        Api
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_15" type="checkbox" id="__nav_2_15" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_15" tabindex="0" aria-expanded="false">
+          System design
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="System design" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_15">
+          <span class="md-nav__icon md-icon"></span>
+          System design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/0-general-approach/" class="md-nav__link">
+        System Design General Approach
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/1-general-considerations/" class="md-nav__link">
+        General System Design Considerations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/asynchronism/" class="md-nav__link">
+        Asynchronism
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/cache/" class="md-nav__link">
+        Cache
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/content-delivery-network/" class="md-nav__link">
+        Content Deliver Network (CDN)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/databases/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/load-balancer/" class="md-nav__link">
+        Load Balancer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/reverse-proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/scalability/" class="md-nav__link">
+        Scalabilty
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Posts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Posts" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Posts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1" tabindex="0" aria-expanded="false">
+          2018
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2018" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          2018
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-nav__link">
+        Breadth First Search
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" tabindex="0" aria-expanded="false">
+          2020
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2020" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          2020
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2020/2020-09-16-learning-oauth2/" class="md-nav__link">
+        OAuth 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cost-function" class="md-nav__link">
+    Cost Function
+  </a>
+  
+    <nav class="md-nav" aria-label="Cost Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linear-regression-cost-function" class="md-nav__link">
+    Linear Regression Cost Function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logistic-regression-cost-function" class="md-nav__link">
+    Logistic Regression Cost Function
+  </a>
+  
+    <nav class="md-nav" aria-label="Logistic Regression Cost Function">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#looking-at-y1" class="md-nav__link">
+    Looking at \(y=1\)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#looking-at-y0" class="md-nav__link">
+    Looking at \(y=0\)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simplified-cost-function-and-gradient-descent" class="md-nav__link">
+    Simplified Cost Function and Gradient Descent
+  </a>
+  
+    <nav class="md-nav" aria-label="Simplified Cost Function and Gradient Descent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logistic-regression-cost-function_1" class="md-nav__link">
+    Logistic Regression Cost Function
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-optimization" class="md-nav__link">
+    Advanced Optimization
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<div class="toc">
+<ul>
+<li><a href="#logistic-regression-model">Logistic Regression Model</a><ul>
+<li><a href="#cost-function">Cost Function</a><ul>
+<li><a href="#linear-regression-cost-function">Linear Regression Cost Function</a></li>
+<li><a href="#logistic-regression-cost-function">Logistic Regression Cost Function</a><ul>
+<li><a href="#looking-at-y1">Looking at \(y=1\)</a></li>
+<li><a href="#looking-at-y0">Looking at \(y=0\)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#simplified-cost-function-and-gradient-descent">Simplified Cost Function and Gradient Descent</a><ul>
+<li><a href="#logistic-regression-cost-function_1">Logistic Regression Cost Function</a></li>
+</ul>
+</li>
+<li><a href="#advanced-optimization">Advanced Optimization</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="logistic-regression-model">Logistic Regression Model</h1>
+<h2 id="cost-function">Cost Function</h2>
+<p>Given:
+$$
+\begin{align<em>}
+\text{training set} &amp;= {(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), \ldots, (x^{(m)}, y^{(m)})}\
+x &amp;= \begin{bmatrix} x_0\ x_1\ \vdots \ x_n \end{bmatrix} \in \R^{n+1}\
+x_0 &amp;= 1\
+y &amp;\in {0,1}\
+h_\theta(x) &amp;= \frac{1}{1 + e^{-\theta^\intercal x}}
+\end{align</em>}
+$$
+<strong>How do we choose <span class="arithmatex">\(\theta\)</span>?</strong> Similar to linear regression, we have to minimize the cost function.</p>
+<h4 id="linear-regression-cost-function">Linear Regression Cost Function</h4>
+<p>Let's re-write <em>linear regression cost function</em>:
+$$
+\begin{align<em>}
+J(\theta) &amp;= \frac{1}{m} \sum_{i=1}^m \frac12(h_\theta(x^{(i)}) - y^{(i)})^2\
+&amp;= \frac1m \sum_{i=1}^m Cost(h_\theta(x^{(i)}), y^{(i)}) &amp; ``\text{The average cost across the training dataset}"\
+Cost(a,b) &amp;= \frac12 (a - b)^2
+\end{align</em>}
+$$
+<strong>Can we use the same <span class="arithmatex">\(Cost\)</span> for logistic regression?</strong> No, we can't. This results in a <strong>non-convex function</strong>, a function with many local minima. This is due to <span class="arithmatex">\(h_\theta(x) = \frac1{1+e^{-\theta^\intercal x}}\)</span> not being linear. We need a convex function for logistic regression</p>
+<h4 id="logistic-regression-cost-function">Logistic Regression Cost Function</h4>
+<div class="arithmatex">\[
+Cost(a,b) = \begin{cases}
+-log(a) &amp; \text{if $y=1$}\\
+-log(1-a) &amp; \text{if $y=0$}\\
+\end{cases}
+\]</div>
+<h5 id="looking-at-y1">Looking at <span class="arithmatex">\(y=1\)</span></h5>
+<div class="arithmatex">\[
+cost = \begin{cases}
+0 &amp; \text{if $a=1$}\\
+\infty &amp; \text{as $a \rarr 0$}\\
+\end{cases}
+\]</div>
+<p><code>TODO Include graph.</code> Note - because we are dealing with logistic functions, <span class="arithmatex">\(0 \leq a \leq 1\)</span>.</p>
+<p><strong>Does <span class="arithmatex">\(\lim_{a \rarr 0} cost = \infty\)</span> make sense?</strong> If we say, for some value of <span class="arithmatex">\(x\)</span>, that <span class="arithmatex">\(h_\theta(x) = 0\)</span>, then we are saying that there is <strong>no chance that <span class="arithmatex">\(y=1\)</span></strong>. If it turns out that <span class="arithmatex">\(y=1\)</span>, then our hypothesis is completely, absolutely wrong.</p>
+<h5 id="looking-at-y0">Looking at <span class="arithmatex">\(y=0\)</span></h5>
+<div class="arithmatex">\[
+cost = \begin{cases}
+0 &amp; \text{if $a=0$}\\
+\infty &amp; \text{as $a \rarr 1$}\\
+\end{cases}
+\]</div>
+<p><code>TODO Include graph.</code> Note - because we are dealing with logistic functions, <span class="arithmatex">\(0 \leq a \leq 1\)</span>.</p>
+<p><strong>Does <span class="arithmatex">\(\lim_{a \rarr1 } cost = \infty\)</span> make sense?</strong> If we say, for some value of <span class="arithmatex">\(x\)</span>, that <span class="arithmatex">\(h_\theta(x) = 1\)</span>, then we are saying that there is <strong>no chance that it is not <span class="arithmatex">\(y=1\)</span></strong>. If it turns out that <span class="arithmatex">\(y=0\)</span>, then our hypothesis is completely, absolutely wrong.</p>
+<h2 id="simplified-cost-function-and-gradient-descent">Simplified Cost Function and Gradient Descent</h2>
+<div class="arithmatex">\[
+Cost(a,b) = \begin{cases}
+-log(a) &amp; \text{if $y=1$}\\
+-log(1-a) &amp; \text{if $y=0$}\\
+\end{cases}
+\]</div>
+<p>The cost function can be simplified, if we take advantage of the fact that <span class="arithmatex">\(y \in \{0,1\}\)</span>:
+$$
+Cost(a,b) = -b\ log(a) + (-(1-b)\ log(1-a))
+$$
+Since <span class="arithmatex">\(y \in \{0,1\}\)</span>, one of the log multipliers will be 0 and the other will be 1.</p>
+<h4 id="logistic-regression-cost-function_1">Logistic Regression Cost Function</h4>
+<div class="arithmatex">\[
+\begin{align*}
+J(\theta) &amp;= \frac1m \sum_{i=1}^m Cost(h_\theta(x^{(i)}), y^{(i)})\\
+&amp;= \frac1m \sum_{i=1}^m -y^{(i)}log(h_\theta(x^{(i)})) - (1-y^{(i)})log(1-h_\theta(x^{(i)}))\\
+&amp;= -\frac1m \sum_{i=1}^m y^{(i)}log(h_\theta(x^{(i)})) + (1-y^{(i)})log(1-h_\theta(x^{(i)}))\\
+\end{align*}
+\]</div>
+<p>Vectorized:
+$$
+\begin{align<em>}
+h &amp;= g(X\theta)\
+J(\theta) &amp;= \frac1m \cdot (-y^\intercal log(h) - (1-y)^\intercal log(1-h))
+\end{align</em>}
+$$
+The above can be derived from the <strong>principle of maximum likelihood estimation</strong>. <code>TODO Derive this</code>.</p>
+<p><strong>So how to do we find <span class="arithmatex">\(\theta\)</span> that minimizes <span class="arithmatex">\(J(\theta)\)</span>?</strong> Gradient descent:
+$$
+\begin{align<em>}
+&amp; Repeat \; \lbrace \
+&amp; \; \theta_j := \theta_j - \alpha \dfrac{\partial}{\partial \theta_j}J(\theta) \
+&amp; \rbrace
+\end{align</em>}
+$$</p>
+<p>Let's calculate <span class="arithmatex">\(\frac{\partial}{\partial\theta_j}J(\theta) = \frac1m \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}\\\)</span>:
+$$
+\begin{align<em>}
+\frac{\partial}{\partial \theta_j} h_\theta(x) &amp;= \frac{\partial}{\partial \theta_j} \frac{1}{1+e^{-\theta^\intercal x}}\
+&amp;= \frac{\partial}{\partial \theta_j}(1+e^{-\theta^\intercal x})^{-1}\
+&amp;= -(1+e^{-\theta^\intercal x})^{-2} \frac{\partial}{\partial \theta_j} (1+e^{-\theta^\intercal x})\
+&amp;= -(1+e^{-\theta^\intercal x})^{-2} \frac{\partial}{\partial \theta_j} e^{-\theta^\intercal x}\
+&amp;= -(1+e^{-\theta^\intercal x})^{-2} e^{-\theta^\intercal x}  \frac{\partial}{\partial \theta_j}(-\theta^\intercal x)\
+&amp;= (1+e^{-\theta^\intercal x})^{-2} e^{-\theta^\intercal x}  \frac{\partial}{\partial \theta_j}(\theta^\intercal x)\
+&amp;= (1+e^{-\theta^\intercal x})^{-2} e^{-\theta^\intercal x}  x_j\
+&amp;= h_\theta(x)^2 \times e^{-\theta^\intercal x} \times x_j\
+\end{align</em>}
+$$</p>
+<div class="arithmatex">\[
+\begin{align*}
+\frac{\partial}{\partial \theta_j} J(\theta) &amp;= \frac{\partial}{\partial \theta_j} \frac{-1}m \sum_{i=1}^m y^{(i)}log(h_\theta(x^{(i)})) + (1-y^{(i)})log(1-h_\theta(x^{(i)}))\\
+&amp;= -\frac1m \sum_{i=1}^m \frac{\partial}{\partial \theta_j} \left( y^{(i)}log(h_\theta(x^{(i)})) \right) + \frac{\partial}{\partial \theta_j} \left( (1-y^{(i)})log(1-h_\theta(x^{(i)}))\right)\\
+&amp;= -\frac1m \sum_{i=1}^m y^{(i)} \frac{\partial}{\partial \theta_j} \left( log(h_\theta(x^{(i)})) \right) + (1-y^{(i)}) \frac{\partial}{\partial \theta_j} \left( log(1-h_\theta(x^{(i)}))\right)\\
+&amp;= -\frac1m \sum_{i=1}^m \frac{y^{(i)}}{h_\theta(x^{(i)}) } \frac{\partial}{\partial \theta_j} \left( h_\theta(x^{(i)}) \right) + \frac{(1-y^{(i)})}{1 - h_\theta(x^{(i)})} \frac{\partial}{\partial \theta_j}\left( 1-h_\theta(x^{(i)})\right)\\
+&amp;= -\frac1m \sum_{i=1}^m \frac{y^{(i)}}{h_\theta(x^{(i)}) } \frac{\partial}{\partial \theta_j} \left( h_\theta(x^{(i)}) \right) - \frac{(1-y^{(i)})}{1 - h_\theta(x^{(i)})} \frac{\partial}{\partial \theta_j}\left( h_\theta(x^{(i)})\right)\\
+&amp;= -\frac1m \sum_{i=1}^m \frac{\partial h_\theta(x^{(i)})}{\partial\theta_j} \left[ \frac{y^{(i)}}{h_\theta(x^{(i)})} - \frac{(1-y^{(i)})}{1 - h_\theta(x^{(i)})} \right]\\
+&amp;= -\frac1m \sum_{i=1}^m \frac{\partial h_\theta(x^{(i)})}{\partial\theta_j} \left[ \frac{y^{(i)}(1 - h_\theta(x^{(i)})) - h_\theta(x^{(i)})(1-y^{(i)})}{h_\theta(x^{(i)})(1 - h_\theta(x^{(i)}))} \right]\\
+&amp;= -\frac1m \sum_{i=1}^m \frac{\partial h_\theta(x^{(i)})}{\partial\theta_j} \left[ \frac{y^{(i)} - h_\theta(x^{(i)})}{h_\theta(x^{(i)})(1 - h_\theta(x^{(i)}))} \right]\\
+&amp;= \frac1m \sum_{i=1}^m \frac{\partial h_\theta(x^{(i)})}{\partial\theta_j} \left[ \frac{h_\theta(x^{(i)}) - y^{(i)}}{h_\theta(x^{(i)})(1 - h_\theta(x^{(i)}))} \right]\\
+&amp;= \frac1m \sum_{i=1}^m h_\theta(x^{(i)})^2 e^{-\theta^\intercal x} \left[ \frac{h_\theta(x^{(i)}) - y^{(i)}}{h_\theta(x^{(i)})(1 - h_\theta(x^{(i)}))} \right] x_j^{(i)}\\
+&amp;= \frac1m \sum_{i=1}^m \left[ \frac{h_\theta(x^{(i)})^2}{h_\theta(x^{(i)})(1 - h_\theta(x^{(i)}))} \right] e^{-\theta^\intercal x} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}\\
+&amp;= \frac1m \sum_{i=1}^m \left[ \frac{ \frac{1}{1+e^{-\theta^\intercal x}} }{1 - \frac{1}{1+e^{-\theta^\intercal x}}} \right] e^{-\theta^\intercal x} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}\\
+&amp;= \frac1m \sum_{i=1}^m \left[ \frac{ \frac{1}{1+e^{-\theta^\intercal x}} }{\frac{e^{-\theta^\intercal x}}{1+e^{-\theta^\intercal x}}} \right] e^{-\theta^\intercal x} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}\\
+&amp;= \frac1m \sum_{i=1}^m \frac{1}{e^{-\theta^\intercal x}} e^{-\theta^\intercal x} (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}\\
+&amp;= \frac1m \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j^{(i)}\\
+\end{align*}
+\]</div>
+<p>Our updated gradient descent:
+$$
+\begin{align<em>}
+&amp; Repeat \; \lbrace \
+&amp; \; \theta_j := \theta_j - \alpha \frac1m \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)}) x_j \
+&amp; \rbrace
+\end{align</em>}
+$$
+Vectorized gradient descent: <code>TODO Think about this</code>
+$$
+\theta := \theta - \frac{\alpha}{m} X^\intercal(g(X\theta) - \vec{y})
+$$
+This looks very similar to linear regression gradient descent! <strong>What is the difference between the two, then?</strong> The <span class="arithmatex">\(h(\theta)\)</span>.</p>
+<ul>
+<li>Linear Regression - <span class="arithmatex">\(h_\theta(x)=\theta^\intercal x\)</span></li>
+<li>Logistic Regression - <span class="arithmatex">\(h_\theta(x)= \frac{1}{1 + e^{-\theta^\intercal x}}\)</span></li>
+</ul>
+<p>One last note, feature scaling applies for logistic regression as well.</p>
+<h2 id="advanced-optimization">Advanced Optimization</h2>
+<p>There are other ways to find <span class="arithmatex">\(\theta\)</span> that minimizes <span class="arithmatex">\(J(\theta)\)</span>:</p>
+<ul>
+<li>Conjugate Gradient</li>
+<li>BFGS</li>
+<li>L-BFGS</li>
+</ul>
+<p>These are more sophisticated algorithms compared to gradient descent, but usually runs faster than it and we do not need to pick a step size (<span class="arithmatex">\(\alpha\)</span>).</p>
+<p>For more details, check the slides/video.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tracking", "navigation.tabs"], "search": "../../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

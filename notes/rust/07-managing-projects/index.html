@@ -1,0 +1,2758 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Notes By Gapuchi">
+      
+      
+        <meta name="author" content="gapuchi">
+      
+      
+        <link rel="canonical" href="https://arjun.adhia.net/notes/rust/07-managing-projects/">
+      
+      
+        <link rel="prev" href="../06-enums/">
+      
+      
+        <link rel="next" href="../09-error-handling/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+    
+    
+      
+        <title>Managing Growing Projects with Packages, Crates, and Modules - Gapuchi's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#managing-growing-projects-with-packages-crates-and-modules" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-header__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gapuchi's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Managing Growing Projects with Packages, Crates, and Modules
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Index
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../AWS/ecs/" class="md-tabs__link md-tabs__link--active">
+        Notes
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-tabs__link">
+        Posts
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-nav__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Gapuchi's Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+          Notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" tabindex="0" aria-expanded="false">
+          AWS
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="AWS" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/ecs/" class="md-nav__link">
+        Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/eks/" class="md-nav__link">
+        EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/emr-on-eks/" class="md-nav__link">
+        EMR on EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/kinesis-streams/" class="md-nav__link">
+        Amazon Kinesis Data Streams
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/route-53/" class="md-nav__link">
+        Route 53
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/vpc/" class="md-nav__link">
+        VPCs and Subnets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/xray/" class="md-nav__link">
+        Xray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2" tabindex="0" aria-expanded="false">
+          Containers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Containers" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Containers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/namespaces/" class="md-nav__link">
+        Container Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/oci/" class="md-nav__link">
+        Open Contianer Initiative (OCI)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Data structures
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data structures" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data structures
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/advanced-topics/" class="md-nav__link">
+        Advanced Topics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/implementations/" class="md-nav__link">
+        Implementations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/recursion-and-dynamic-programming/" class="md-nav__link">
+        Recursion and Dynamic Programming
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/sort-and-search/" class="md-nav__link">
+        Sort and Search
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/tree-balance/" class="md-nav__link">
+        Balancing Trees
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/trees-and-graphs/" class="md-nav__link">
+        Trees and Graphs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="false">
+          Database
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Database" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Database
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_5" type="checkbox" id="__nav_2_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_5" tabindex="0" aria-expanded="false">
+          Docker
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Docker" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Docker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/privileged/" class="md-nav__link">
+        Docker Privileges
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_6" tabindex="0" aria-expanded="false">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/intro/" class="md-nav__link">
+        A Tour of Go
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_7" tabindex="0" aria-expanded="false">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/concurrency/" class="md-nav__link">
+        Concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/iterable/" class="md-nav__link">
+        Iterable, Iterator
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8" tabindex="0" aria-expanded="false">
+          Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/1-kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/2-components/" class="md-nav__link">
+        Components
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/3-api/" class="md-nav__link">
+        Kubernetes API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/4-scheduling/" class="md-nav__link">
+        Scheduling, Preemption, Eviction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_9" tabindex="0" aria-expanded="false">
+          Machine learning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Machine learning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          Machine learning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/01-introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/02-model-and-cost-function/" class="md-nav__link">
+        Model and Cost Function
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/03-parameter-learning/" class="md-nav__link">
+        03 parameter learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/04-multivariate-linear-regression/" class="md-nav__link">
+        04 multivariate linear regression
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/05-computing-parameters-analytically/" class="md-nav__link">
+        05 computing parameters analytically
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/06-classification-and-representation/" class="md-nav__link">
+        06 classification and representation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/07-logistic-regression-model/" class="md-nav__link">
+        07 logistic regression model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/08-multiclass-classification/" class="md-nav__link">
+        08 multiclass classification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/09-solving-overfitting/" class="md-nav__link">
+        09 solving overfitting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/10-neural-networks/" class="md-nav__link">
+        10 neural networks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_10" type="checkbox" id="__nav_2_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_10" tabindex="0" aria-expanded="false">
+          Math
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Math" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_10">
+          <span class="md-nav__icon md-icon"></span>
+          Math
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../math/bitwise-operations/" class="md-nav__link">
+        Bitwise Operations Tips/Tricks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_11" type="checkbox" id="__nav_2_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_11" tabindex="0" aria-expanded="false">
+          Networking
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networking" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_11">
+          <span class="md-nav__icon md-icon"></span>
+          Networking
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/cidr/" class="md-nav__link">
+        Classless Inter-Domain Routing (CIDR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/dns/" class="md-nav__link">
+        DNS Concepts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/rpc-vs-rest/" class="md-nav__link">
+        RPC vs REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_12" type="checkbox" id="__nav_2_12" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_12" tabindex="0" aria-expanded="true">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rust" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_12">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03.1-variables-mutability/" class="md-nav__link">
+        Variable and Mutability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03.2-data-types/" class="md-nav__link">
+        Data Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03.3-functions/" class="md-nav__link">
+        Functions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03.5-control-flow/" class="md-nav__link">
+        Control Flow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-ownership/" class="md-nav__link">
+        Ownership
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-structs/" class="md-nav__link">
+        Using Structs to Structure Related Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-enums/" class="md-nav__link">
+        Enums and Pattern Matching
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Managing Growing Projects with Packages, Crates, and Modules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Managing Growing Projects with Packages, Crates, and Modules
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#packages-and-crates" class="md-nav__link">
+    Packages and Crates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-modules-to-control-scope-and-privacy" class="md-nav__link">
+    Defining Modules to Control Scope and Privacy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paths-for-referring-to-an-item-in-the-module-tree" class="md-nav__link">
+    Paths for Referring to an Item in the Module Tree
+  </a>
+  
+    <nav class="md-nav" aria-label="Paths for Referring to an Item in the Module Tree">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposing-paths-with-the-pub-keyword" class="md-nav__link">
+    Exposing Paths with the pub Keyword
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-relative-paths-with-super" class="md-nav__link">
+    Starting Relative Paths with super
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#making-structs-and-enums-public" class="md-nav__link">
+    Making Structs and Enums Public
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bringing-paths-into-scope-with-the-use-keyword" class="md-nav__link">
+    Bringing Paths into Scope with the use Keyword
+  </a>
+  
+    <nav class="md-nav" aria-label="Bringing Paths into Scope with the use Keyword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-idiomatic-use-paths" class="md-nav__link">
+    Creating Idiomatic use Paths
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#providing-new-names-with-the-as-keyword" class="md-nav__link">
+    Providing New Names with the as Keyword
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#re-exporting-names-with-pub-use" class="md-nav__link">
+    Re-exporting Names with pub use
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-external-packages" class="md-nav__link">
+    Using External Packages
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-nested-paths-to-clean-up-large-use-lists" class="md-nav__link">
+    Using Nested Paths to Clean Up Large use Lists
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#glob-operator" class="md-nav__link">
+    Glob Operator
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#separating-modules-into-different-files" class="md-nav__link">
+    Separating Modules into Different Files
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-generics/" class="md-nav__link">
+        Generic Types, Traits, and Lifetimes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../13-functional-features/" class="md-nav__link">
+        Functional Features
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../15-smart-pointers/" class="md-nav__link">
+        Smart Pointers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13" type="checkbox" id="__nav_2_13" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13" tabindex="0" aria-expanded="false">
+          Scala
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Scala" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_13">
+          <span class="md-nav__icon md-icon"></span>
+          Scala
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/00-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/01-monoids-and-semigroups/" class="md-nav__link">
+        Monoids and Semigroups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/02-functors/" class="md-nav__link">
+        Functors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/03-monads/" class="md-nav__link">
+        Monads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/04-semigroupal-and-applicatives/" class="md-nav__link">
+        Semigroupal and Applicative
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/05-foldable-and-traverse/" class="md-nav__link">
+        Foldable and Traverse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/99-heirarchy-of-type-classes/" class="md-nav__link">
+        Heirarchy of Sequencing Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/higher-kinds-and-type-constructors/" class="md-nav__link">
+        Higher Kinds and Type Constructors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/selections/" class="md-nav__link">
+        Selections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13_10" type="checkbox" id="__nav_2_13_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13_10" tabindex="0" aria-expanded="false">
+          Cats
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cats" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_13_10">
+          <span class="md-nav__icon md-icon"></span>
+          Cats
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-01-19-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-01-23-implicits/" class="md-nav__link">
+        Implicits
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-02-18-monoids-cats/" class="md-nav__link">
+        Monoids Cats
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/ad-hoc-polymorphism/" class="md-nav__link">
+        Ad-hoc Polymorphism in Cats
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_14" type="checkbox" id="__nav_2_14" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_14" tabindex="0" aria-expanded="false">
+          Service
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Service" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_14">
+          <span class="md-nav__icon md-icon"></span>
+          Service
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service/api/" class="md-nav__link">
+        Api
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_15" type="checkbox" id="__nav_2_15" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_15" tabindex="0" aria-expanded="false">
+          System design
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="System design" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_15">
+          <span class="md-nav__icon md-icon"></span>
+          System design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/0-general-approach/" class="md-nav__link">
+        System Design General Approach
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/1-general-considerations/" class="md-nav__link">
+        General System Design Considerations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/asynchronism/" class="md-nav__link">
+        Asynchronism
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/cache/" class="md-nav__link">
+        Cache
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/content-delivery-network/" class="md-nav__link">
+        Content Deliver Network (CDN)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/databases/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/load-balancer/" class="md-nav__link">
+        Load Balancer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/reverse-proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/scalability/" class="md-nav__link">
+        Scalabilty
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Posts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Posts" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Posts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1" tabindex="0" aria-expanded="false">
+          2018
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2018" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          2018
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-nav__link">
+        Breadth First Search
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" tabindex="0" aria-expanded="false">
+          2020
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2020" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          2020
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2020/2020-09-16-learning-oauth2/" class="md-nav__link">
+        OAuth 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#packages-and-crates" class="md-nav__link">
+    Packages and Crates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-modules-to-control-scope-and-privacy" class="md-nav__link">
+    Defining Modules to Control Scope and Privacy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paths-for-referring-to-an-item-in-the-module-tree" class="md-nav__link">
+    Paths for Referring to an Item in the Module Tree
+  </a>
+  
+    <nav class="md-nav" aria-label="Paths for Referring to an Item in the Module Tree">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exposing-paths-with-the-pub-keyword" class="md-nav__link">
+    Exposing Paths with the pub Keyword
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#starting-relative-paths-with-super" class="md-nav__link">
+    Starting Relative Paths with super
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#making-structs-and-enums-public" class="md-nav__link">
+    Making Structs and Enums Public
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bringing-paths-into-scope-with-the-use-keyword" class="md-nav__link">
+    Bringing Paths into Scope with the use Keyword
+  </a>
+  
+    <nav class="md-nav" aria-label="Bringing Paths into Scope with the use Keyword">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creating-idiomatic-use-paths" class="md-nav__link">
+    Creating Idiomatic use Paths
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#providing-new-names-with-the-as-keyword" class="md-nav__link">
+    Providing New Names with the as Keyword
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#re-exporting-names-with-pub-use" class="md-nav__link">
+    Re-exporting Names with pub use
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-external-packages" class="md-nav__link">
+    Using External Packages
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-nested-paths-to-clean-up-large-use-lists" class="md-nav__link">
+    Using Nested Paths to Clean Up Large use Lists
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#glob-operator" class="md-nav__link">
+    Glob Operator
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#separating-modules-into-different-files" class="md-nav__link">
+    Separating Modules into Different Files
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="managing-growing-projects-with-packages-crates-and-modules">Managing Growing Projects with Packages, Crates, and Modules</h1>
+<ul>
+<li>So far we've written code in one <strong>module</strong> in one <strong>file</strong>.</li>
+<li>As code gets bigger, we can split our code into multiple modules and then in multiple files.</li>
+<li><strong>Package</strong> contains <strong>multiple binary crater</strong> and <strong>optionally one library crate</strong>. (Why only one library? Idk).</li>
+<li>As your project grows, you can split code into different crates.</li>
+<li>This leads to the concept of <strong>scope</strong>. The context where code is written has a set of names that are defined as <em>in scope</em>. You can create scopes and change which names are in and out of the scope. You can't have two itesm with the same name in the same scope.</li>
+</ul>
+<p>Rust provides introduces various tools:</p>
+<dl>
+    <dt>Packages</dt>
+    <dd>A Cargo feature that lets you build, test, and share crates</dd>
+    <dt>Crates</dt>
+    <dd>A tree of modules that produces a library or executable</dd>
+    <dt>Modules, use</dt>
+    <dd>Lets you control the organization, scope, and privacy of paths</dd>
+    <dt>Paths</dt>
+    <dd>A way of naming an item, such as a struct, function, or module</dt>
+</dl>
+
+<h2 id="packages-and-crates">Packages and Crates</h2>
+<dl>
+    <dt>Crate</dt>
+    <dd>A binary or library</dd>
+    <dt>crate root</dt>
+    <dd>A source file that the Rust compiler starts from and makes up the root module of your crate.</dd>
+    <dt>Package</dt>
+    <dd>One or more crates that provide a set of functionality. It contains a *Cargo.toml* file that explains how to build these crates.</dd>
+</dl>
+
+<p>A <em>package</em>:</p>
+<ol>
+<li><strong>Must contain</strong> at least one crate (either a library crate or binary crate)</li>
+<li>Cannot contain more than one library crate</li>
+<li>Can contain as many binary crates as you want</li>
+</ol>
+<p>Let's create a new project:</p>
+<div class="highlight"><pre><span></span><code>~<span class="w"> </span>$<span class="w"> </span>cargo<span class="w"> </span>new<span class="w"> </span>my-new-project
+<span class="w">     </span>Created<span class="w"> </span>binary<span class="w"> </span><span class="o">(</span>application<span class="o">)</span><span class="w"> </span><span class="sb">`</span>my-new-project<span class="sb">`</span><span class="w"> </span>package
+~<span class="w"> </span>$<span class="w"> </span>ls<span class="w"> </span>my-new-project<span class="w"> </span>
+Cargo.toml<span class="w"> </span>src
+~<span class="w"> </span>$<span class="w"> </span>ls<span class="w"> </span>my-new-project/src
+main.rs
+~<span class="w"> </span>$<span class="w"> </span>cat<span class="w"> </span>my-new-project/Cargo.toml<span class="w"> </span>
+<span class="o">[</span>package<span class="o">]</span>
+<span class="nv">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;my-new-project&quot;</span>
+<span class="nv">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.1.0&quot;</span>
+<span class="nv">authors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;Spongebob Squarepants &lt;bob.sponge@krustykrab.com&gt;&quot;</span><span class="o">]</span>
+<span class="nv">edition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;2018&quot;</span>
+
+<span class="w"> </span>See<span class="w"> </span>more<span class="w"> </span>keys<span class="w"> </span>and<span class="w"> </span>their<span class="w"> </span>definitions<span class="w"> </span>at<span class="w"> </span>https://doc.rust-lang.org/cargo/reference/manifest.html
+
+<span class="o">[</span>dependencies<span class="o">]</span>
+~<span class="w"> </span>$
+</code></pre></div>
+<p>Couple of things to note here:</p>
+<ol>
+<li>There is a <em>Cargo.toml</em> file, indicating that this is a package.</li>
+<li><em>Cargo.toml</em> has no mention of <code>src/main.rs</code>. Cargo follows the convention of:<ul>
+<li><code>src/main.rs</code> - crate root of a binary crate with the same name as the package.</li>
+<li><code>src/lib.rs,</code> - crate root of a library crate with the same name as the package.</li>
+</ul>
+</li>
+<li>Cargo passes the crate root files to <code>rustc</code> to build the library or binary.</li>
+<li>This package only has <code>src/main.rs</code> so it only contains a binary crate named <code>my-project</code>.</li>
+<li>If the package contains both <code>src/main.rs</code> and <code>src/lib.rs</code>, it has two crates:<ol>
+<li>A binary crate named <code>my-project</code></li>
+<li>A library crate named <code>my-project</code></li>
+</ol>
+</li>
+<li>A package can have multiple binary crates by placing files under <code>src/bin</code>. Each file is a separate binary crate.</li>
+</ol>
+<p><em>A crate will group related functionality together in a scope so its easy to share among projects.</em></p>
+<p>For example, the <code>rand</code> crate provides the functionality of generating random numbers. We can use this by bringing <code>rand</code> crate into our project's scope. All functionality can be through the crate's name, <code>rand</code>.</p>
+<p>Keeping a crate's functionality in its own scope prevents conflicts. For example, <code>rand</code> provides a trait <code>Rng</code>. We can also create a struct <code>Rng</code> in our own crate. We can bring in <code>rand</code> as a dependency and the compiler wouldn't be confused on which <code>Rng</code> we're using. In our crate it refers to our struct <code>Rng</code>. If we wanted to use the one in <code>rand</code>, we'd access it by saying <code>rand::Rng</code>.</p>
+<h2 id="defining-modules-to-control-scope-and-privacy">Defining Modules to Control Scope and Privacy</h2>
+<p><strong>Modules</strong> let us organize code within a crate into groups for readability and easy reuse. It also controls <strong>privacy</strong>.</p>
+<p>Example, a module for restaurant functionality. We create <code>src/lib.rs</code> to create a library crate. Inside this class, we can define modules and functions:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/lib.rs</span>
+<span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">seat_at_table</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">mod</span> <span class="nn">serving</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">fn</span> <span class="nf">take_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">serve_order</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+
+<span class="w">        </span><span class="k">fn</span> <span class="nf">take_payment</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>We use <code>mod</code> keyword to define a module and use <code>{}</code> to define the mody of the module. </p>
+<p>Inside a module, we can define other modules and hold definitions for other items, such as structs, enums, constants, traits, or functions.</p>
+<p>You know how <code>src/lib.rs</code> and <code>src/main.rs</code> are called <em>crate root</em>s? This is because the contents of these files form the a module called <code>crate</code> that is at the root of the module tree.</p>
+<div class="highlight"><pre><span></span><code><span class="k">crate</span>
+<span class="w"> </span><span class="err">└──</span><span class="w"> </span><span class="n">front_of_house</span>
+<span class="w">     </span><span class="err">├──</span><span class="w"> </span><span class="n">hosting</span>
+<span class="w">     </span><span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">add_to_waitlist</span>
+<span class="w">     </span><span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">seat_at_table</span>
+<span class="w">     </span><span class="err">└──</span><span class="w"> </span><span class="n">serving</span>
+<span class="w">         </span><span class="err">├──</span><span class="w"> </span><span class="n">take_order</span>
+<span class="w">         </span><span class="err">├──</span><span class="w"> </span><span class="n">serve_order</span>
+<span class="w">         </span><span class="err">└──</span><span class="w"> </span><span class="n">take_payment</span>
+</code></pre></div>
+<p>Things to note:</p>
+<ol>
+<li><code>hosting</code> <em>nests</em> inside <code>front_of_house</code></li>
+<li><code>hosting</code> is <em>siblings</em> with <code>serving</code></li>
+<li><code>hosting</code> is the <em>child</em> of <code>front_of_house</code></li>
+<li><code>front_of_house</code> is the <em>parent</em> of <code>hosting</code></li>
+</ol>
+<h2 id="paths-for-referring-to-an-item-in-the-module-tree">Paths for Referring to an Item in the Module Tree</h2>
+<p>We use paths to find an item in the module tree structure.</p>
+<p>A path can take two forms:</p>
+<ol>
+<li><em>Absolute path</em> - starts from a crate root by using a crate name or a literal <code>crate</code></li>
+<li><em>Relative path</em> - starts from the current module and uses <code>self</code>, <code>super</code>, or an identifier in the current module.</li>
+</ol>
+<p>The identifiers are separated by <code>::</code> in a path.</p>
+<p>So if we wanted to access <code>add_to_waitlist</code> from the root:</p>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">..</span><span class="p">.</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">//absolute path</span>
+<span class="w">    </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">//relative path</span>
+<span class="w">    </span><span class="n">front_of_house</span>::<span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This actually won't compile because <strong><code>hosting</code> is private</strong>.</p>
+<ul>
+<li>Modules define privacy boundaries. All items are private by default.</li>
+<li>Parent modules cannot access private items inside child modules</li>
+<li>Child modules can access private items in their ancestor modules.<ul>
+<li>This is because child hides implementation from the parent, but the child is aware of the context they're defined in.</li>
+</ul>
+</li>
+<li>Use <code>pub</code> to make an item public.</li>
+</ul>
+<h3 id="exposing-paths-with-the-pub-keyword">Exposing Paths with the pub Keyword</h3>
+<p>Let's make that function accessible:</p>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Absolute path</span>
+<span class="w">    </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Relative path</span>
+<span class="w">    </span><span class="n">front_of_house</span>::<span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Note:</p>
+<ul>
+<li>We had to make both the <code>hosting</code> and <code>add_to_waitlist</code> public.</li>
+<li>We didn't have to make <code>front_of_house</code> public. <code>eat_at_restaurant</code> is siblings with <code>front_of_house</code> so it can access it.</li>
+</ul>
+<h3 id="starting-relative-paths-with-super">Starting Relative Paths with <code>super</code></h3>
+<p>tldr - use <code>super</code> to up one module when using relative paths.</p>
+<h3 id="making-structs-and-enums-public">Making Structs and Enums Public</h3>
+<p>We use <code>pub</code> to make structs and enum public. Things to note:</p>
+<ol>
+<li>Marking a struct public doesn't make the fields public. We have to mark whichever fields we want to be public with <code>pub</code> as well.</li>
+<li>If a struct has private fields, it needs a public associated function that constructs an instance of the struct.<ol>
+<li>Otherwise we can't create an instance outside of the module. (Is this required if we don't want to access it outside of the module? My guess is it is because why else would we mark the struct as <code>pub</code>?)</li>
+</ol>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">back_of_house</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">struct</span> <span class="nc">Breakfast</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="n">toast</span>: <span class="nb">String</span><span class="p">,</span>
+<span class="w">        </span><span class="n">seasonal_fruit</span>: <span class="nb">String</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">impl</span><span class="w"> </span><span class="n">Breakfast</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">summer</span><span class="p">(</span><span class="n">toast</span>: <span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Breakfast</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Breakfast</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">toast</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="n">toast</span><span class="p">),</span>
+<span class="w">                </span><span class="n">seasonal_fruit</span>: <span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;peaches&quot;</span><span class="p">),</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Order a breakfast in the summer with Rye toast</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">meal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back_of_house</span>::<span class="n">Breakfast</span>::<span class="n">summer</span><span class="p">(</span><span class="s">&quot;Rye&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Change our mind about what bread we&#39;d like</span>
+<span class="w">    </span><span class="n">meal</span><span class="p">.</span><span class="n">toast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from</span><span class="p">(</span><span class="s">&quot;Wheat&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="fm">println!</span><span class="p">(</span><span class="s">&quot;I&#39;d like {} toast please&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">meal</span><span class="p">.</span><span class="n">toast</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// The next line won&#39;t compile if we uncomment it; we&#39;re not allowed</span>
+<span class="w">    </span><span class="c1">// to see or modify the seasonal fruit that comes with the meal</span>
+<span class="w">    </span><span class="c1">// meal.seasonal_fruit = String::from(&quot;blueberries&quot;);</span>
+<span class="p">}</span>
+</code></pre></div>
+<ol>
+<li>Marking an enum public makes all its variants public. You only need to mark the enum as <code>pub</code>.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">back_of_house</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">enum</span> <span class="nc">Appetizer</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Soup</span><span class="p">,</span>
+<span class="w">        </span><span class="n">Salad</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">order1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back_of_house</span>::<span class="n">Appetizer</span>::<span class="n">Soup</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">order2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">back_of_house</span>::<span class="n">Appetizer</span>::<span class="n">Salad</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="bringing-paths-into-scope-with-the-use-keyword">Bringing Paths into Scope with the <code>use</code> Keyword</h2>
+<p>Instead of declaring the whole path each time we want to use an item, we can bring the path into scope with <code>use</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">use</span><span class="w"> </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span><span class="p">;</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>With this, <code>hosting</code> can be treated as if <em>it was defined in the scope</em></p>
+<p>You can also use with relative paths.</p>
+<h3 id="creating-idiomatic-use-paths">Creating Idiomatic use Paths</h3>
+<p>Why not specify the <code>use</code> path all the way to <code>add_to_waitlist</code>? <em>This is possible</em>, but the <strong>idiomatic way is to bring the module into scope, not the function</strong>. This way we can make it apparent that the function isn't defined in the scope.</p>
+<p><strong>The idiomatic way to bring in strucst, enums, and other items is to use the full path</strong>. Weird right?</p>
+<p>There really isn't a reason, just the convention that formed.</p>
+<p>The only limitation is that we can't bring two items with the same name into the same scope:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fmt</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span>
+
+<span class="k">fn</span> <span class="nf">function1</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">fmt</span>::<span class="nb">Result</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// --snip--</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+
+<span class="k">fn</span> <span class="nf">function2</span><span class="p">()</span><span class="w"> </span>-&gt; <span class="nc">io</span>::<span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// --snip--</span>
+<span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>We clarify <code>Result</code> by using the <code>fmt</code> or <code>io</code> module. We couldn't do </p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fmt</span>::<span class="nb">Result</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="nb">Result</span><span class="p">;</span>
+</code></pre></div>
+<p>because Rust wouldn't know which one to use if we were to refer to <code>Result</code>.</p>
+<h3 id="providing-new-names-with-the-as-keyword">Providing New Names with the as Keyword</h3>
+<p>A work around to bring in items with the same name is to rename an item with <code>as</code> keyworkd:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">fmt</span>::<span class="nb">Result</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="nb">Result</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">IoResult</span><span class="p">;</span>
+</code></pre></div>
+<h3 id="re-exporting-names-with-pub-use">Re-exporting Names with pub use</h3>
+<ul>
+<li><code>use</code> brings a name into the scope, but the name is private</li>
+<li>If we want to allow external code to access this name in given module, we can slap on a <code>pub</code> in front of <code>use</code></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span><span class="p">;</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Things to note:</p>
+<ol>
+<li>External code can call <code>add_to_waitlist</code> by <code>hosting::add_to_waitlist</code>.</li>
+<li>External code <em>cannot</em> call <code>add_to_waitlist</code> because <code>front_of_house</code> is not public.</li>
+</ol>
+<dl>
+    <dt>When to use?</dt>
+    <dd>The internal structure of your code differs from how users would think about the domain. (e.g. users wouldn't not distinguish "back of house" and "front of house")</dd>
+</dl>
+
+<h3 id="using-external-packages">Using External Packages</h3>
+<p>To use (for example) <code>rand</code> package, we add this line to <em>Cargo.toml</em>:</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="n">dependencies</span><span class="p">]</span>
+<span class="n">rand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;0.0.5&quot;</span>
+</code></pre></div>
+<p>then to bring <code>rand</code> into scope, we add a <code>use</code> line:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">rand</span>::<span class="n">Rng</span><span class="p">;</span><span class="w"> </span><span class="c1">//Starts with the crate name (rand) and then followed by the item/module etc.</span>
+</code></pre></div>
+<p><code>std</code> (standard library) is an external package that is shipped with Rust, so we do not neet to declare it as a dependency, but we do need to declare a <code>use</code> statement if we want to use something from it.</p>
+<h3 id="using-nested-paths-to-clean-up-large-use-lists">Using Nested Paths to Clean Up Large <code>use</code> Lists</h3>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">cmp</span>::<span class="n">Ordering</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span>
+</code></pre></div>
+<p>can be simplified to:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="p">{</span><span class="n">cmp</span>::<span class="n">Ordering</span><span class="p">,</span><span class="w"> </span><span class="n">io</span><span class="p">};</span>
+</code></pre></div>
+<p>and</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span><span class="p">;</span>
+<span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="n">Write</span><span class="p">;</span>
+</code></pre></div>
+<p>can be simplified to:</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">io</span>::<span class="p">{</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">Write</span><span class="p">};</span>
+</code></pre></div>
+<h3 id="glob-operator">Glob Operator</h3>
+<p>If we want to bring in all public items in a path, use <code>*</code> (the <em>glob operator</em>):</p>
+<div class="highlight"><pre><span></span><code><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">collections</span>::<span class="o">*</span><span class="p">;</span>
+</code></pre></div>
+<h2 id="separating-modules-into-different-files">Separating Modules into Different Files</h2>
+<p>We want to split modules into different files when it gets too big.</p>
+<p>Let's move <code>front_of_house</code> into its own file. We create <code>src/front_of_house.rs</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>and change <code>src/lib.rs</code> to be:</p>
+<div class="highlight"><pre><span></span><code><span class="k">mod</span> <span class="nn">front_of_house</span><span class="p">;</span><span class="w"> </span><span class="c1">//The semi-colon instead of a body tells Rust to load the contents from another file with the same name as the module.</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="k">crate</span>::<span class="n">front_of_house</span>::<span class="n">hosting</span><span class="p">;</span>
+
+<span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">eat_at_restaurant</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="w">    </span><span class="n">hosting</span>::<span class="n">add_to_waitlist</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Let's extract <code>hosting</code> to its own file:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// src/front_of_house.rs</span>
+<span class="k">pub</span><span class="w"> </span><span class="k">mod</span> <span class="nn">hosting</span><span class="p">;</span>
+</code></pre></div>
+<p>and we create <code>src/front_of_house/hosting.rs</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">add_to_waitlist</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+</code></pre></div>
+<p>A way to think about the structure is to look at the path: <code>crate::front_of_housing::hosting</code> can be converted to <code>src/front_of_housing/hosting.rs</code>.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tracking", "navigation.tabs"], "search": "../../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

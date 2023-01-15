@@ -1,0 +1,3108 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Notes By Gapuchi">
+      
+      
+        <meta name="author" content="gapuchi">
+      
+      
+        <link rel="canonical" href="https://arjun.adhia.net/notes/scala/03-monads/">
+      
+      
+        <link rel="prev" href="../02-functors/">
+      
+      
+        <link rel="next" href="../04-semigroupal-and-applicatives/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+    
+    
+      
+        <title>Monads - Gapuchi's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#monads" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-header__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gapuchi's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Monads
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Index
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../AWS/ecs/" class="md-tabs__link md-tabs__link--active">
+        Notes
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-tabs__link">
+        Posts
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-nav__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Gapuchi's Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+          Notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" tabindex="0" aria-expanded="false">
+          AWS
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="AWS" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/ecs/" class="md-nav__link">
+        Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/eks/" class="md-nav__link">
+        EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/emr-on-eks/" class="md-nav__link">
+        EMR on EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/kinesis-streams/" class="md-nav__link">
+        Amazon Kinesis Data Streams
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/route-53/" class="md-nav__link">
+        Route 53
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/vpc/" class="md-nav__link">
+        VPCs and Subnets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/xray/" class="md-nav__link">
+        Xray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2" tabindex="0" aria-expanded="false">
+          Containers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Containers" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Containers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/namespaces/" class="md-nav__link">
+        Container Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../containers/oci/" class="md-nav__link">
+        Open Contianer Initiative (OCI)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Data structures
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data structures" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data structures
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/advanced-topics/" class="md-nav__link">
+        Advanced Topics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/implementations/" class="md-nav__link">
+        Implementations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/recursion-and-dynamic-programming/" class="md-nav__link">
+        Recursion and Dynamic Programming
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/sort-and-search/" class="md-nav__link">
+        Sort and Search
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/tree-balance/" class="md-nav__link">
+        Balancing Trees
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/trees-and-graphs/" class="md-nav__link">
+        Trees and Graphs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="false">
+          Database
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Database" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Database
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_5" type="checkbox" id="__nav_2_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_5" tabindex="0" aria-expanded="false">
+          Docker
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Docker" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Docker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/privileged/" class="md-nav__link">
+        Docker Privileges
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_6" tabindex="0" aria-expanded="false">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/intro/" class="md-nav__link">
+        A Tour of Go
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_7" tabindex="0" aria-expanded="false">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/concurrency/" class="md-nav__link">
+        Concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/iterable/" class="md-nav__link">
+        Iterable, Iterator
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8" tabindex="0" aria-expanded="false">
+          Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/1-kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/2-components/" class="md-nav__link">
+        Components
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/3-api/" class="md-nav__link">
+        Kubernetes API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/4-scheduling/" class="md-nav__link">
+        Scheduling, Preemption, Eviction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_9" tabindex="0" aria-expanded="false">
+          Machine learning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Machine learning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          Machine learning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/01-introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/02-model-and-cost-function/" class="md-nav__link">
+        Model and Cost Function
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/03-parameter-learning/" class="md-nav__link">
+        03 parameter learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/04-multivariate-linear-regression/" class="md-nav__link">
+        04 multivariate linear regression
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/05-computing-parameters-analytically/" class="md-nav__link">
+        05 computing parameters analytically
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/06-classification-and-representation/" class="md-nav__link">
+        06 classification and representation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/07-logistic-regression-model/" class="md-nav__link">
+        07 logistic regression model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/08-multiclass-classification/" class="md-nav__link">
+        08 multiclass classification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/09-solving-overfitting/" class="md-nav__link">
+        09 solving overfitting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/10-neural-networks/" class="md-nav__link">
+        10 neural networks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_10" type="checkbox" id="__nav_2_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_10" tabindex="0" aria-expanded="false">
+          Math
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Math" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_10">
+          <span class="md-nav__icon md-icon"></span>
+          Math
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../math/bitwise-operations/" class="md-nav__link">
+        Bitwise Operations Tips/Tricks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_11" type="checkbox" id="__nav_2_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_11" tabindex="0" aria-expanded="false">
+          Networking
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networking" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_11">
+          <span class="md-nav__icon md-icon"></span>
+          Networking
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/cidr/" class="md-nav__link">
+        Classless Inter-Domain Routing (CIDR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/dns/" class="md-nav__link">
+        DNS Concepts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/rpc-vs-rest/" class="md-nav__link">
+        RPC vs REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_12" type="checkbox" id="__nav_2_12" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_12" tabindex="0" aria-expanded="false">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rust" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_12">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.1-variables-mutability/" class="md-nav__link">
+        Variable and Mutability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.2-data-types/" class="md-nav__link">
+        Data Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.3-functions/" class="md-nav__link">
+        Functions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.5-control-flow/" class="md-nav__link">
+        Control Flow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/04-ownership/" class="md-nav__link">
+        Ownership
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/05-structs/" class="md-nav__link">
+        Using Structs to Structure Related Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/06-enums/" class="md-nav__link">
+        Enums and Pattern Matching
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/07-managing-projects/" class="md-nav__link">
+        Managing Growing Projects with Packages, Crates, and Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/09-error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/10-generics/" class="md-nav__link">
+        Generic Types, Traits, and Lifetimes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/13-functional-features/" class="md-nav__link">
+        Functional Features
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/15-smart-pointers/" class="md-nav__link">
+        Smart Pointers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13" type="checkbox" id="__nav_2_13" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13" tabindex="0" aria-expanded="true">
+          Scala
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Scala" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_13">
+          <span class="md-nav__icon md-icon"></span>
+          Scala
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-monoids-and-semigroups/" class="md-nav__link">
+        Monoids and Semigroups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-functors/" class="md-nav__link">
+        Functors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Monads
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Monads
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition-of-a-monad" class="md-nav__link">
+    Definition of a Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="Definition of a Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laws" class="md-nav__link">
+    Laws
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-a-monad-is-also-a-functor" class="md-nav__link">
+    Exercise - A monad is also a functor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-identity-monad" class="md-nav__link">
+    The Identity Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The Identity Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercise-implement-id-monad-instance" class="md-nav__link">
+    Exercise - Implement Id Monad Instance
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-either-monad" class="md-nav__link">
+    The Either Monad
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-eval-monad" class="md-nav__link">
+    The Eval Monad
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-writer-monad" class="md-nav__link">
+    The Writer Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The Writer Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-and-transforming" class="md-nav__link">
+    Composing and Transforming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-factorial" class="md-nav__link">
+    Exercise - factorial
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-reader-monad" class="md-nav__link">
+    The Reader Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The Reader Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-and-transforming_1" class="md-nav__link">
+    Composing and Transforming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise" class="md-nav__link">
+    Exercise
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-state-monad" class="md-nav__link">
+    The State Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The State Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-and-transforming_2" class="md-nav__link">
+    Composing and Transforming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-post-order-calculator" class="md-nav__link">
+    Exercise - Post-Order Calculator
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-custom-monads" class="md-nav__link">
+    Defining Custom Monads
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-semigroupal-and-applicatives/" class="md-nav__link">
+        Semigroupal and Applicative
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-foldable-and-traverse/" class="md-nav__link">
+        Foldable and Traverse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../99-heirarchy-of-type-classes/" class="md-nav__link">
+        Heirarchy of Sequencing Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../higher-kinds-and-type-constructors/" class="md-nav__link">
+        Higher Kinds and Type Constructors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../selections/" class="md-nav__link">
+        Selections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13_10" type="checkbox" id="__nav_2_13_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13_10" tabindex="0" aria-expanded="false">
+          Cats
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cats" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_13_10">
+          <span class="md-nav__icon md-icon"></span>
+          Cats
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cats/2019-01-19-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cats/2019-01-23-implicits/" class="md-nav__link">
+        Implicits
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cats/2019-02-18-monoids-cats/" class="md-nav__link">
+        Monoids Cats
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cats/ad-hoc-polymorphism/" class="md-nav__link">
+        Ad-hoc Polymorphism in Cats
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_14" type="checkbox" id="__nav_2_14" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_14" tabindex="0" aria-expanded="false">
+          Service
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Service" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_14">
+          <span class="md-nav__icon md-icon"></span>
+          Service
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service/api/" class="md-nav__link">
+        Api
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_15" type="checkbox" id="__nav_2_15" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_15" tabindex="0" aria-expanded="false">
+          System design
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="System design" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_15">
+          <span class="md-nav__icon md-icon"></span>
+          System design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/0-general-approach/" class="md-nav__link">
+        System Design General Approach
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/1-general-considerations/" class="md-nav__link">
+        General System Design Considerations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/asynchronism/" class="md-nav__link">
+        Asynchronism
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/cache/" class="md-nav__link">
+        Cache
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/content-delivery-network/" class="md-nav__link">
+        Content Deliver Network (CDN)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/databases/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/load-balancer/" class="md-nav__link">
+        Load Balancer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/reverse-proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/scalability/" class="md-nav__link">
+        Scalabilty
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Posts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Posts" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Posts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1" tabindex="0" aria-expanded="false">
+          2018
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2018" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          2018
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-nav__link">
+        Breadth First Search
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" tabindex="0" aria-expanded="false">
+          2020
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2020" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          2020
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2020/2020-09-16-learning-oauth2/" class="md-nav__link">
+        OAuth 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition-of-a-monad" class="md-nav__link">
+    Definition of a Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="Definition of a Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laws" class="md-nav__link">
+    Laws
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-a-monad-is-also-a-functor" class="md-nav__link">
+    Exercise - A monad is also a functor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-identity-monad" class="md-nav__link">
+    The Identity Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The Identity Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exercise-implement-id-monad-instance" class="md-nav__link">
+    Exercise - Implement Id Monad Instance
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-either-monad" class="md-nav__link">
+    The Either Monad
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-eval-monad" class="md-nav__link">
+    The Eval Monad
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-writer-monad" class="md-nav__link">
+    The Writer Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The Writer Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-and-transforming" class="md-nav__link">
+    Composing and Transforming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-factorial" class="md-nav__link">
+    Exercise - factorial
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-reader-monad" class="md-nav__link">
+    The Reader Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The Reader Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-and-transforming_1" class="md-nav__link">
+    Composing and Transforming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise" class="md-nav__link">
+    Exercise
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-state-monad" class="md-nav__link">
+    The State Monad
+  </a>
+  
+    <nav class="md-nav" aria-label="The State Monad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composing-and-transforming_2" class="md-nav__link">
+    Composing and Transforming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exercise-post-order-calculator" class="md-nav__link">
+    Exercise - Post-Order Calculator
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-custom-monads" class="md-nav__link">
+    Defining Custom Monads
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="monads">Monads</h1>
+<p>In layman's terms, a functor is anything with a <code>flatMap</code> function.</p>
+<blockquote>
+<p>A <strong>monad</strong> is a mechanism for sequencing computations.</p>
+</blockquote>
+<p>But doesn't a <strong>functor</strong> sequence computations? It allows us do perform computations while ignoring some "complications". The thing is, it can handles complications at the beginning. If more complications occur, it cannot handle that.</p>
+<blockquote>
+<p>Complications here meaning the complications of a data type. E.g. how do we apply a function to an Option? We have to get the value, apply it, and return an Option wrapping it. If it is None, return None.</p>
+</blockquote>
+<p>So with functors, we can change <code>Option[A]</code> with <code>A =&gt; B</code> and get <code>Option[B]</code>. What happens if a "complication" occurs, i.e. with <code>A =&gt; Option[B]</code>? Then we get <code>Option[Option[B]]</code>.</p>
+<p>This is where monads come in. The <code>flapMap</code> method allows us to specify what to apply next, accouting for the complication. </p>
+<p>The <code>flatMap</code> method of <code>Option</code> takes intermediate <code>Options</code> to account. Same with the <code>flatMap</code> method of <code>List</code>, etc.</p>
+<p>This "complication" makes more sense if we look at the <code>Future</code> monad. <code>Future</code> is a monad that sequences computations without having to worry that they are asynchronous.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">scala</span><span class="p">.</span><span class="nn">concurrent</span><span class="p">.</span><span class="nc">Future</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">scala</span><span class="p">.</span><span class="nn">concurrent</span><span class="p">.</span><span class="nc">ExecutionContext</span><span class="p">.</span><span class="nc">Implicits</span><span class="p">.</span><span class="n">global</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">scala</span><span class="p">.</span><span class="nn">concurrent</span><span class="p">.</span><span class="nn">duration</span><span class="p">.</span><span class="n">_</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">doSomethingLongRunning</span><span class="p">:</span><span class="w"> </span><span class="nc">Future</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">???</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">doSomethingElseLongRunning</span><span class="p">:</span><span class="w"> </span><span class="nc">Future</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">???</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">doSomethingVeryLongRunning</span><span class="p">:</span><span class="w"> </span><span class="nc">Future</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">result1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">doSomethingLongRunning</span>
+<span class="w">    </span><span class="n">result2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">doSomethingElseLongRunning</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="n">result1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">result2</span>
+</code></pre></div>
+<p>The <code>flatMap</code> takes care of all the complexity of thread pools, schedulers, and that garbage.</p>
+<p>The above runs the computations in sequence. We can think of it as <code>Future[A] flatMap A =&gt; Future[B]</code> giving us <code>Future[B]</code>. We can also do parallel, but thats for another time.</p>
+<h2 id="definition-of-a-monad">Definition of a Monad</h2>
+<p>A monad of constructor type <code>F[_]</code> has:</p>
+<ul>
+<li>An operation <code>pure</code> of type <code>A =&gt; F[A]</code></li>
+<li>An operation <code>flatMap</code> of type <code>(F[A], A=&gt; F[B]) = F[B]</code></li>
+</ul>
+<h3 id="functions">Functions</h3>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">scala</span><span class="p">.</span><span class="nn">language</span><span class="p">.</span><span class="n">higherKinds</span>
+
+<span class="k">trait</span><span class="w"> </span><span class="nc">Monad</span><span class="p">[</span><span class="nc">F</span><span class="p">[</span><span class="n">_</span><span class="p">]]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">pure</span><span class="p">[</span><span class="nc">A</span><span class="p">](</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="p">):</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">flatMap</span><span class="p">[</span><span class="nc">A</span><span class="p">,</span><span class="w"> </span><span class="nc">B</span><span class="p">](</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">A</span><span class="p">])(</span><span class="n">func</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">B</span><span class="p">]):</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">B</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="laws">Laws</h3>
+<p>Monads must obey certain laws:</p>
+<p>Left Identity. Calling <code>pure</code> and then transforming with <code>func</code> is the same as calling <code>func</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="n">pure</span><span class="p">(</span><span class="n">a</span><span class="p">).</span><span class="n">flatMap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</code></pre></div>
+<p>Right identity. Passing <code>pure</code> to <code>flatMap</code> is the same as doing nothing.</p>
+<div class="highlight"><pre><span></span><code><span class="n">m</span><span class="p">.</span><span class="n">flatMap</span><span class="p">(</span><span class="n">pure</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">m</span>
+</code></pre></div>
+<p>Associativity.</p>
+<div class="highlight"><pre><span></span><code><span class="n">m</span><span class="p">.</span><span class="n">flatMap</span><span class="p">(</span><span class="n">f</span><span class="p">).</span><span class="n">flatMap</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">flatMap</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">).</span><span class="n">flatMap</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="exercise-a-monad-is-also-a-functor">Exercise - A monad is also a functor</h3>
+<p>Define <code>map</code> using <code>flatMap</code> and <code>pure</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">scala</span><span class="p">.</span><span class="nn">language</span><span class="p">.</span><span class="n">higherKinds</span>
+
+<span class="k">trait</span><span class="w"> </span><span class="nc">Monad</span><span class="p">[</span><span class="nc">F</span><span class="p">[</span><span class="n">_</span><span class="p">]]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">pure</span><span class="p">[</span><span class="nc">A</span><span class="p">](</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="p">):</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">flatMap</span><span class="p">[</span><span class="nc">A</span><span class="p">,</span><span class="w"> </span><span class="nc">B</span><span class="p">](</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">A</span><span class="p">])(</span><span class="n">func</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">B</span><span class="p">]):</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">B</span><span class="p">]</span>
+
+<span class="w">  </span><span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">[</span><span class="nc">A</span><span class="p">,</span><span class="w"> </span><span class="nc">B</span><span class="p">](</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">A</span><span class="p">])(</span><span class="n">func</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">B</span><span class="p">):</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">B</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="n">flatMap</span><span class="p">(</span><span class="n">value</span><span class="p">)(</span><span class="n">a</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">pure</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="the-identity-monad">The Identity Monad</h2>
+<p>We can define methods that are abstracted over different monads:</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">scala</span><span class="p">.</span><span class="nn">language</span><span class="p">.</span><span class="n">higherKinds</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nc">Monad</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nn">syntax</span><span class="p">.</span><span class="nn">functor</span><span class="p">.</span><span class="n">_</span><span class="w"> </span><span class="c1">// for map</span>
+<span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nn">syntax</span><span class="p">.</span><span class="nn">flatMap</span><span class="p">.</span><span class="n">_</span><span class="w"> </span><span class="c1">// for flatMap</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sumSquare</span><span class="p">[</span><span class="nc">F</span><span class="p">[</span><span class="n">_</span><span class="p">]:</span><span class="w"> </span><span class="nc">Monad</span><span class="p">](</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">Int</span><span class="p">],</span><span class="w"> </span><span class="n">b</span><span class="p">:</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">Int</span><span class="p">]):</span><span class="w"> </span><span class="nc">F</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">a</span>
+<span class="w">    </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">b</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="o">*</span><span class="n">y</span>
+</code></pre></div>
+<p>This works with <code>Options</code> and <code>Lists</code> but not plain old values:</p>
+<div class="highlight"><pre><span></span><code>sumSquare(3,4) //This won&#39;t work! An F doesn&#39;t exist such that F[Int] equals Int
+</code></pre></div>
+<p>It'd be nice if we could define a method that would handle monadic and non-monadic types. Cats provdes the <code>Id</code> type to achieve this.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nc">Id</span>
+
+<span class="n">sumSquare</span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">Int</span><span class="p">],</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">Int</span><span class="p">])</span>
+<span class="c1">// res2: cats.Id[Int] = 25</span>
+</code></pre></div>
+<p>We're casting an <code>Int</code> to <code>Id[Int]</code>, what is going on? Here is the definition of <code>Id</code></p>
+<div class="highlight"><pre><span></span><code><span class="k">package</span><span class="w"> </span><span class="n">cats</span>
+
+<span class="k">type</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">A</span>
+</code></pre></div>
+<p>Id is actually a type alias. We can cast any value to its corresponding <code>Id</code>. Cats provides instances for various type classes for <code>Id</code>, including <code>Functor</code> and <code>Monad</code>.</p>
+<h3 id="exercise-implement-id-monad-instance">Exercise - Implement Id Monad Instance</h3>
+<p>Implement <code>pure</code>, <code>map</code>, and <code>flatMap</code> for <code>Id</code></p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">monad</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="nc">Monad</span><span class="p">[</span><span class="nc">Id</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">def</span><span class="w"> </span><span class="nf">pure</span><span class="p">[</span><span class="nc">A</span><span class="p">](</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="p">):</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span>
+
+<span class="w">    </span><span class="k">def</span><span class="w"> </span><span class="nf">flatMap</span><span class="p">[</span><span class="nc">A</span><span class="p">,</span><span class="w"> </span><span class="nc">B</span><span class="p">](</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">A</span><span class="p">])(</span><span class="n">func</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">B</span><span class="p">]):</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">B</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">        </span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">[</span><span class="nc">A</span><span class="p">,</span><span class="w"> </span><span class="nc">B</span><span class="p">](</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">A</span><span class="p">])(</span><span class="n">func</span><span class="p">:</span><span class="w"> </span><span class="nc">A</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">B</span><span class="p">):</span><span class="w"> </span><span class="nc">Id</span><span class="p">[</span><span class="nc">B</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">        </span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p><strong><code>map</code> can be defined with <code>pure</code> and <code>flatMap</code>. How does that reduce to <code>func(a)</code>?</strong></p>
+<div class="highlight"><pre><span></span><code>flatMap(value)(a =&gt; pure(func(a)))
+flatMap(value)(a =&gt; func(a))
+flatMap(value)(func)
+func(value)
+</code></pre></div>
+<p><strong>Why is <code>flatMap</code> and <code>map</code> the same?</strong></p>
+<p>Functors and Monads are used for sequencing computations ignoring some kind of complications. In the case of <code>Id</code>, there is no complication, so making both of them identical.</p>
+</blockquote>
+<h2 id="the-either-monad">The Either Monad</h2>
+<p>In Scala 2.11 and prior, <code>Either</code> wasn't really considered a monad because it didn't have <code>map</code> and <code>flatMap</code>. Starting with 2.12, <code>Either</code> became <em>right biased</em> and a monad.</p>
+<p>Meaning <code>map</code> and <code>flatMap</code> were applied to <code>Right</code>. If it was <code>Left</code> then no-op.</p>
+<p>It is used a lot for error handling</p>
+<div class="highlight"><pre><span></span><code><span class="k">type</span><span class="w"> </span><span class="nc">Result</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Either</span><span class="p">[</span><span class="nc">Throwable</span><span class="p">,</span><span class="w"> </span><span class="nc">A</span><span class="p">]</span>
+</code></pre></div>
+<p><code>Throwable</code> can be very general, we can make it more explicit:</p>
+<div class="highlight"><pre><span></span><code><span class="k">sealed</span><span class="w"> </span><span class="k">trait</span><span class="w"> </span><span class="nc">LoginError</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">Product</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="nc">Serializable</span>
+
+<span class="k">final</span><span class="w"> </span><span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">UserNotFound</span><span class="p">(</span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
+<span class="w">  </span><span class="k">extends</span><span class="w"> </span><span class="nc">LoginError</span>
+
+<span class="k">final</span><span class="w"> </span><span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PasswordIncorrect</span><span class="p">(</span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
+<span class="w">  </span><span class="k">extends</span><span class="w"> </span><span class="nc">LoginError</span>
+
+<span class="k">case</span><span class="w"> </span><span class="k">object</span><span class="w"> </span><span class="nc">UnexpectedError</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nc">LoginError</span>
+
+<span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
+
+<span class="k">type</span><span class="w"> </span><span class="nc">LoginResult</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Either</span><span class="p">[</span><span class="nc">LoginError</span><span class="p">,</span><span class="w"> </span><span class="nc">User</span><span class="p">]</span>
+</code></pre></div>
+<p>This gives us the ability to discretely handle specific errors.</p>
+<h2 id="the-eval-monad">The Eval Monad</h2>
+<p><code>cats.Eval</code> is a monad that allows us to abstract over different models of evaluation. Three models that cats provides, eager, lazy, and memoized.</p>
+<ul>
+<li>eager is done immediately</li>
+<li>lazy is done when value is accessed</li>
+<li>memoized is done on first accessed and then cached</li>
+</ul>
+<p><code>vals</code> are eager and memoized</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Computing X&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">math</span><span class="p">.</span><span class="n">random</span>
+<span class="p">}</span>
+<span class="c1">// Computing X</span>
+<span class="c1">// x: Double = 0.013533499657218728</span>
+
+<span class="n">x</span><span class="w"> </span><span class="c1">// first access</span>
+<span class="c1">// res0: Double = 0.013533499657218728</span>
+
+<span class="n">x</span><span class="w"> </span><span class="c1">// second access</span>
+<span class="c1">// res1: Double = 0.013533499657218728</span>
+</code></pre></div>
+<p><code>defs</code> are lazy and not memoized</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Computing Y&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">math</span><span class="p">.</span><span class="n">random</span>
+<span class="p">}</span>
+<span class="c1">// y: Double</span>
+
+<span class="n">y</span><span class="w"> </span><span class="c1">// first access</span>
+<span class="c1">// Computing Y</span>
+<span class="c1">// res2: Double = 0.5548281126990907</span>
+
+<span class="n">y</span><span class="w"> </span><span class="c1">// second access</span>
+<span class="c1">// Computing Y</span>
+<span class="c1">// res3: Double = 0.7681777032036599</span>
+</code></pre></div>
+<p><code>lazy vals</code> are lazy and memoized.</p>
+<div class="highlight"><pre><span></span><code><span class="k">lazy</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Computing Z&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">math</span><span class="p">.</span><span class="n">random</span>
+<span class="p">}</span>
+<span class="c1">// z: Double = &lt;lazy&gt;</span>
+
+<span class="n">z</span><span class="w"> </span><span class="c1">// first access</span>
+<span class="c1">// Computing Z</span>
+<span class="c1">// res4: Double = 0.45707125364871903</span>
+
+<span class="n">z</span><span class="w"> </span><span class="c1">// second access</span>
+<span class="c1">// res5: Double = 0.45707125364871903</span>
+</code></pre></div>
+<p><code>Eval</code> has three subtypes: <code>Now</code>, <code>Later</code>, and <code>Always</code>. To draw comparisons:</p>
+<table>
+<thead>
+<tr>
+<th>Scala</th>
+<th>Cats</th>
+<th>Properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>val</code></td>
+<td><code>Now</code></td>
+<td>eager, memoized</td>
+</tr>
+<tr>
+<td><code>lazy val</code></td>
+<td><code>Later</code></td>
+<td>lazy, memoized</td>
+</tr>
+<tr>
+<td><code>def</code></td>
+<td><code>Always</code></td>
+<td>lazy, not memoized</td>
+</tr>
+</tbody>
+</table>
+<p>We access the value with the <code>value</code> method.</p>
+<p>The <code>map</code> and <code>flatMap</code> methods add computations to a chain. In this case, it is a list of functions, that aren't run until <code>value</code> method is invoked.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">greeting</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Eval</span><span class="p">.</span>
+<span class="w">  </span><span class="n">always</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Step 1&quot;</span><span class="p">);</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span><span class="w"> </span><span class="p">}.</span>
+<span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Step 2&quot;</span><span class="p">);</span><span class="w"> </span><span class="s">s&quot;</span><span class="si">$</span><span class="n">str</span><span class="s"> world&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="c1">// greeting: cats.Eval[String] = cats.Eval$$anon$8@79ddd73b</span>
+
+<span class="n">greeting</span><span class="p">.</span><span class="n">value</span>
+<span class="c1">// Step 1</span>
+<span class="c1">// Step 2</span>
+<span class="c1">// res15: String = Hello world</span>
+</code></pre></div>
+<p>The mapping functions are always called lazily on demand (<code>def</code>)</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nc">Eval</span><span class="p">.</span><span class="n">now</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Calculating A&quot;</span><span class="p">);</span><span class="w"> </span><span class="mi">40</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nc">Eval</span><span class="p">.</span><span class="n">always</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Calculating B&quot;</span><span class="p">);</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Adding A and B&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span>
+<span class="p">}</span>
+<span class="c1">// Calculating A</span>
+<span class="c1">// ans: cats.Eval[Int] = cats.Eval$$anon$8@12da1eee</span>
+
+<span class="n">ans</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="c1">// first access</span>
+<span class="c1">// Calculating B</span>
+<span class="c1">// Adding A and B</span>
+<span class="c1">// res16: Int = 42</span>
+
+<span class="n">ans</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="c1">// second access</span>
+<span class="c1">// Calculating B</span>
+<span class="c1">// Adding A and B</span>
+<span class="c1">// res17: Int = 42</span>
+</code></pre></div>
+<p><code>Eval</code> has a <code>memoize</code> method to memoize a change of computations.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">saying</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Eval</span><span class="p">.</span>
+<span class="w">  </span><span class="n">always</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Step 1&quot;</span><span class="p">);</span><span class="w"> </span><span class="s">&quot;The cat&quot;</span><span class="w"> </span><span class="p">}.</span>
+<span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Step 2&quot;</span><span class="p">);</span><span class="w"> </span><span class="s">s&quot;</span><span class="si">$</span><span class="n">str</span><span class="s"> sat on&quot;</span><span class="w"> </span><span class="p">}.</span>
+<span class="w">  </span><span class="n">memoize</span><span class="p">.</span>
+<span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">str</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Step 3&quot;</span><span class="p">);</span><span class="w"> </span><span class="s">s&quot;</span><span class="si">$</span><span class="n">str</span><span class="s"> the mat&quot;</span><span class="w"> </span><span class="p">}</span>
+<span class="c1">// saying: cats.Eval[String] = cats.Eval$$anon$8@159a20cc</span>
+
+<span class="n">saying</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="c1">// first access</span>
+<span class="c1">// Step 1</span>
+<span class="c1">// Step 2</span>
+<span class="c1">// Step 3</span>
+<span class="c1">// res18: String = The cat sat on the mat</span>
+
+<span class="n">saying</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="c1">// second access</span>
+<span class="c1">// Step 3</span>
+<span class="c1">// res19: String = The cat sat on the mat</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>TODO
+
+- Trampolining and Eval.defer
+- Writer Monad
+- Reader Monad
+- State Monad
+</code></pre></div>
+<blockquote>
+<p>Why do we need <code>pure</code>?</p>
+</blockquote>
+<h2 id="the-writer-monad">The Writer Monad</h2>
+<p>The writer monad allows us to carry a log along with a computation.</p>
+<ul>
+<li>A use case for this is multi-threaded computations. We can keep track of logs for separate threads without worrying about them interleaving.</li>
+</ul>
+<p>The <code>Writer[W, A]</code> has two values, a log of type <code>W</code> and a result of type <code>A</code>.</p>
+<p>Writer has some convenience methods.</p>
+<p><code>pure</code> syntax - to create with only result. We need to have <code>Monoid[W]</code> so we can create an empty log (<code>W</code>).</p>
+<div class="highlight"><pre><span></span><code><span class="k">type</span><span class="w"> </span><span class="nc">Logged</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Writer</span><span class="p">[</span><span class="nc">Vector</span><span class="p">[</span><span class="nc">String</span><span class="p">],</span><span class="w"> </span><span class="nc">A</span><span class="p">]</span>
+
+<span class="mi">123</span><span class="p">.</span><span class="n">pure</span><span class="p">[</span><span class="nc">Logged</span><span class="p">]</span>
+<span class="c1">// res2: Logged[Int] = WriterT((Vector(),123))</span>
+</code></pre></div>
+<p><code>tell</code> syntax - to create with only log.</p>
+<div class="highlight"><pre><span></span><code><span class="nc">Vector</span><span class="p">(</span><span class="s">&quot;msg1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg3&quot;</span><span class="p">).</span><span class="n">tell</span>
+<span class="c1">// res3: cats.data.Writer[scala.collection.immutable.Vector[String],Unit] = WriterT((Vector(msg1, msg2, msg3),()))</span>
+</code></pre></div>
+<p><code>Writer.apply</code> or <code>writer</code> syntax if we have both.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Writer</span><span class="p">(</span><span class="nc">Vector</span><span class="p">(</span><span class="s">&quot;msg1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg3&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">123</span><span class="p">)</span>
+<span class="c1">// a: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(msg1, msg2, msg3),123))</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">123</span><span class="p">.</span><span class="n">writer</span><span class="p">(</span><span class="nc">Vector</span><span class="p">(</span><span class="s">&quot;msg1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;msg3&quot;</span><span class="p">))</span>
+<span class="c1">// b: cats.data.Writer[scala.collection.immutable.Vector[String],Int] = WriterT((Vector(msg1, msg2, msg3),123))</span>
+</code></pre></div>
+<p><code>value</code> to get result.
+<code>written</code> to get logs.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">aResult</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">a</span><span class="p">.</span><span class="n">value</span>
+<span class="c1">// aResult: Int = 123</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">aLog</span><span class="p">:</span><span class="w"> </span><span class="nc">Vector</span><span class="p">[</span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">a</span><span class="p">.</span><span class="n">written</span>
+<span class="c1">// aLog: Vector[String] = Vector(msg1, msg2, msg3)</span>
+</code></pre></div>
+<p><code>run</code> to get both.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="p">(</span><span class="n">log</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">run</span>
+<span class="c1">// log: scala.collection.immutable.Vector[String] = Vector(msg1, msg2, msg3)</span>
+<span class="c1">// result: Int = 123</span>
+</code></pre></div>
+<h3 id="composing-and-transforming">Composing and Transforming</h3>
+<p><code>map</code> only operates on the result</p>
+<p><code>flatMap</code> appends the logs (so it needs <code>Semigroup[W]</code>) and with the computed results.</p>
+<blockquote>
+<p>This is an example of how <code>flatMap</code> handles complexity. We use <code>flatMap</code> to apply a function to our result giving us another <code>Writer</code>. One with a log and the result. <code>flatMap</code> here handles this by taking in the new result and taking the <strong>old log</strong> and appending the <strong>new log</strong>. That is handled out of the box.</p>
+</blockquote>
+<p><code>mapWritten</code> transforms the logs.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">writer2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writer1</span><span class="p">.</span><span class="n">mapWritten</span><span class="p">(</span><span class="n">_</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">_</span><span class="p">.</span><span class="n">toUpperCase</span><span class="p">))</span>
+<span class="c1">// writer2: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(A, B, C, X, Y, Z),42))</span>
+</code></pre></div>
+<p><code>bimap</code> transforms both log and result, taking in two functions.</p>
+<p><code>mapBoth</code> transforms both log and result, taking in one function with two arguments.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">writer3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writer1</span><span class="p">.</span><span class="n">bimap</span><span class="p">(</span>
+<span class="w">  </span><span class="n">log</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">log</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">_</span><span class="p">.</span><span class="n">toUpperCase</span><span class="p">),</span>
+<span class="w">  </span><span class="n">res</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span>
+<span class="p">)</span>
+<span class="c1">// writer3: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(A, B, C, X, Y, Z),4200))</span>
+
+<span class="n">writer3</span><span class="p">.</span><span class="n">run</span>
+<span class="c1">// res6: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(A, B, C, X, Y, Z),4200)</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">writer4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writer1</span><span class="p">.</span><span class="n">mapBoth</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">(</span><span class="n">log</span><span class="p">,</span><span class="w"> </span><span class="n">res</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">log2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">log</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;!&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">res2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span>
+<span class="w">  </span><span class="p">(</span><span class="n">log2</span><span class="p">,</span><span class="w"> </span><span class="n">res2</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// writer4: cats.data.WriterT[cats.Id,scala.collection.immutable.Vector[String],Int] = WriterT((Vector(a!, b!, c!, x!, y!, z!),42000))</span>
+
+<span class="n">writer4</span><span class="p">.</span><span class="n">run</span>
+<span class="c1">// res7: cats.Id[(scala.collection.immutable.Vector[String], Int)] = (Vector(a!, b!, c!, x!, y!, z!),42000)</span>
+</code></pre></div>
+<p><code>result</code> clears the logs.</p>
+<p><code>swap</code> swaps the log and result.</p>
+<h3 id="exercise-factorial">Exercise - factorial</h3>
+<p>Let's say we have a slow <code>factorial</code> that logs.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">slowly</span><span class="p">[</span><span class="nc">A</span><span class="p">](</span><span class="n">body</span><span class="p">:</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">A</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="p">):</span><span class="w"> </span><span class="nc">Int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slowly</span><span class="p">(</span><span class="k">if</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">  </span><span class="n">println</span><span class="p">(</span><span class="s">s&quot;fact </span><span class="si">$</span><span class="n">n</span><span class="s"> </span><span class="si">$</span><span class="n">ans</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">ans</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>If we have multi-threaded application, the logs will get interleaved.</p>
+<p>Rewrite <code>factorial</code> to capture the log messages.</p>
+<div class="highlight"><pre><span></span><code><span class="k">type</span><span class="w"> </span><span class="nc">Logged</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Writer</span><span class="p">[</span><span class="nc">Vector</span><span class="p">[</span><span class="nc">String</span><span class="p">],</span><span class="w"> </span><span class="nc">A</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">slowly</span><span class="p">[</span><span class="nc">A</span><span class="p">](</span><span class="n">body</span><span class="p">:</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">A</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="nc">Thread</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="p">):</span><span class="w"> </span><span class="nc">Logged</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">ans</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+<span class="w">                </span><span class="mi">1</span><span class="p">.</span><span class="n">pure</span><span class="p">[</span><span class="nc">Logged</span><span class="p">]</span>
+<span class="w">              </span><span class="k">else</span>
+<span class="w">                </span><span class="n">slowly</span><span class="p">(</span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">).</span><span class="n">map</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">))</span>
+<span class="w">      </span><span class="n">_</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nc">Vector</span><span class="p">(</span><span class="s">s&quot;fact </span><span class="si">$</span><span class="n">n</span><span class="s"> </span><span class="si">$</span><span class="n">ans</span><span class="s">&quot;</span><span class="p">).</span><span class="n">tell</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="n">ans</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="the-reader-monad">The Reader Monad</h2>
+<p>The Reader monad allows us to sequence operations that depend on some input.</p>
+<h3 id="composing-and-transforming_1">Composing and Transforming</h3>
+<p>We can create <code>Reader[A, B]</code> from a function <code>A =&gt; B</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nn">data</span><span class="p">.</span><span class="nc">Reader</span>
+
+<span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Cat</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">,</span><span class="w"> </span><span class="n">favoriteFood</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">)</span>
+<span class="c1">// defined class Cat</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">catName</span><span class="p">:</span><span class="w"> </span><span class="nc">Reader</span><span class="p">[</span><span class="nc">Cat</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="nc">Reader</span><span class="p">(</span><span class="n">cat</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">cat</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+<span class="c1">// catName: cats.data.Reader[Cat,String] = Kleisli(&lt;function1&gt;)</span>
+</code></pre></div>
+<p><code>run</code> extracts the function, and then we can call it as usual.</p>
+<div class="highlight"><pre><span></span><code><span class="n">catName</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="nc">Cat</span><span class="p">(</span><span class="s">&quot;Garfield&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;lasagne&quot;</span><span class="p">))</span>
+<span class="c1">// res0: cats.Id[String] = Garfield</span>
+</code></pre></div>
+<p>We can have a set of <code>Readers</code> that accept the same type of input, combine it using <code>map</code> or <code>flatMap</code>, and then call <code>run</code> at the end.</p>
+<p><code>map</code> passes the result of the computation through a function.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">greetKitty</span><span class="p">:</span><span class="w"> </span><span class="nc">Reader</span><span class="p">[</span><span class="nc">Cat</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">catName</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">s&quot;Hello </span><span class="si">${</span><span class="n">name</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
+
+<span class="n">greetKitty</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="nc">Cat</span><span class="p">(</span><span class="s">&quot;Heathcliff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;junk food&quot;</span><span class="p">))</span>
+<span class="c1">// res1: cats.Id[String] = Hello Heathcliff</span>
+</code></pre></div>
+<p><code>flatMap</code> allows us to combine readers that depend on the same input type.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">feedKitty</span><span class="p">:</span><span class="w"> </span><span class="nc">Reader</span><span class="p">[</span><span class="nc">Cat</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="nc">Reader</span><span class="p">(</span><span class="n">cat</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">s&quot;Have a nice bowl of </span><span class="si">${</span><span class="n">cat</span><span class="p">.</span><span class="n">favoriteFood</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">greetAndFeed</span><span class="p">:</span><span class="w"> </span><span class="nc">Reader</span><span class="p">[</span><span class="nc">Cat</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">greet</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">greetKitty</span>
+<span class="w">    </span><span class="n">feed</span><span class="w">  </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">feedKitty</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="s">s&quot;</span><span class="si">$</span><span class="n">greet</span><span class="s">. </span><span class="si">$</span><span class="n">feed</span><span class="s">.&quot;</span>
+
+<span class="c1">//Or</span>
+<span class="c1">// greetKitty.flatMap(greeting -&gt; feedKitty.map(feeding -&gt; s&quot;$greet. $feed.&quot;))</span>
+
+<span class="n">greetAndFeed</span><span class="p">(</span><span class="nc">Cat</span><span class="p">(</span><span class="s">&quot;Garfield&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;lasagne&quot;</span><span class="p">))</span>
+<span class="c1">// res3: cats.Id[String] = Hello Garfield. Have a nice bowl of lasagne.</span>
+
+<span class="n">greetAndFeed</span><span class="p">(</span><span class="nc">Cat</span><span class="p">(</span><span class="s">&quot;Heathcliff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;junk food&quot;</span><span class="p">))</span>
+<span class="c1">// res4: cats.Id[String] = Hello Heathcliff. Have a nice bowl of junk food.</span>
+</code></pre></div>
+<h3 id="exercise">Exercise</h3>
+<p>Build a program that accept a configuration as a parameter - a login system.</p>
+<div class="highlight"><pre><span></span><code><span class="k">case</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Db</span><span class="p">(</span>
+<span class="w">  </span><span class="n">usernames</span><span class="p">:</span><span class="w"> </span><span class="nc">Map</span><span class="p">[</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">],</span>
+<span class="w">  </span><span class="n">passwords</span><span class="p">:</span><span class="w"> </span><span class="nc">Map</span><span class="p">[</span><span class="nc">String</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Create a type alias <code>DbReader</code> for a <code>Reader</code> that consumes <code>Db</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">type</span><span class="w"> </span><span class="nc">DbReader</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Reader</span><span class="p">[</span><span class="nc">Db</span><span class="p">,</span><span class="w"> </span><span class="nc">A</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">findUsername</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="p">):</span><span class="w"> </span><span class="nc">DbReader</span><span class="p">[</span><span class="nc">Option</span><span class="p">[</span><span class="nc">String</span><span class="p">]]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="nc">Reader</span><span class="p">(</span><span class="n">db</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">usernames</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">id</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">checkPassword</span><span class="p">(</span>
+<span class="w">      </span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">,</span>
+<span class="w">      </span><span class="n">password</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">):</span><span class="w"> </span><span class="nc">DbReader</span><span class="p">[</span><span class="nc">Boolean</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="nc">Reader</span><span class="p">(</span><span class="n">db</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="n">passwords</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">username</span><span class="p">).</span><span class="n">contains</span><span class="p">(</span><span class="n">password</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">checkLogin</span><span class="p">(</span>
+<span class="w">      </span><span class="n">userId</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="p">,</span>
+<span class="w">      </span><span class="n">password</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">):</span><span class="w"> </span><span class="nc">DbReader</span><span class="p">[</span><span class="nc">Boolean</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">username</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">findUsername</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+<span class="w">    </span><span class="n">check</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">username</span><span class="p">.</span><span class="n">map</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span>
+<span class="w">              </span><span class="n">checkPassowrd</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">)</span>
+<span class="w">            </span><span class="p">}.</span><span class="n">getOrElse</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kc">false</span><span class="p">.</span><span class="n">pure</span><span class="p">[</span><span class="nc">DbReader</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="n">check</span>
+</code></pre></div>
+<h2 id="the-state-monad">The State Monad</h2>
+<p>The State monad allow us to pass additional state around as part of a computation.</p>
+<p>Instances of <code>State[S, A]</code> represent functions of type <code>S =&gt; (S, A)</code>. <code>S</code> is the type of state, <code>A</code> is the type of the result.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nn">data</span><span class="p">.</span><span class="nc">State</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">State</span><span class="p">[</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">  </span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="s">s&quot;The state is </span><span class="si">$</span><span class="n">state</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// a: cats.data.State[Int,String] = cats.data.IndexedStateT@6ceace82</span>
+</code></pre></div>
+<p>We can run our monad by giving the inital state.</p>
+<p><code>run</code> gives us both the state and result.</p>
+<p><code>runS</code> gives us the state</p>
+<p><code>runA</code> gives the result.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Get the state and the result:</span>
+<span class="kd">val</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// state: Int = 10</span>
+<span class="c1">// result: String = The state is 10</span>
+
+<span class="c1">// Get the state, ignore the result:</span>
+<span class="kd">val</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">runS</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// state: Int = 10</span>
+
+<span class="c1">// Get the result, ignore the state:</span>
+<span class="kd">val</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">runA</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// result: String = The state is 10</span>
+</code></pre></div>
+<h3 id="composing-and-transforming_2">Composing and Transforming</h3>
+<p><code>map</code> and <code>flatMap</code> thread the state from one instance to another by combining instances. Each individual instances represents an atomic state transformation, and the combination represents a complete sequence of changes.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">step1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">State</span><span class="p">[</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="w"> </span><span class="s">s&quot;Result of step1: </span><span class="si">$</span><span class="n">ans</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// step1: cats.data.State[Int,String] = cats.data.IndexedStateT@76122894</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">step2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">State</span><span class="p">[</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">String</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">  </span><span class="kd">val</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">2</span>
+<span class="w">  </span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="w"> </span><span class="s">s&quot;Result of step2: </span><span class="si">$</span><span class="n">ans</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// step2: cats.data.State[Int,String] = cats.data.IndexedStateT@1eaaaa5d</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">both</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">step1</span>
+<span class="w">  </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">step2</span>
+<span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="c1">// both: cats.data.IndexedStateT[cats.Eval,Int,Int,(String, String)] = cats.data.IndexedStateT@47a10835</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">both</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="mi">20</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// state: Int = 42</span>
+<span class="c1">// result: (String, String) = (Result of step1: 21,Result of step2: 42)</span>
+</code></pre></div>
+<p>The final state is the result of applying both transformations in sequence. The single state gets threaded from step to step even though we don't interact with it in the for comprehension.</p>
+<blockquote>
+<p>How does the state get threaded? It is a behind a scene of flatMap.</p>
+</blockquote>
+<p>The general model for using <code>State</code> is to represent each step as an instance and then compose it using general monad operators.</p>
+<p>Some methods for convenience for creating primitive steps:</p>
+<ul>
+<li><code>get</code> extracts the state as the result. <code>// State[A, A](a =&gt; (a,a))</code></li>
+<li><code>set</code> updates the state and returns unit as the result. <code>// State[A, Unit](a =&gt; (a,())</code></li>
+<li><code>pure</code> ignores the state and returns a supplied result.</li>
+<li><code>inspect</code> extracts the state via a transformation function.</li>
+<li><code>modify</code> updates the state using an update function.</li>
+</ul>
+<p>We can use these in a for comprehension. We usually ignore the result of intermediate stages.</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nc">State</span><span class="p">.</span><span class="n">_</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="n">program</span><span class="p">:</span><span class="w"> </span><span class="nc">State</span><span class="p">[</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">Int</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">a</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span>
+<span class="w">  </span><span class="n">_</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">set</span><span class="p">[</span><span class="nc">Int</span><span class="p">](</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="n">b</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">get</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span>
+<span class="w">  </span><span class="n">_</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">modify</span><span class="p">[</span><span class="nc">Int</span><span class="p">](</span><span class="n">_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="n">c</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">inspect</span><span class="p">[</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">Int</span><span class="p">](</span><span class="n">_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span>
+<span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="p">)</span>
+<span class="c1">// program: cats.data.State[Int,(Int, Int, Int)] = cats.data.IndexedStateT@22a799f8</span>
+
+<span class="kd">val</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">program</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// state: Int = 3</span>
+<span class="c1">// result: (Int, Int, Int) = (1,2,3000)</span>
+</code></pre></div>
+<h3 id="exercise-post-order-calculator">Exercise - Post-Order Calculator</h3>
+<div class="highlight"><pre><span></span><code><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="c1">//gives us 3</span>
+</code></pre></div>
+<p>Let's parse each symbol into a <code>State</code> instance</p>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nn">cats</span><span class="p">.</span><span class="nn">data</span><span class="p">.</span><span class="nc">State</span>
+
+<span class="k">type</span><span class="w"> </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">A</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">State</span><span class="p">[</span><span class="nc">List</span><span class="p">[</span><span class="nc">Int</span><span class="p">],</span><span class="w"> </span><span class="nc">A</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evalOne</span><span class="p">(</span><span class="n">sym</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">):</span><span class="w"> </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sym</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;+&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operator</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">_</span><span class="p">)</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;-&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operator</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_</span><span class="p">)</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operator</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">_</span><span class="p">)</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operator</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">_</span><span class="p">)</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">operand</span><span class="p">(</span><span class="n">num</span><span class="p">.</span><span class="n">toInt</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">operand</span><span class="p">(</span><span class="n">num</span><span class="p">:</span><span class="w"> </span><span class="nc">Int</span><span class="p">):</span><span class="w"> </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="w">  </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">stack</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">num</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="n">stack</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">operator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span><span class="w"> </span><span class="p">(</span><span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="nc">Int</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nc">Int</span><span class="p">):</span><span class="w"> </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">      </span><span class="kd">val</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="w">      </span><span class="p">(</span><span class="n">ans</span><span class="w"> </span><span class="o">::</span><span class="w"> </span><span class="n">tail</span><span class="p">,</span><span class="w"> </span><span class="n">ans</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">      </span><span class="n">sys</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Fail!&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span>
+</code></pre></div>
+<p>Now we can use <code>evalOne</code></p>
+<div class="highlight"><pre><span></span><code><span class="n">evalOne</span><span class="p">(</span><span class="s">&quot;42&quot;</span><span class="p">).</span><span class="n">runA</span><span class="p">(</span><span class="nc">Nil</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// res3: Int = 42</span>
+</code></pre></div>
+<p>We can use <code>flatMap</code> to get more complex</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">evalOne</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">_</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">evalOne</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">ans</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">evalOne</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="p">)</span>
+<span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="n">ans</span>
+<span class="c1">// program: cats.data.IndexedStateT[cats.Eval,List[Int],List[Int],Int] = cats.data.IndexedStateT@19744e79</span>
+
+<span class="n">program</span><span class="p">.</span><span class="n">runA</span><span class="p">(</span><span class="nc">Nil</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// res4: Int = 3</span>
+</code></pre></div>
+<p>We can write an <code>evalAll</code> method.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evalAll</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="nc">List</span><span class="p">[</span><span class="nc">String</span><span class="p">]):</span><span class="w"> </span><span class="nc">CalcState</span><span class="p">[</span><span class="nc">Int</span><span class="p">]</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">input</span><span class="p">.</span><span class="n">foldLeft</span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="n">pure</span><span class="p">[</span><span class="nc">CalcState</span><span class="p">])</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span>
+<span class="w">    </span><span class="n">a</span><span class="p">.</span><span class="n">flatMap</span><span class="p">(</span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">evalOne</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+<span class="w">  </span><span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p>How do we recognize that fold is needed here?</p>
+</blockquote>
+<p>We can combine <code>evalAll</code> and <code>evalOne</code> since they are the same type:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">val</span><span class="w"> </span><span class="n">program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">_</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">evalAll</span><span class="p">(</span><span class="nc">List</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;+&quot;</span><span class="p">))</span>
+<span class="w">  </span><span class="n">_</span><span class="w">   </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">evalAll</span><span class="p">(</span><span class="nc">List</span><span class="p">(</span><span class="s">&quot;3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;+&quot;</span><span class="p">))</span>
+<span class="w">  </span><span class="n">ans</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">evalOne</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
+<span class="p">}</span><span class="w"> </span><span class="k">yield</span><span class="w"> </span><span class="n">ans</span>
+<span class="c1">// program: cats.data.IndexedStateT[cats.Eval,List[Int],List[Int],Int] = cats.data.IndexedStateT@e08e443</span>
+
+<span class="n">program</span><span class="p">.</span><span class="n">runA</span><span class="p">(</span><span class="nc">Nil</span><span class="p">).</span><span class="n">value</span>
+<span class="c1">// res7: Int = 21</span>
+</code></pre></div>
+<p>We can define a function that takes in one string:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">evalInput</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="nc">String</span><span class="p">):</span><span class="w"> </span><span class="nc">Int</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="n">evalAll</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">).</span><span class="n">toList</span><span class="p">).</span><span class="n">runA</span><span class="p">(</span><span class="nc">Nil</span><span class="p">).</span><span class="n">value</span>
+
+<span class="n">evalInput</span><span class="p">(</span><span class="s">&quot;1 2 + 3 4 + *&quot;</span><span class="p">)</span>
+<span class="c1">// res8: Int = 21</span>
+</code></pre></div>
+<h2 id="defining-custom-monads">Defining Custom Monads</h2>
+<p>We can define our own <code>Monad</code> by providing implementation of <code>flatMap</code>, <code>pure</code> and <code>tailRecM</code> (haven't seen this yet).</p>
+<div class="highlight"><pre><span></span><code>// TODO Finish custom 
+</code></pre></div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tracking", "navigation.tabs"], "search": "../../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

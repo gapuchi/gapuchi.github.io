@@ -1,0 +1,2814 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Notes By Gapuchi">
+      
+      
+        <meta name="author" content="gapuchi">
+      
+      
+        <link rel="canonical" href="https://arjun.adhia.net/notes/containers/namespaces/">
+      
+      
+        <link rel="prev" href="../../AWS/xray/">
+      
+      
+        <link rel="next" href="../oci/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.5">
+    
+    
+      
+        <title>Container Namespaces - Gapuchi's Notes</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#container-namespaces" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-header__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gapuchi's Notes
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Container Namespaces
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="blue"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Index
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../AWS/ecs/" class="md-tabs__link md-tabs__link--active">
+        Notes
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-tabs__link">
+        Posts
+      </a>
+    </li>
+  
+
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Gapuchi&#39;s Notes" class="md-nav__button md-logo" aria-label="Gapuchi's Notes" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Gapuchi's Notes
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/gapuchi/gapuchi.github.io" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Index
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="true">
+          Notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" tabindex="0" aria-expanded="false">
+          AWS
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="AWS" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          AWS
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/ecs/" class="md-nav__link">
+        Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/eks/" class="md-nav__link">
+        EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/emr-on-eks/" class="md-nav__link">
+        EMR on EKS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/kinesis-streams/" class="md-nav__link">
+        Amazon Kinesis Data Streams
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/route-53/" class="md-nav__link">
+        Route 53
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/vpc/" class="md-nav__link">
+        VPCs and Subnets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../AWS/xray/" class="md-nav__link">
+        Xray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2" tabindex="0" aria-expanded="true">
+          Containers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Containers" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Containers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Container Namespaces
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Container Namespaces
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#chroot" class="md-nav__link">
+    Chroot
+  </a>
+  
+    <nav class="md-nav" aria-label="Chroot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-cant-we-create-containers-with-chroot" class="md-nav__link">
+    Why can't we create containers with chroot?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linux-namespaces" class="md-nav__link">
+    Linux Namespaces
+  </a>
+  
+    <nav class="md-nav" aria-label="Linux Namespaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespace-api" class="md-nav__link">
+    Namespace API
+  </a>
+  
+    <nav class="md-nav" aria-label="Namespace API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-clone" class="md-nav__link">
+    1. clone
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-unshare" class="md-nav__link">
+    2. unshare
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-setns" class="md-nav__link">
+    3. setns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proc" class="md-nav__link">
+    proc
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-namespaces-or-namespace-types" class="md-nav__link">
+    Available Namespaces (or Namespace Types)
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Namespaces (or Namespace Types)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mount-mnt" class="md-nav__link">
+    Mount (mnt)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unix-time-sharing-system-uts" class="md-nav__link">
+    UNIX Time-sharing System (uts)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interprocess-communication-ipc" class="md-nav__link">
+    Interprocess Communication (ipc)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#process-id-pid" class="md-nav__link">
+    Process ID (pid)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-net" class="md-nav__link">
+    Network (net)
+  </a>
+  
+    <nav class="md-nav" aria-label="Network (net)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-case-software-defined-network" class="md-nav__link">
+    Use Case - Software Defined Network
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-id-user" class="md-nav__link">
+    User ID (user)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-group-cgroup" class="md-nav__link">
+    Control Group (cgroup)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composing-namespaces" class="md-nav__link">
+    Composing Namespaces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../oci/" class="md-nav__link">
+        Open Contianer Initiative (OCI)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_3" type="checkbox" id="__nav_2_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_3" tabindex="0" aria-expanded="false">
+          Data structures
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data structures" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data structures
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/advanced-topics/" class="md-nav__link">
+        Advanced Topics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/implementations/" class="md-nav__link">
+        Implementations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/recursion-and-dynamic-programming/" class="md-nav__link">
+        Recursion and Dynamic Programming
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/sort-and-search/" class="md-nav__link">
+        Sort and Search
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/tree-balance/" class="md-nav__link">
+        Balancing Trees
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../data_structures/trees-and-graphs/" class="md-nav__link">
+        Trees and Graphs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_4" type="checkbox" id="__nav_2_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_4" tabindex="0" aria-expanded="false">
+          Database
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Database" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_4">
+          <span class="md-nav__icon md-icon"></span>
+          Database
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../database/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_5" type="checkbox" id="__nav_2_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_5" tabindex="0" aria-expanded="false">
+          Docker
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Docker" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_5">
+          <span class="md-nav__icon md-icon"></span>
+          Docker
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docker/privileged/" class="md-nav__link">
+        Docker Privileges
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_6" tabindex="0" aria-expanded="false">
+          Golang
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Golang" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_6">
+          <span class="md-nav__icon md-icon"></span>
+          Golang
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../golang/intro/" class="md-nav__link">
+        A Tour of Go
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_7" type="checkbox" id="__nav_2_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_7" tabindex="0" aria-expanded="false">
+          Java
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Java" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_7">
+          <span class="md-nav__icon md-icon"></span>
+          Java
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/concurrency/" class="md-nav__link">
+        Concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/iterable/" class="md-nav__link">
+        Iterable, Iterator
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_8" type="checkbox" id="__nav_2_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_8" tabindex="0" aria-expanded="false">
+          Kubernetes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Kubernetes" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_8">
+          <span class="md-nav__icon md-icon"></span>
+          Kubernetes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/1-kubernetes/" class="md-nav__link">
+        Kubernetes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/2-components/" class="md-nav__link">
+        Components
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/3-api/" class="md-nav__link">
+        Kubernetes API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../kubernetes/4-scheduling/" class="md-nav__link">
+        Scheduling, Preemption, Eviction
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_9" type="checkbox" id="__nav_2_9" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_9" tabindex="0" aria-expanded="false">
+          Machine learning
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Machine learning" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_9">
+          <span class="md-nav__icon md-icon"></span>
+          Machine learning
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/01-introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/02-model-and-cost-function/" class="md-nav__link">
+        Model and Cost Function
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/03-parameter-learning/" class="md-nav__link">
+        03 parameter learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/04-multivariate-linear-regression/" class="md-nav__link">
+        04 multivariate linear regression
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/05-computing-parameters-analytically/" class="md-nav__link">
+        05 computing parameters analytically
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/06-classification-and-representation/" class="md-nav__link">
+        06 classification and representation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/07-logistic-regression-model/" class="md-nav__link">
+        07 logistic regression model
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/08-multiclass-classification/" class="md-nav__link">
+        08 multiclass classification
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/09-solving-overfitting/" class="md-nav__link">
+        09 solving overfitting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../machine_learning/10-neural-networks/" class="md-nav__link">
+        10 neural networks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_10" type="checkbox" id="__nav_2_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_10" tabindex="0" aria-expanded="false">
+          Math
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Math" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_10">
+          <span class="md-nav__icon md-icon"></span>
+          Math
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../math/bitwise-operations/" class="md-nav__link">
+        Bitwise Operations Tips/Tricks
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_11" type="checkbox" id="__nav_2_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_11" tabindex="0" aria-expanded="false">
+          Networking
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Networking" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_11">
+          <span class="md-nav__icon md-icon"></span>
+          Networking
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/cidr/" class="md-nav__link">
+        Classless Inter-Domain Routing (CIDR)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/dns/" class="md-nav__link">
+        DNS Concepts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/rpc-vs-rest/" class="md-nav__link">
+        RPC vs REST
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../networking/ssh/" class="md-nav__link">
+        SSH
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_12" type="checkbox" id="__nav_2_12" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_12" tabindex="0" aria-expanded="false">
+          Rust
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Rust" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_12">
+          <span class="md-nav__icon md-icon"></span>
+          Rust
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.1-variables-mutability/" class="md-nav__link">
+        Variable and Mutability
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.2-data-types/" class="md-nav__link">
+        Data Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.3-functions/" class="md-nav__link">
+        Functions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/03.5-control-flow/" class="md-nav__link">
+        Control Flow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/04-ownership/" class="md-nav__link">
+        Ownership
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/05-structs/" class="md-nav__link">
+        Using Structs to Structure Related Data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/06-enums/" class="md-nav__link">
+        Enums and Pattern Matching
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/07-managing-projects/" class="md-nav__link">
+        Managing Growing Projects with Packages, Crates, and Modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/09-error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/10-generics/" class="md-nav__link">
+        Generic Types, Traits, and Lifetimes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/13-functional-features/" class="md-nav__link">
+        Functional Features
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rust/15-smart-pointers/" class="md-nav__link">
+        Smart Pointers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13" type="checkbox" id="__nav_2_13" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13" tabindex="0" aria-expanded="false">
+          Scala
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Scala" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_13">
+          <span class="md-nav__icon md-icon"></span>
+          Scala
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/00-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/01-monoids-and-semigroups/" class="md-nav__link">
+        Monoids and Semigroups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/02-functors/" class="md-nav__link">
+        Functors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/03-monads/" class="md-nav__link">
+        Monads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/04-semigroupal-and-applicatives/" class="md-nav__link">
+        Semigroupal and Applicative
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/05-foldable-and-traverse/" class="md-nav__link">
+        Foldable and Traverse
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/99-heirarchy-of-type-classes/" class="md-nav__link">
+        Heirarchy of Sequencing Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/higher-kinds-and-type-constructors/" class="md-nav__link">
+        Higher Kinds and Type Constructors
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/selections/" class="md-nav__link">
+        Selections
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_13_10" type="checkbox" id="__nav_2_13_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_13_10" tabindex="0" aria-expanded="false">
+          Cats
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cats" data-md-level="3">
+        <label class="md-nav__title" for="__nav_2_13_10">
+          <span class="md-nav__icon md-icon"></span>
+          Cats
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-01-19-type-classes/" class="md-nav__link">
+        Type Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-01-23-implicits/" class="md-nav__link">
+        Implicits
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/2019-02-18-monoids-cats/" class="md-nav__link">
+        Monoids Cats
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/cats/ad-hoc-polymorphism/" class="md-nav__link">
+        Ad-hoc Polymorphism in Cats
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_14" type="checkbox" id="__nav_2_14" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_14" tabindex="0" aria-expanded="false">
+          Service
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Service" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_14">
+          <span class="md-nav__icon md-icon"></span>
+          Service
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../service/api/" class="md-nav__link">
+        Api
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_15" type="checkbox" id="__nav_2_15" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_15" tabindex="0" aria-expanded="false">
+          System design
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="System design" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_15">
+          <span class="md-nav__icon md-icon"></span>
+          System design
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/0-general-approach/" class="md-nav__link">
+        System Design General Approach
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/1-general-considerations/" class="md-nav__link">
+        General System Design Considerations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/asynchronism/" class="md-nav__link">
+        Asynchronism
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/cache/" class="md-nav__link">
+        Cache
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/content-delivery-network/" class="md-nav__link">
+        Content Deliver Network (CDN)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/databases/" class="md-nav__link">
+        Database
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/load-balancer/" class="md-nav__link">
+        Load Balancer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/reverse-proxy/" class="md-nav__link">
+        Reverse Proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../system_design/scalability/" class="md-nav__link">
+        Scalabilty
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Posts
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Posts" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Posts
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1" tabindex="0" aria-expanded="false">
+          2018
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2018" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          2018
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2018/2018-11-16-breadth-first-search/" class="md-nav__link">
+        Breadth First Search
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" tabindex="0" aria-expanded="false">
+          2020
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="2020" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          2020
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../posts/2020/2020-09-16-learning-oauth2/" class="md-nav__link">
+        OAuth 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#chroot" class="md-nav__link">
+    Chroot
+  </a>
+  
+    <nav class="md-nav" aria-label="Chroot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-cant-we-create-containers-with-chroot" class="md-nav__link">
+    Why can't we create containers with chroot?
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#linux-namespaces" class="md-nav__link">
+    Linux Namespaces
+  </a>
+  
+    <nav class="md-nav" aria-label="Linux Namespaces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespace-api" class="md-nav__link">
+    Namespace API
+  </a>
+  
+    <nav class="md-nav" aria-label="Namespace API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-clone" class="md-nav__link">
+    1. clone
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-unshare" class="md-nav__link">
+    2. unshare
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-setns" class="md-nav__link">
+    3. setns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proc" class="md-nav__link">
+    proc
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-namespaces-or-namespace-types" class="md-nav__link">
+    Available Namespaces (or Namespace Types)
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Namespaces (or Namespace Types)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mount-mnt" class="md-nav__link">
+    Mount (mnt)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unix-time-sharing-system-uts" class="md-nav__link">
+    UNIX Time-sharing System (uts)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interprocess-communication-ipc" class="md-nav__link">
+    Interprocess Communication (ipc)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#process-id-pid" class="md-nav__link">
+    Process ID (pid)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#network-net" class="md-nav__link">
+    Network (net)
+  </a>
+  
+    <nav class="md-nav" aria-label="Network (net)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#use-case-software-defined-network" class="md-nav__link">
+    Use Case - Software Defined Network
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#user-id-user" class="md-nav__link">
+    User ID (user)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#control-group-cgroup" class="md-nav__link">
+    Control Group (cgroup)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#composing-namespaces" class="md-nav__link">
+    Composing Namespaces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="container-namespaces">Container Namespaces</h1>
+<p>My notes from <a href="https://medium.com/@saschagrunert/demystifying-containers-part-i-kernel-space-2c53d6979504">this Medium article</a>.</p>
+<p>Containers are:</p>
+<ol>
+<li>isolated</li>
+<li>groups of processes</li>
+<li>running on a single host</li>
+<li>which fulfill a set of common features.</li>
+</ol>
+<h2 id="chroot">Chroot</h2>
+<p>Most Unix operating systems have the ability to change the root directory of the current process (and its children). This is available as the syscall <a href="https://man7.org/linux/man-pages/man2/chroot.2.html"><code>chroot(2)</code></a>. It is also known as <strong>jail</strong>.</p>
+<blockquote>
+<p><strong>What is the significance of changing the root?</strong></p>
+<p>It (kinda) changes the environment. The root contains all the binaries/libraries that processes can use. When you kick off a shell, one of the processes that gets kicked off is <code>bash</code>. The process looks for this in <code>/bin/bash</code>.</p>
+</blockquote>
+<p>It was used in the first approaches of running microservices. It is currently used by a wide range of applications, including within build systems for different distributions.</p>
+<p>How can we set up a chroot environment? With little effort:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>mkdir<span class="w"> </span>-p<span class="w"> </span>new-root/<span class="o">{</span>bin,lib64<span class="o">}</span>
+<span class="gp">$ </span>cp<span class="w"> </span>/bin/bash<span class="w"> </span>new-root/bin
+<span class="gp">$ </span>cp<span class="w"> </span>/lib64/<span class="o">{</span>ld-linux-x86-64.so*,libc.so*,libdl.so.*,libreadline.so*,libtinfo.so*<span class="o">}</span><span class="w"> </span>new-root/lib64
+<span class="go">// This isn&#39;t working on my system because a dependency is missing</span>
+<span class="gp">$ </span>sudo<span class="w"> </span>chroot<span class="w"> </span>new-root
+</code></pre></div>
+<p>This creates a new folder, copies the bash shell and its dependencies to this folder, and sets this new folder as the root. This jail only has bash capabilities (and everything that comes with bash, e.g. <code>cd</code>, <code>pwd</code>, etc.). Not really a useful jail, but a working example.</p>
+<blockquote>
+<p>Could we run a binary in this jail and call it a container? <strong>No.</strong></p>
+</blockquote>
+<h3 id="why-cant-we-create-containers-with-chroot">Why can't we create containers with <code>chroot</code>?</h3>
+<p>Let's take a look at the 4 attributes of containers:</p>
+<ol>
+<li>isolated? <strong>It actually isn't isolated.</strong> We will expand on this below.</li>
+<li>groups of processes? <strong>Yes.</strong> In linux, processes live in a tree structure, so this means having a root process. A root process can then kick off child processes, giving us a group of processes.</li>
+<li>running on a single host? <strong>Yes.</strong></li>
+<li>which fulfill a set of common features. <strong>Yes.*</strong> This is kinda vague, but we can set up a chroot environment with proper functionalities to support a set of common features.</li>
+</ol>
+<p>Let's take a look at the "isolation" a jail provides.</p>
+<p><strong>The current working directory is unchanged</strong> when calling <code>chroot(2)</code> via a syscall. Although your absolute paths are different now, relative paths can still refer to files outside of the new root.</p>
+<p>Only priviledged processes with the <code>CAP_SYS_CHROOT</code> capability are able to call <code>chroot</code>.</p>
+<p>Calls to <code>chroot</code> do not stack. It will override the current jail. So a root user could escape jail with a program like:</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/stat.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unistd.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">mkdir</span><span class="p">(</span><span class="s">&quot;.out&quot;</span><span class="p">,</span><span class="w"> </span><span class="mo">0755</span><span class="p">);</span><span class="w">                        </span><span class="c1">//Create a new folder</span>
+<span class="w">    </span><span class="n">chroot</span><span class="p">(</span><span class="s">&quot;.out&quot;</span><span class="p">);</span><span class="w">                             </span><span class="c1">//Make it the new root, removing the old jail</span>
+<span class="w">    </span><span class="n">chdir</span><span class="p">(</span><span class="s">&quot;../../../../../&quot;</span><span class="p">);</span><span class="w">                   </span><span class="c1">//Changed the working directory to a location outside of the jail</span>
+<span class="w">    </span><span class="n">chroot</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">);</span><span class="w">                                </span><span class="c1">//Made it the new root</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">execl</span><span class="p">(</span><span class="s">&quot;/bin/bash&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;-i&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<blockquote>
+<p>Did we need to create a new jail before changing the working directory outside of the jail? Could we not have used the current jail?</p>
+</blockquote>
+<p>So, <strong><code>chroot</code> doesn't give isolation of the file system.</strong></p>
+<p>We can sneak peak outside of a jail from a process perspective:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>mkdir<span class="w"> </span>/proc
+<span class="gp">$ </span>mount<span class="w"> </span>-t<span class="w"> </span>proc<span class="w"> </span>proc<span class="w"> </span>/proc
+<span class="gp">$ </span>ps<span class="w"> </span>aux
+<span class="go">...</span>
+</code></pre></div>
+<p>There is no process isolation at all. We can even kill processes outside of the jail.</p>
+<p>We can sneak peak out of a jail from a network perspective:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>mkdir<span class="w"> </span>/sys
+<span class="gp">$ </span>mount<span class="w"> </span>-t<span class="w"> </span>sysfs<span class="w"> </span>sys<span class="w"> </span>/sys
+<span class="gp">$ </span>ls<span class="w"> </span>/sys/class/net
+<span class="go">eth0 lo</span>
+</code></pre></div>
+<p>There is no network isolation either.</p>
+<p>This lack of isolation is a security risk - and doesn't meet the criteria for a container to be isolated.</p>
+<p>How do we address this? Using <strong>Linux namespaces</strong>.</p>
+<h2 id="linux-namespaces">Linux Namespaces</h2>
+<p>The idea - wrap certain global system resources in an abstraction layer. This allows different groups of processes to have different views of the system.</p>
+<p>Processes within a namespace have their own isolated instance of the resources.</p>
+<hr />
+<dl>
+<dt>Namespaces</dt>
+<dd>(General) a space of names</dd>
+<dd>(Linux) a type of namespace (e.g. process id, mount, etc.)</dd>
+</dl>
+<hr />
+<blockquote>
+<p>What is important here is that the term "namespaces" are used in different ways. When a process is "in a namespace", it is in an instance of a namespace type.</p>
+</blockquote>
+<p>There are 7 namespace (or I'll refer to is as "namespace types" to keep terminology less confusing):</p>
+<ol>
+<li>mnt</li>
+<li>pid</li>
+<li>net</li>
+<li>ipc</li>
+<li>uts</li>
+<li>cgroup</li>
+<li>user</li>
+</ol>
+<blockquote>
+<p>A process will be in a namespace of every type. (It will have a specific <code>mnt</code> ns, <code>pid</code> ns, etc.)</p>
+</blockquote>
+<p>There were two more proposed in 2016 - time and syslog, but they have not been implemented yet.</p>
+<p>With the introduction of user namespace in 2013, the kernel became "container ready".</p>
+<h3 id="namespace-api">Namespace API</h3>
+<p>Before we look at the namespaces, it'll be useful to look at the namespace API. It consists of 3 system calls.</p>
+<blockquote>
+<p>Coming from an OO background, I assumed "namespace API" meant the API of a namespace. I assume that each namespace had a "verb" or an implementation of the below API's that could vary among the namespace types. <strong>This is not the case</strong>.</p>
+<p>Rather, it is an API of the kernel (?) that operates with namespaces. These are <em>syscall</em>'s.</p>
+</blockquote>
+<h4 id="1-clone">1. clone</h4>
+<p><a href="https://man7.org/linux/man-pages/man2/clone.2.html"><code>clone(2)</code></a> creates a new child process, like <a href="https://man7.org/linux/man-pages/man2/fork.2.html"><code>fork(2)</code></a>. Unlike <code>fork</code>, <code>clone</code> allows the child process to share parts of its execution context with the calling process (such as the memory space, the table of file descriptors, and table of signal handlers).</p>
+<p>You can pass different namespace flags to <code>clone</code> to create new namespaces for the child process.</p>
+<h4 id="2-unshare">2. unshare</h4>
+<p><a href="https://man7.org/linux/man-pages/man2/unshare.2.html"><code>unshare(2)</code></a> allows a process to disassociate parts of the execution context which are currently being shared with others.</p>
+<h4 id="3-setns">3. setns</h4>
+<p><a href="https://man7.org/linux/man-pages/man2/setns.2.html"><code>setns(2)</code></a> reassociates the calling thread with the provided namespace file descriptor.</p>
+<p>This can be used to join an existing namespace.</p>
+<h4 id="proc">proc</h4>
+<p>Not a syscall, but the <code>proc</code> filesystem provides additional namespace related files. Each file in <code>/proc/$PID/ns</code> is a magic link that be used as a handle for performing operations (like <code>setns</code>) to the referenced namespace.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">  24900 pts/2    00:00:00 zsh</span>
+<span class="go">  25039 pts/2    00:00:00 ps</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>ls<span class="w"> </span>-Gg<span class="w"> </span>/proc/24900/ns
+<span class="go">total 0</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 cgroup -&gt; &#39;cgroup:[4026531835]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 ipc -&gt; &#39;ipc:[4026531839]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 mnt -&gt; &#39;mnt:[4026531840]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 net -&gt; &#39;net:[4026532000]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 pid -&gt; &#39;pid:[4026531836]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 pid_for_children -&gt; &#39;pid:[4026531836]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 time -&gt; &#39;time:[4026531834]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 time_for_children -&gt; &#39;time:[4026531834]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 user -&gt; &#39;user:[4026531837]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:37 uts -&gt; &#39;uts:[4026531838]&#39;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>ls<span class="w"> </span>-Gg<span class="w"> </span>/proc/self/ns
+<span class="go">total 0</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 cgroup -&gt; &#39;cgroup:[4026531835]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 ipc -&gt; &#39;ipc:[4026531839]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 mnt -&gt; &#39;mnt:[4026531840]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 net -&gt; &#39;net:[4026532000]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 pid -&gt; &#39;pid:[4026531836]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 pid_for_children -&gt; &#39;pid:[4026531836]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 time -&gt; &#39;time:[4026531834]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 time_for_children -&gt; &#39;time:[4026531834]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 user -&gt; &#39;user:[4026531837]&#39;</span>
+<span class="go">lrwxrwxrwx 1 0 Feb 21 16:40 uts -&gt; &#39;uts:[4026531838]&#39;</span>
+</code></pre></div>
+<p>We can actually track which namespaces a process resides in using this.</p>
+<p>Another tool, <a href="https://github.com/karelzak/util-linux"><code>util-linux</code></a> package, contains dedicated wrapper programs for the above syscalls.</p>
+<h3 id="available-namespaces-or-namespace-types">Available Namespaces (or Namespace Types)</h3>
+<h4 id="mount-mnt">Mount (mnt)</h4>
+<p>With the <code>mnt</code> namespace, Linux is able to isolate a set of mount points by a group of processes. Another way to put this, for a group of processes, we have a specific set of mount points. This abstraction gives us the ability to create an entire virtual environment where we are the root user even without root permissions.</p>
+<p>The flag for this namespace type is <code>CLONE_NEWNS</code> (CLONE NEW NameSpace). This was the first implemented namespace (2002) and most people didn't think more than one namespace was needed, which was why this flag is so generic.</p>
+<p>A use case for the mnt namespace is to improve our jail (by making it more secure):</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>sudo<span class="w"> </span>unshare<span class="w"> </span>-m
+<span class="gp"># </span>mkdir<span class="w"> </span>mount-dir
+<span class="gp"># </span>mount<span class="w"> </span>-n<span class="w"> </span>-o<span class="w"> </span><span class="nv">size</span><span class="o">=</span>10m<span class="w"> </span>-t<span class="w"> </span>tmpfs<span class="w"> </span>tmpfs<span class="w"> </span>mount-dir
+<span class="gp"># </span>man<span class="w"> </span>mount
+<span class="gp"># </span>df<span class="w"> </span>mount-dir/
+<span class="go">Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="go">tmpfs            10M     0   10M   0% /home/arjun/mount-dir</span>
+<span class="gp"># </span>touch<span class="w"> </span>mount-dir/<span class="o">{</span><span class="m">0</span>,1,2<span class="o">}</span>
+<span class="gp"># </span>ls<span class="w"> </span>mount-dir/
+<span class="go">0  1  2</span>
+</code></pre></div>
+<p>If we try to access this on the host system:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>la<span class="w"> </span>mount-dir
+<span class="go">total 0</span>
+<span class="gp">$ </span>grep<span class="w"> </span>mount-dir<span class="w"> </span>/proc/mounts
+<span class="gp">$</span>
+</code></pre></div>
+<p>We see folder (a file) created in the first namespace, but no files under it. This is because we mounted a <a href="https://en.wikipedia.org/wiki/Tmpfs">tmpfs</a> (a temporary fs) to that folder and added files to that mount. Since our host system is in another <code>mnt</code> namespace, it cannot see these files, or see this mount.</p>
+<p>We can actually see the mount point in the <code>mountinfo</code> file inside of the <code>proc</code> filesystem:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>grep<span class="w"> </span>mount-dir<span class="w"> </span>/proc/<span class="k">$(</span>pgrep<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>bash<span class="k">)</span>/mountinfo
+<span class="go">441 440 0:54 / /home/arjun/mount-dir rw,relatime - tmpfs tmpfs rw,size=10240k,inode64</span>
+</code></pre></div>
+<blockquote>
+<p>The memory being used here is in an abstraction layer called Virtual File System (VFS), which is part of the kernel. This is also where other file systems are based on. If the namespace gets destroyed, the mount memory is unrecoverably lost.</p>
+<p><strong>How to work with these mount points in the source code?</strong> Programs tend to keep track of the <code>/proc/$PID/ns/mnt</code> file, which is referring to the used namespace.</p>
+</blockquote>
+<h4 id="unix-time-sharing-system-uts">UNIX Time-sharing System (uts)</h4>
+<p>With the <code>uts</code> namespace, we can unshare the domain and hostname from the current host system.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>hostname
+<span class="go">arjun-b250hd3</span>
+<span class="gp">$ </span>sudo<span class="w"> </span>unshare<span class="w"> </span>-u
+<span class="gp"># </span>hostname
+<span class="go">arjun-b250hd3</span>
+<span class="gp"># </span>hostname<span class="w"> </span>a-cooler-hostname
+<span class="gp"># </span>hostname
+<span class="go">a-cooler-hostname</span>
+</code></pre></div>
+<p>and if we look at the system:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>hostname
+<span class="go">arjun-b250hd3</span>
+</code></pre></div>
+<p>it is unchanged. This is useful for container networking related topics.</p>
+<h4 id="interprocess-communication-ipc">Interprocess Communication (ipc)</h4>
+<p>With the <code>ipc</code> namespace, we can isolate interprocess communication (IPC) resources.</p>
+<p>These are <em>System V IPC objects</em> and <em>POSIX message queues</em>.</p>
+<blockquote>
+<p>Use Case - Separate the shared memory (SHM) between two processes.</p>
+<p>Each process will be able to use the same identifiers for a shared memory segment and have two different regions.</p>
+</blockquote>
+<p>When an IPC namespace is destroyed, all IPC objects in the namespace is destroyed too.</p>
+<h4 id="process-id-pid">Process ID (pid)</h4>
+<p>With the <code>pid</code> namespaces, processes can have independent set of process identifiers (PIDs).</p>
+<p>Process in two different <code>pid</code> namespaces can have the same PID.</p>
+<p>A process will have more than one PID:</p>
+<ol>
+<li>the PID inside the namespace</li>
+<li>the PID on the host system</li>
+</ol>
+<p><strong>The <code>pid</code> namespace can be nested</strong>, so a process will have a PID for each namespace from its current namespace up to the initial namespace.</p>
+<blockquote>
+<p>Does this mean the host system can still see this process? This namespace doesn't seem to isolate the process from other namespaces. Only the PID.</p>
+</blockquote>
+<p>The first process created in a <code>pid</code> namespace gets the number 1 and gains all the same special treatment as the usual init process, like:</p>
+<ul>
+<li>All processes within a namespace will be reparented to the namespace's PID 1 instead of the host system's PID 1.</li>
+<li>The termination of this PID will terminate all processes in its PID namespace and any descendants.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>ps<span class="w"> </span>aux
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">root           1  0.0  0.0 171184 10752 ?        Ss   16:22   0:00 /sbin/init</span>
+<span class="go">root           2  0.0  0.0      0     0 ?        S    16:22   0:00 [kthreadd]</span>
+<span class="go">root           3  0.0  0.0      0     0 ?        I&lt;   16:22   0:00 [rcu_gp]</span>
+<span class="go">.... //The list goes on</span>
+<span class="gp">$ </span>sudo<span class="w"> </span>unshare<span class="w"> </span>-fp<span class="w"> </span>--mount-proc
+<span class="gp"># </span>ps<span class="w"> </span>aux
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">root           1  0.0  0.0   7728  4484 pts/4    S    17:27   0:00 -bash</span>
+<span class="go">root           6  0.0  0.0   9876  3424 pts/4    R+   17:27   0:00 ps aux</span>
+<span class="gp">#</span>
+</code></pre></div>
+<blockquote>
+<p><code>--mount-proc</code> is needed to remount the <code>proc</code> filesystem. Why? We didn't unshare the <code>mnt</code> namespace.</p>
+</blockquote>
+<h4 id="network-net">Network (net)</h4>
+<p>With the <code>net</code> namespace, we can virtualize the network stack.</p>
+<p>Each network namespace contains its own resource properties within <code>/proc/net</code>.</p>
+<p>A network namespace only contains a loopback interface on creation:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>sudo<span class="w"> </span>unshare<span class="w"> </span>-n
+<span class="gp">[arjun-b250hd3 gapuchi.github.io]# </span>ip<span class="w"> </span>link
+<span class="go">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span>
+</code></pre></div>
+<p>Every network interface (physical or virtual) is present exactly once per namespace.</p>
+<p>An interface can be moved between namespaces.</p>
+<p>Each namespace contains:</p>
+<ul>
+<li>a private set of IP addresses</li>
+<li>its own routing table</li>
+<li>socket listing</li>
+<li>connection tracking table</li>
+<li>firewall</li>
+<li>other network-related resources</li>
+</ul>
+<p>Destroying a network namespace will destroy any virtual interfaces and move any physical interfaces back to teh initial network namespace.</p>
+<h5 id="use-case-software-defined-network">Use Case - Software Defined Network</h5>
+<p>TBD</p>
+<h4 id="user-id-user">User ID (user)</h4>
+<p>With the <code>user</code> namespace, we can isolate user and group IDs.</p>
+<p>This allows a user and group ID's of a process be different inside and outside of the namespace.</p>
+<p>Use Case - A process can have a normal, unprivileged user ID outside a user namespace while being fully privileged inside.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>whoami
+<span class="go">arjun</span>
+<span class="gp">$ </span>id<span class="w"> </span>-u
+<span class="go">1000</span>
+<span class="gp">$ </span>unshare<span class="w"> </span>-U
+<span class="gp">$ </span>whoami
+<span class="go">nobody</span>
+<span class="gp">$ </span>id<span class="w"> </span>-u
+<span class="go">65534</span>
+</code></pre></div>
+<p>After we create the namespace, the files <code>/proc/$PID/{u,g}id_map</code> expose the mappings for user and group ID's for the PID. This can be written only once. These files contain a 1:1 mapping a range of contiguous user IDs between two user namespaces.</p>
+<p>An example file:</p>
+<div class="highlight"><pre><span></span><code><span class="go">&gt; cat /proc/$PID/uid_map</span>
+<span class="go">0 1000 1</span>
+</code></pre></div>
+<p>This means user ID starting at <code>0</code> are mapped to ID <code>1000</code>, with the length of the range of <code>1</code>. (Meaning only user ID <code>0</code> is mapped to <code>1000</code>. user ID <code>1</code> isn't mapped to <code>1001</code> with this.)</p>
+<p>If a process tried to access a file, its user and group IDs are mapped to the initial user namespace (for permission checking).</p>
+<p>When a process retrieves file user and group IDs (via <a href="https://man7.org/linux/man-pages/man2/fstat.2.html"><code>stat(2)</code></a>), the IDs are mapped in the opposite direction (i.e. to ID's within the namespace).</p>
+<p>The file <code>/proc/$PID/setgroups</code> contains either <code>allow</code> or <code>deny</code> (literally) to enable or disable the permission to call the <a href="https://man7.org/linux/man-pages/man2/setgroups.2.html"><code>setgroups(2)</code></a> syscall within a user namespace. This prevented an unprivileged process to create a new namespace where the user had all the privileges. The user would be able to drop groups with <code>setgroups(2)</code> to gain access files previously not accessible.</p>
+<h4 id="control-group-cgroup">Control Group (cgroup)</h4>
+<p>cgroups was a dedicated kernel feature to support resource limiting, prioritization, accounting, and controlling.</p>
+<p>With the <code>cgroups</code> namespace, we can prevent leaking host information into a namespace.</p>
+<blockquote>
+<p>Not really sure what cgroup really is. Will expand this with the demo later.</p>
+</blockquote>
+<h3 id="composing-namespaces">Composing Namespaces</h3>
+<p>Namespaces are composable, making it possible to have isolated <code>pid</code> namespaces which share the same network interface (which apparently is done in Kubernetes Pods).</p>
+<p>As an example, let's create a new <code>pid</code> namespace:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">$ </span>sudo<span class="w"> </span>unshare<span class="w"> </span>-fp<span class="w"> </span>--mount-proc
+<span class="gp"># </span>ps<span class="w"> </span>aux
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">root           1  0.0  0.0   7728  4452 pts/2    S    18:25   0:00 -bash</span>
+<span class="go">root           6  0.0  0.0   9876  3352 pts/2    R+   18:26   0:00 ps aux</span>
+</code></pre></div>
+<p>The <code>setns(2)</code> syscall (with its appropriate wrapper program <code>nsenter</code>) can be used to join the namespace. First find the <code>pid</code> we want to join with:</p>
+<div class="highlight"><pre><span></span><code><span class="gp"># </span><span class="nb">export</span><span class="w"> </span><span class="nv">PID</span><span class="o">=</span><span class="k">$(</span>pgrep<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>bash<span class="k">)</span>
+</code></pre></div>
+<p>Now we can join the namespace:</p>
+<div class="highlight"><pre><span></span><code><span class="gp"># </span>sudo<span class="w"> </span>nsenter<span class="w"> </span>--pid<span class="o">=</span>/proc/<span class="nv">$PID</span>/ns/pid<span class="w"> </span>unshare<span class="w"> </span>--mount-proc
+<span class="gp"># </span>ps<span class="w"> </span>aux
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">root           1  0.0  0.0   7728  4488 pts/2    S    18:25   0:00 -bash</span>
+<span class="go">root          10  0.0  0.0  15764  7268 pts/2    S    18:26   0:00 sudo nsenter --pid=/proc/1/ns/pid unshare --mount-proc</span>
+<span class="go">root          11  0.0  0.0   5360   740 pts/2    S    18:26   0:00 nsenter --pid=/proc/1/ns/pid unshare --mount-proc</span>
+<span class="go">root          12  0.0  0.0   7720  4480 pts/2    S    18:26   0:00 -bash</span>
+<span class="go">root          17  0.0  0.0   9876  3320 pts/2    R+   18:26   0:00 ps aux</span>
+<span class="gp">#</span>
+</code></pre></div>
+<p>We are now in the same <code>pid</code> namespace. Cool!</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tracking", "navigation.tabs"], "search": "../../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+        <script src="../../../javascripts/config.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
