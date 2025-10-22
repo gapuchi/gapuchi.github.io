@@ -5,17 +5,20 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
   };
 
-  outputs = { self, nixpkgs }: {
-    devShells.x86_64-linux.default =
+  outputs = { self, nixpkgs }: 
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    in pkgs.mkShell {
-      buildInputs = with pkgs; [
-        (python3.withPackages (python-pkgs: [
-          python-pkgs.mkdocs
-          python-pkgs.mkdocs-material
-        ]))
-      ];
+      eachDefaultSystem = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ];
+    in
+    {
+      devShells = eachDefaultSystem (system: {
+        default = nixpkgs.legacyPackages.${system}.mkShell {
+          buildInputs = with nixpkgs.legacyPackages.${system}; [
+            (python3.withPackages (python-pkgs: [
+              python-pkgs.mkdocs
+              python-pkgs.mkdocs-material
+            ]))
+          ];
+        };
+      });
     };
-  };
 }
