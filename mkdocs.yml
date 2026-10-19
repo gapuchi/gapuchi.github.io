@@ -150,6 +150,11 @@ nav:
     - Transactions: notes/database/transactions.md
     - Math: notes/math/bitwise-operations.md
     - APIs: notes/service/api.md
+  - Media:
+    - notes/media/index.md
+    - Codec: notes/media/codec.md
+    - Video codecs: notes/media/video-codecs.md
+    - Audio codecs: notes/media/audio-codecs.md
   - Posts:
     - Breadth-first search: posts/2018/2018-11-16-breadth-first-search.md
     - OAuth 2: posts/2020/2020-09-16-learning-oauth2.md

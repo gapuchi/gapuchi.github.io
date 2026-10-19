@@ -32,6 +32,10 @@ Check it out. Or don't. I'm not a cop.
 - [Math](notes/math/bitwise-operations.md): bitwise tricks.
 - [APIs](notes/service/api.md): SDK, API, and SPI.
 
+## Media
+
+- [Media](notes/media/index.md): a codec compresses pictures or samples, then the video and audio codecs in use.
+
 ## Posts
 
 - [Breadth-first search](posts/2018/2018-11-16-breadth-first-search.md)
