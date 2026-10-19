@@ -9,6 +9,7 @@ theme:
   features:
     - navigation.tracking
     - navigation.tabs
+    - navigation.indexes
 
 extra_javascript:
   - javascripts/config.js
@@ -17,8 +18,14 @@ extra_javascript:
 
 markdown_extensions:
   - def_list
+  - admonition
+  - pymdownx.details
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format 
   - pymdownx.arithmatex:
       generic: true
 
@@ -31,3 +38,118 @@ site_author: gapuchi
 
 extra_css:
   - stylesheets/extra.css
+
+nav:
+  - Notes: index.md
+  - Systems:
+    - Linux:
+      - notes/linux/index.md
+      - Users, groups, and permissions: notes/linux/users-groups-permissions.md
+      - umask: notes/linux/umask.md
+      - UID and GID ranges: notes/linux/uid-gid-ranges.md
+      - Cross-machine identity: notes/linux/cross-machine-identity.md
+      - NFS security: notes/linux/nfs-security.md
+    - Containers:
+      - notes/containers/index.md
+      - Namespaces: notes/containers/namespaces.md
+      - OCI: notes/containers/oci.md
+    - Docker: notes/docker/privileged.md
+    - Kubernetes:
+      - notes/kubernetes/index.md
+      - Introduction: notes/kubernetes/1-kubernetes.md
+      - Components: notes/kubernetes/2-components.md
+      - API: notes/kubernetes/3-api.md
+      - Scheduling: notes/kubernetes/4-scheduling.md
+    - Networking:
+      - notes/networking/index.md
+      - The network: notes/networking/network.md
+      - VPC: notes/networking/vpc.md
+      - NAT: notes/networking/nat.md
+      - CIDR: notes/networking/cidr.md
+      - DNS: notes/networking/dns.md
+      - SSH: notes/networking/ssh.md
+      - RPC vs REST: notes/networking/rpc-vs-rest.md
+    - AWS:
+      - notes/AWS/index.md
+      - VPC: notes/AWS/vpc.md
+      - Route 53: notes/AWS/route-53.md
+      - ECS: notes/AWS/ecs.md
+      - EKS: notes/AWS/eks.md
+      - EMR on EKS: notes/AWS/emr-on-eks.md
+      - Kinesis: notes/AWS/kinesis-streams.md
+      - X-Ray: notes/AWS/xray.md
+  - Languages:
+    - Rust:
+      - notes/rust/index.md
+      - Variables and mutability: notes/rust/03.1-variables-mutability.md
+      - Data types: notes/rust/03.2-data-types.md
+      - Functions: notes/rust/03.3-functions.md
+      - Control flow: notes/rust/03.5-control-flow.md
+      - Ownership: notes/rust/04-ownership.md
+      - Structs: notes/rust/05-structs.md
+      - Enums: notes/rust/06-enums.md
+      - Packages and modules: notes/rust/07-managing-projects.md
+      - Error handling: notes/rust/09-error-handling.md
+      - Generics: notes/rust/10-generics.md
+      - Functional features: notes/rust/13-functional-features.md
+      - Smart pointers: notes/rust/15-smart-pointers.md
+    - Scala:
+      - notes/scala/index.md
+      - Type classes: notes/scala/00-type-classes.md
+      - Monoids and semigroups: notes/scala/01-monoids-and-semigroups.md
+      - Functors: notes/scala/02-functors.md
+      - Monads: notes/scala/03-monads.md
+      - Semigroupal and applicative: notes/scala/04-semigroupal-and-applicatives.md
+      - Foldable and traverse: notes/scala/05-foldable-and-traverse.md
+      - Hierarchy: notes/scala/99-heirarchy-of-type-classes.md
+      - Higher kinds: notes/scala/higher-kinds-and-type-constructors.md
+      - Selections: notes/scala/selections.md
+      - Cats:
+        - Type classes: notes/scala/cats/2019-01-19-type-classes.md
+        - Ad-hoc polymorphism: notes/scala/cats/ad-hoc-polymorphism.md
+        - Implicits: notes/scala/cats/2019-01-23-implicits.md
+        - Monoids: notes/scala/cats/2019-02-18-monoids-cats.md
+    - Java:
+      - notes/java/index.md
+      - Iterable and Iterator: notes/java/iterable.md
+      - Concurrency: notes/java/concurrency.md
+    - Go: notes/golang/intro.md
+    - Python: notes/python/module.md
+  - Design:
+    - System design:
+      - notes/system_design/index.md
+      - Approach: notes/system_design/0-general-approach.md
+      - Tradeoffs: notes/system_design/1-general-considerations.md
+      - Scalability: notes/system_design/scalability.md
+      - Load balancer: notes/system_design/load-balancer.md
+      - Reverse proxy: notes/system_design/reverse-proxy.md
+      - Cache: notes/system_design/cache.md
+      - CDN: notes/system_design/content-delivery-network.md
+      - Databases: notes/system_design/databases.md
+      - Asynchronism: notes/system_design/asynchronism.md
+    - Data structures:
+      - notes/data_structures/index.md
+      - Sort and search: notes/data_structures/sort-and-search.md
+      - Recursion and dynamic programming: notes/data_structures/recursion-and-dynamic-programming.md
+      - Trees and graphs: notes/data_structures/trees-and-graphs.md
+      - BFS and DFS: notes/data_structures/implementations.md
+      - Balanced trees: notes/data_structures/tree-balance.md
+      - Shortest paths and ordering: notes/data_structures/advanced-topics.md
+    - Machine learning:
+      - notes/machine_learning/index.md
+      - Introduction: notes/machine_learning/01-introduction.md
+      - Model and cost function: notes/machine_learning/02-model-and-cost-function.md
+      - Parameter learning: notes/machine_learning/03-parameter-learning.md
+      - Multivariate linear regression: notes/machine_learning/04-multivariate-linear-regression.md
+      - Computing parameters analytically: notes/machine_learning/05-computing-parameters-analytically.md
+      - Classification: notes/machine_learning/06-classification-and-representation.md
+      - Logistic regression: notes/machine_learning/07-logistic-regression-model.md
+      - Multiclass classification: notes/machine_learning/08-multiclass-classification.md
+      - Overfitting: notes/machine_learning/09-solving-overfitting.md
+      - Neural networks: notes/machine_learning/10-neural-networks.md
+    - Transactions: notes/database/transactions.md
+    - Math: notes/math/bitwise-operations.md
+    - APIs: notes/service/api.md
+  - Posts:
+    - Breadth-first search: posts/2018/2018-11-16-breadth-first-search.md
+    - OAuth 2: posts/2020/2020-09-16-learning-oauth2.md

@@ -75,21 +75,21 @@ The authorization grant type used depends on:
 
 This grant type is optimized for *server-side applications*. The application must be able to receive HTTP requests from the *user-agent* (i.e. the user's web browser) because the service will redirect the user once authorization is granted.
 
-1. Client is given an *authorization code link*: `https://discord.com/api/oauth2/authorize?response_type=code&client_id=123456789&permissions=8&redirect_uri=http%3A%2F%2Farjun.adhia.net&scope=bot`
+1. Client is given an *authorization code link*: `https://discord.com/api/oauth2/authorize?response_type=code&client_id=123456789&permissions=8&redirect_uri=http%3A%2F%2Fexample.com&scope=bot`
     * `https://discord.com/api/oauth2/authorize` - Discord's API authorization endpoint
     * `client_id=123456789` - the *application*'s *client id*.
-    * `redirect_uri=http%3A%2F%2Farjun.adhia.net` - The URI that the service redirects the user after an authorization code is granted.
+    * `redirect_uri=http%3A%2F%2Fexample.com` - The URI that the service redirects the user after an authorization code is granted.
     * `response_type=code` - Specifies that the application is requesting an authorization code grant.
     * `scope=bot` - specifies the level of access that the application is requesting. (For Discord, this is defined under [OAuth2 Scopes](https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes)).
 1. Client authorizes the application - The user will click on the above link, and the service will ask the user to authorize or deny the application.
-1. Client is redirected to the provided `redirect_url` once they authorize: `https://arjun.adhia.net/?code=987654321`
+1. Client is redirected to the provided `redirect_url` once they authorize: `https://example.com/?code=987654321`
     * `code=987654321` - The authorization code provided by the service, as an argument to the redirect url.
-1. Application requests access token - The application, requests a token with a `POST`: `https://discord.com/api/oauth2/token?client_id=1234567890&client_secret=3216549870&grant_type=authorization_code&code=098763421&redirect_uri=http%3A%2F%2Farjun.adhia.net&scope=bot`
+1. Application requests access token - The application, requests a token with a `POST`: `https://discord.com/api/oauth2/token?client_id=1234567890&client_secret=3216549870&grant_type=authorization_code&code=098763421&redirect_uri=http%3A%2F%2Fexample.com&scope=bot`
     * `client_id=1234567890`
     * `client_secret=3216549870` - the client secret. The client secret can be held by the application because it is server-side and source code is hidden. If this was client side, anyone can see the secret.
     * `grant_type=authorization_code`
     * `code=098763421`
-    * `redirect_uri=http%3A%2F%2Farjun.adhia.net`
+    * `redirect_uri=http%3A%2F%2Fexample.com`
     * `scope=bot`
 1. The API will return a response with the access token (and potentially a refresh token, to get a new token when the returned one expires) - the application can now use this token when making calls to the service.
 
@@ -103,7 +103,7 @@ This flow **does not authenticate the identity of the application**. It relies t
 
 1. THe user is given an authorization link, to get a token from the service. This is similar to autorization code link except it **requests a token instead of a code**. (Check the reponse type in the url): `https://discord.com/api/oauth2/authorize?response_type=token&client_id=290926444748734499&state=15773059ghq9183habn&scope=identify`
 1. Client authorizes the application - The user will click on the above link, and the service will ask the user to authorize or deny the application.
-1. User-agent receives the redirect URI and the URL contains the access token: `https://arjun.adhia.net/?access_token=RTfP0OK99U3kbRtHOoKLmJbOn45PjL&token_type=Bearer&expires_in=604800&scope=identify&state=15773059ghq9183habn`.
+1. User-agent receives the redirect URI and the URL contains the access token: `https://example.com/?access_token=RTfP0OK99U3kbRtHOoKLmJbOn45PjL&token_type=Bearer&expires_in=604800&scope=identify&state=15773059ghq9183habn`.
 1. User-agent gets redirected to the redirect URI.
 1. The application returns a webpage that contains a script that can get the access token from the redirect URI.
 1. User-agent gets the token and passes it to the application.

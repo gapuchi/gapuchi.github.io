@@ -25,6 +25,13 @@
             ''}/bin/serve";
           };
         };
+
+        devShells.default = pkgs.mkShellNoCC {
+          packages = [
+            mkdocs
+            pkgs.just
+          ];
+        };
       }
     );
 }

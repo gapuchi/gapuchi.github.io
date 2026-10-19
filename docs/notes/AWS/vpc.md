@@ -1,5 +1,7 @@
 # VPCs and Subnets
 
+The address space, the subnet, and the rewrite are drawn in [VPC](../networking/vpc.md). This page is the AWS inventory.
+
 ## VPC Concepts
 
 Virtual Private Cloud (VPC)

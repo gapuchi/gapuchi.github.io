@@ -25,7 +25,7 @@ How can we set up a chroot environment? With little effort:
 $ mkdir -p new-root/{bin,lib64}
 $ cp /bin/bash new-root/bin
 $ cp /lib64/{ld-linux-x86-64.so*,libc.so*,libdl.so.*,libreadline.so*,libtinfo.so*} new-root/lib64
-// This isn't working on my system because a dependency is missing
+// ldd /bin/bash may list more libraries to copy
 $ sudo chroot new-root
 ```
 
@@ -212,7 +212,7 @@ $ sudo unshare -m
 # man mount
 # df mount-dir/
 Filesystem      Size  Used Avail Use% Mounted on
-tmpfs            10M     0   10M   0% /home/arjun/mount-dir
+tmpfs            10M     0   10M   0% /home/ada/mount-dir
 # touch mount-dir/{0,1,2}
 # ls mount-dir/
 0  1  2
@@ -233,7 +233,7 @@ We can actually see the mount point in the `mountinfo` file inside of the `proc`
 
 ```console
 $ grep mount-dir /proc/$(pgrep -u root bash)/mountinfo
-441 440 0:54 / /home/arjun/mount-dir rw,relatime - tmpfs tmpfs rw,size=10240k,inode64
+441 440 0:54 / /home/ada/mount-dir rw,relatime - tmpfs tmpfs rw,size=10240k,inode64
 ```
 
 > The memory being used here is in an abstraction layer called Virtual File System (VFS), which is part of the kernel. This is also where other file systems are based on. If the namespace gets destroyed, the mount memory is unrecoverably lost.
@@ -246,10 +246,10 @@ With the `uts` namespace, we can unshare the domain and hostname from the curren
 
 ```console
 $ hostname
-arjun-b250hd3
+workstation
 $ sudo unshare -u
 # hostname
-arjun-b250hd3
+workstation
 # hostname a-cooler-hostname
 # hostname
 a-cooler-hostname
@@ -259,7 +259,7 @@ and if we look at the system:
 
 ```console
 $ hostname
-arjun-b250hd3
+workstation
 ```
 
 it is unchanged. This is useful for container networking related topics.
@@ -323,7 +323,7 @@ A network namespace only contains a loopback interface on creation:
 
 ```console
 $ sudo unshare -n
-[arjun-b250hd3 gapuchi.github.io]# ip link
+[workstation]# ip link
 1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
 ```
@@ -343,9 +343,9 @@ Each namespace contains:
 
 Destroying a network namespace will destroy any virtual interfaces and move any physical interfaces back to teh initial network namespace.
 
-##### Use Case - Software Defined Network
+##### Use Case - A bridge
 
-TBD
+Docker puts the container in a network namespace and connects `eth0` to a bridge on the host. The packet view of that bridge is [The network](../networking/network.md).
 
 #### User ID (user)
 
@@ -358,7 +358,7 @@ Use Case - A process can have a normal, unprivileged user ID outside a user name
 
 ```console
 $ whoami
-arjun
+ada
 $ id -u
 1000
 $ unshare -U

@@ -1,5 +1,7 @@
 # Classless Inter-Domain Routing (CIDR)
 
+**Big picture:** the `/24` and `/16` in [the network](network.md) and [NAT](nat.md) notes are this notation. The prefix is how many leading bits are the network. The rest pick a host inside it.
+
 CIDR
 : Method for IP routing and for allocating IP addresses
 
